@@ -1,13 +1,14 @@
 package cz.muni.fi.pv168.project.ui;
 
+import cz.muni.fi.pv168.project.ui.tabs.*;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MainWindow {
 
     private final JFrame frame;
+    private final JTabbedPane tabbedPane;
 
     public MainWindow() {
         frame = new JFrame("Taxi trip tracking");
@@ -15,17 +16,19 @@ public class MainWindow {
         frame.setSize(1280, 800);
         frame.setLocationRelativeTo(null);
 
-        JButton closeButton = new JButton("Close taxi trip tracking");
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        tabbedPane = new JTabbedPane();
 
-        // Add the button to the frame
-        frame.getContentPane().setLayout(new FlowLayout());
-        frame.getContentPane().add(closeButton);
+        JPanel homePage = HomePage.createHomePagePanel();
+        tabbedPane.addTab("Home Page", homePage);
+
+        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel();
+        tabbedPane.addTab("Rides History", ridesHistory);
+
+        JPanel ridesCategories = RidesCategories.createRidesCategoriesPanel();
+        tabbedPane.addTab("Rides Categories", ridesCategories);
+
+        // Add the tabbed pane to the frame
+        frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
     }
 
     // Method to show the window
