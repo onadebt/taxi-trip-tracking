@@ -17,6 +17,7 @@ public class MainWindow {
         frame.setLocationRelativeTo(null);
 
         tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(new Font("Arial", Font.BOLD, 18));
 
         JPanel homePage = HomePage.createHomePagePanel();
         tabbedPane.addTab("Home Page", homePage);
@@ -26,6 +27,9 @@ public class MainWindow {
 
         JPanel ridesCategories = RidesCategories.createRidesCategoriesPanel();
         tabbedPane.addTab("Rides Categories", ridesCategories);
+
+        tabbedPane.setBackgroundAt(0, Color.BLUE);
+        tabbedPane.setForegroundAt(0, Color.RED);
 
         // Add the tabbed pane to the frame
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
