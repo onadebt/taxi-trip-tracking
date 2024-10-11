@@ -1,29 +1,29 @@
-# PV168 Project: {{ PROJECT NAME }}
+# PV168 Project: Taxi-Trip-Tracking
 
-<!--- FIXME: fill in the PROJECT NAME above and include short description of what the project is about -->
-{{ PROJECT DESCRIPTION }}
+Taxi-Trip-Tracking app is a comprehensive solution designed to manage taxi rides.
+The app allows users to track taxi trips distance, ride categories and money earned in many currencies.
 
 ## Team Information
 
 | Seminar Group | Team |
-|-------------- | ---- |
-| PV168/0X      | Y    | <!--- FIXME: fill in the seminar group and team identification -->
+|---------------| ---- |
+| PV168/05      | Y    |
 
 ### Members
 
-| Role           | Person               |
-|----------------|----------------------|
-|Team Lead       | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Member          | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
+| Role           | Person                                                  |
+|----------------|---------------------------------------------------------|
+|Team Lead       | Bc. Ivan Yatskiv (https://is.muni.cz/auth/osoba/567817) |
+|Member          | Dorián Viktora (https://is.muni.cz/auth/osoba/536313)   |
+|Member          | Jan Vondrášek (https://is.muni.cz/auth/osoba/536685)    |
+|Member          | Bc. Jan Fabšič (https://is.muni.cz/auth/osoba/484764)   |
 
 ### Evaluators
 
-| Role           | Person               |
-|----------------|----------------------|
-|PM              | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
-|Technical Coach | [Name Surname](https://is.muni.cz/auth/osoba/UCO) | <!--- FIXME: fill in the name and UCO -->
+| Role           | Person                                                          |
+|----------------|-----------------------------------------------------------------|
+|PM              | Bc. Kryštof-Mikuláš Štys (https://is.muni.cz/auth/osoba/493159) |
+|Technical Coach | Mgr. Josef Ludvíček (https://is.muni.cz/auth/osoba/374268)      |
 
 ## TODO
 
