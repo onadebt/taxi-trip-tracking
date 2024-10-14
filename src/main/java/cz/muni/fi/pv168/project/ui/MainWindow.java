@@ -28,9 +28,6 @@ public class MainWindow {
         JPanel ridesCategories = RidesCategories.createRidesCategoriesPanel();
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
-        tabbedPane.setBackgroundAt(0, Color.BLUE);
-        tabbedPane.setForegroundAt(0, Color.RED);
-
         // Add the tabbed pane to the frame
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
     }
