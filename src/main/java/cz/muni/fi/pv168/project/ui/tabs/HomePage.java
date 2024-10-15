@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
+import cz.muni.fi.pv168.project.ui.Currencies;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -24,6 +26,10 @@ public class HomePage {
     private static JLabel totalMoneyLabel = new JLabel("0");
     private static JLabel totalDrivesLabel = new JLabel("0");
 
+    private static JLabel moneyLabel;
+
+    public static Currencies currencies;
+
 
     public static JPanel createHomePagePanel() {
         JPanel panel = new JPanel();
@@ -32,10 +38,12 @@ public class HomePage {
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
 
-        JLabel distanceLabel = new JLabel("Distance traveled (km):");
+        JLabel distanceLabel = new JLabel("Distance traveled:");
         JTextField distanceField = new JTextField(10); // 10 columns wide
 
-        JLabel moneyLabel = new JLabel("Money earned (Kč):");
+        currencies = new Currencies();
+        JPanel currencyPanel = createCurrencyPanel();
+        moneyLabel = new JLabel("Money earned (" + currencies.getCurrentCurrency() + "):");
         JTextField moneyField = new JTextField(10);
 
         JButton addButton = new JButton("Add");
@@ -88,7 +96,7 @@ public class HomePage {
                     double money = Double.parseDouble(moneyText);
 
                     // temp currency and distance for now
-                    String currencyType = "Kč";
+                    String currencyType = currencies.getCurrentCurrency();
                     String distanceType = "Km";
 
                     String record = "Distance: " + distance + distanceType + " , Money: " + money + currencyType;
@@ -114,6 +122,32 @@ public class HomePage {
         panel.add(statsPanel, BorderLayout.CENTER);
         panel.add(inputPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.SOUTH);
+        panel.add(currencyPanel, BorderLayout.EAST);
+
+        return panel;
+    }
+
+    private static JPanel createCurrencyPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JList<String> currencyList = new JList<>(currencies.getCurrencies().toArray(new String[0]));
+        currencyList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        currencyList.setSelectedIndex(0);
+
+        currencyList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                String selectedCurrency = currencyList.getSelectedValue();
+                currencies.setCurrentCurrency(selectedCurrency);
+
+                // temp way, i will fix later
+                moneyLabel.setText("Money earned (" + currencies.getCurrentCurrency() + "):");
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(currencyList);
+        panel.add(new JLabel("Select Currency:"), BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
     }
