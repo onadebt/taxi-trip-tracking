@@ -1,159 +1,102 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
-import cz.muni.fi.pv168.project.ui.Currencies;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
-import cz.muni.fi.pv168.project.ui.model.Currency;
 import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
+import cz.muni.fi.pv168.project.ui.model.RideModel;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomePage {
 
-    // store records (distance and money)
-    private static java.util.List<String> records = new ArrayList<>();
-
-    // total stats
-    private static double totalDistance = 0.0;
-    private static double totalMoney = 0.0;
-    private static int totalDrives = 0;
-
-    private static final JLabel totalDistanceLabelHeader = new JLabel("Total Distance:");
-    private static final JLabel totalMoneyLabelHeader = new JLabel("Total Money:");
-    private static final JLabel totalDrivesLabelHeader = new JLabel("Total Drives:");
-    private static JLabel totalDistanceLabel = new JLabel("0");
-    private static JLabel totalMoneyLabel = new JLabel("0");
-    private static JLabel totalDrivesLabel = new JLabel("0");
-
-    private static JLabel moneyLabel;
-
-    public static Currencies currencies;
-
-
     public static JPanel createHomePagePanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
-
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new FlowLayout());
-
-        JLabel distanceLabel = new JLabel("Distance traveled:");
-        JTextField distanceField = new JTextField(10); // 10 columns wide
-
-        currencies = new Currencies();
-        JPanel currencyPanel = createCurrencyPanel();
-        moneyLabel = new JLabel("Money earned (" + currencies.getCurrentCurrency() + "):");
-        JTextField moneyField = new JTextField(10);
-
-        JButton addButton = new JButton("Add");
-
-        // temp area to display added records
-        JTextArea recordArea = new JTextArea(10, 30);
-        recordArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(recordArea);
+        panel.setLayout(new BorderLayout());
 
         JPanel statsPanel = new JPanel();
-        statsPanel.setLayout(new GridLayout(2, 3, 10, 10));
+        statsPanel.setLayout(new GridLayout(2, 3, 10, 10)); // 2 rows, 3 columns for labels and values
 
-        inputPanel.add(distanceLabel);
-        inputPanel.add(distanceField);
-        inputPanel.add(moneyLabel);
-        inputPanel.add(moneyField);
-        inputPanel.add(addButton);
+        List<RideModel> rideHistory = RidesHistory.getSampleRideHistory();
 
-        totalDistanceLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        totalMoneyLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        totalDrivesLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        double totalAmount = calculateTotalAmount(rideHistory);
+        double totalDistance = calculateTotalDistance(rideHistory);
+        int totalDrives = rideHistory.size();
 
-        totalDistanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        totalMoneyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        totalDrivesLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel totalDistanceLabel = new JLabel("Total Distance:");
+        JLabel totalMoneyLabel = new JLabel("Total Money Earned:");
+        JLabel totalDrivesLabel = new JLabel("Total Rides:");
 
-        statsPanel.add(totalDistanceLabelHeader);
-        statsPanel.add(totalMoneyLabelHeader);
-        statsPanel.add(totalDrivesLabelHeader);
+        JLabel totalDistanceValue = new JLabel(String.format("%.2f km", totalDistance));
+        JLabel totalMoneyValue = new JLabel(String.format("%.2f CZK", totalAmount));
+        JLabel totalDrivesValue = new JLabel(String.valueOf(totalDrives));
+
+        Font labelFont = new Font("Arial", Font.PLAIN, 16);
+        Font valueFont = new Font("Arial", Font.BOLD, 24);
+
+        totalDistanceLabel.setFont(labelFont);
+        totalMoneyLabel.setFont(labelFont);
+        totalDrivesLabel.setFont(labelFont);
+
+        totalDistanceValue.setFont(valueFont);
+        totalMoneyValue.setFont(valueFont);
+        totalDrivesValue.setFont(valueFont);
+
         statsPanel.add(totalDistanceLabel);
         statsPanel.add(totalMoneyLabel);
         statsPanel.add(totalDrivesLabel);
+        statsPanel.add(totalDistanceValue);
+        statsPanel.add(totalMoneyValue);
+        statsPanel.add(totalDrivesValue);
 
-        Border lineBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
-        statsPanel.setBorder(BorderFactory.createTitledBorder(lineBorder, "Total Statistics"));
+        statsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Ride Statistics"));
 
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.add(Box.createVerticalGlue());
+        centerPanel.add(statsPanel);
+        centerPanel.add(Box.createVerticalGlue());
+
+        panel.add(centerPanel, BorderLayout.CENTER);
+
+        JButton addButton = new JButton("Add");
         addButton.addActionListener(new NewRideAction(panel, new CurrencyListModel(new ArrayList<>()), new CategoryListModel(new ArrayList<>())));
-        /*addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String distanceText = distanceField.getText();
-                String moneyText = moneyField.getText();
 
-                if (distanceText.isEmpty() || moneyText.isEmpty()) {
-                    JOptionPane.showMessageDialog(panel, "Please enter both distance and earned money values.");
-                    return;
-                }
-
-                try {
-                    double distance = Double.parseDouble(distanceText);
-                    double money = Double.parseDouble(moneyText);
-
-                    // temp currency and distance for now
-                    String currencyType = currencies.getCurrentCurrency();
-                    String distanceType = "Km";
-
-                    String record = "Distance: " + distance + distanceType + " , Money: " + money + currencyType;
-                    records.add(record);
-                    recordArea.append(record + "\n");
-
-                    totalDistance += distance;
-                    totalMoney += money;
-                    totalDrives++;
-
-                    totalDistanceLabel.setText(totalDistance + " " + distanceType);
-                    totalMoneyLabel.setText(totalMoney + " " + currencyType);
-                    totalDrivesLabel.setText(totalDrives + "");
-                    distanceField.setText("");
-                    moneyField.setText("");
-
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(panel, "Please enter valid numbers.");
-                }
-            }
-        });*/
-
-        panel.add(statsPanel, BorderLayout.CENTER);
-        panel.add(inputPanel, BorderLayout.NORTH);
-        panel.add(scrollPane, BorderLayout.SOUTH);
-        panel.add(currencyPanel, BorderLayout.EAST);
+        addButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(addButton);
 
         return panel;
     }
 
-    private static JPanel createCurrencyPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-
-        JList<String> currencyList = new JList<>(currencies.getCurrencies().toArray(new String[0]));
-        currencyList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        currencyList.setSelectedIndex(0);
-
-        currencyList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                String selectedCurrency = currencyList.getSelectedValue();
-                currencies.setCurrentCurrency(selectedCurrency);
-
-                // temp way, i will fix later
-                moneyLabel.setText("Money earned (" + currencies.getCurrentCurrency() + "):");
+    private static double calculateTotalAmount(List<RideModel> rideHistory) {
+        double total = 0;
+        double eurToCzkRate = 25.0;
+        double usdToCzkRate = 22.0;
+    
+        for (RideModel ride : rideHistory) {
+            double tempAmount = ride.getAmountCurrency();
+            String currency = ride.getCurrency();
+    
+            if (currency.equals("EUR")) {
+                total += tempAmount * eurToCzkRate;
+            } else if (currency.equals("USD")) {
+                total += tempAmount * usdToCzkRate;
+            } else { // CZK
+                total += tempAmount;
             }
-        });
+        }
+        return total;
+    }
 
-        JScrollPane scrollPane = new JScrollPane(currencyList);
-        panel.add(new JLabel("Select Currency:"), BorderLayout.NORTH);
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        return panel;
+    private static double calculateTotalDistance(List<RideModel> rideHistory) {
+        double totalDistance = 0;
+        for (RideModel ride : rideHistory) {
+            totalDistance += ride.getDistance();
+        }
+        return totalDistance;
     }
 }
