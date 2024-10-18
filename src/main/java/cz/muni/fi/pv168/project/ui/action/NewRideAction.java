@@ -20,6 +20,14 @@ public class NewRideAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         var dialog = new NewRideDialog(currencyListModel, categoryListModel);
-        dialog.show(parent, "Add ride"); //TODO - add ifpresent(service.addRide)
+        var ride = dialog.show(parent, "Add ride");
+        if (!dialog.isValidationOk()) {
+            do {
+                dialog = new NewRideDialog(currencyListModel, categoryListModel);
+                ride = dialog.show(parent, "Add ride");
+            } while (!dialog.isValidationOk());
+        }
+
+        //TODO - add ifpresent(service.addRide)
     }
 }

@@ -13,6 +13,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 
+
 public class NewRideDialog extends EntityDialog<NewRide> {
     private final JTextField amountField = new JTextField("0.0");
     private final JTextField distanceField = new JTextField("0.0");
@@ -21,6 +22,8 @@ public class NewRideDialog extends EntityDialog<NewRide> {
     private final ComboBoxModel<TripType> tripTypeModel = new DefaultComboBoxModel<>(TripType.values());
 
     private final NewRide newRide = new NewRide();
+
+    private boolean validationOk = true;
 
     public NewRideDialog(ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
         this.currencyModel = new ComboBoxModelAdapter<>(currencyListModel);
@@ -33,11 +36,17 @@ public class NewRideDialog extends EntityDialog<NewRide> {
     NewRide getEntity() {
         double amount = 0;
         double distance = 0;
+        var err = "";
         try {
+            err = "Invalid number format in \"amount\" field";
             amount = Double.parseDouble(amountField.getText());
+            err = "Invalid number format in \"distance\" field";
             distance = Double.parseDouble(distanceField.getText());
-        } catch (NumberFormatException e) {
-            // TODO - Proper validation on frontend
+        }
+        catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this.panel, err, "Error", JOptionPane.ERROR_MESSAGE);
+            validationOk = false;
+            return newRide;
         }
         newRide.setAmountCurrency(amountField.isEnabled() ? amount : 0);
         newRide.setDistance(distance);
@@ -63,19 +72,18 @@ public class NewRideDialog extends EntityDialog<NewRide> {
         add("Trip type", tripTypeBox);
     }
 
+    public boolean isValidationOk() {
+        return validationOk;
+    }
+
     private class TripTypeItemListener implements ItemListener {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 TripType item = (TripType) e.getItem();
-                if (item == TripType.Personal) {
-                    amountField.setEnabled(false);
-                } else {
-                    amountField.setEnabled(true);
-                }
+                amountField.setEnabled(item != TripType.Personal);
             }
         }
     }
-
 }
