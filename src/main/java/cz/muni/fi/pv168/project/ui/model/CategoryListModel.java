@@ -43,7 +43,6 @@ public class CategoryListModel extends AbstractListModel<Category> {
         fireContentsChanged(this, 0, getSize() - 1);
     }
 
-    // Přidání metody indexOf, která chyběla
     public int indexOf(Category category) {
         return categories.indexOf(category);
     }
