@@ -44,6 +44,9 @@ public class HomePage {
         totalMoneyValue.setFont(valueFont);
         totalDrivesValue.setFont(valueFont);
 
+        totalDrivesLabel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
+        totalDrivesValue.setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 0));
+
         statsPanel.add(totalDistanceLabel);
         statsPanel.add(totalMoneyLabel);
         statsPanel.add(totalDrivesLabel);
@@ -53,21 +56,29 @@ public class HomePage {
 
         statsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Ride Statistics"));
 
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.add(Box.createVerticalGlue());
-        centerPanel.add(statsPanel);
-        centerPanel.add(Box.createVerticalGlue());
+        // Set a preferred size for the stats panel to make it smaller
+        statsPanel.setPreferredSize(new Dimension(600, 200));
 
-        panel.add(centerPanel, BorderLayout.CENTER);
+        // Use GridBagLayout for centering
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(10, 0, 10, 0); // Add some padding between components
 
+        centerPanel.add(statsPanel, gbc);
+
+        // Add the button below the stats panel
         JButton addButton = new JButton("Add");
         addButton.addActionListener(new NewRideAction(panel, new CurrencyListModel(new ArrayList<>()), new CategoryListModel(new ArrayList<>())));
 
         addButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(addButton);
+        gbc.gridy = 1;  // Move to the next row for the button
+        gbc.anchor = GridBagConstraints.CENTER;  // Center the button
+        centerPanel.add(addButton, gbc);
+
+        panel.add(centerPanel, BorderLayout.CENTER);
 
         return panel;
     }
@@ -76,11 +87,11 @@ public class HomePage {
         double total = 0;
         double eurToCzkRate = 25.0;
         double usdToCzkRate = 22.0;
-    
+
         for (RideModel ride : rideHistory) {
             double tempAmount = ride.getAmountCurrency();
             String currency = ride.getCurrency();
-    
+
             if (currency.equals("EUR")) {
                 total += tempAmount * eurToCzkRate;
             } else if (currency.equals("USD")) {

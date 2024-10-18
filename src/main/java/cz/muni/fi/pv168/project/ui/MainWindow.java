@@ -28,6 +28,13 @@ public class MainWindow {
         JPanel ridesCategories = RidesCategories.createRidesCategoriesPanel();
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
+        // this refreshes page on tab change
+        tabbedPane.addChangeListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                // TODO: update HomePage tab
+            });
+        });
+
         // Add the tabbed pane to the frame
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
     }
