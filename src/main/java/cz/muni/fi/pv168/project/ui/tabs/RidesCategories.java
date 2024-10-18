@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class RidesCategories {
 
-    private static CategoryListModel categoryListModel = new CategoryListModel(new ArrayList<>());
     private static List<Category> allCategories = new ArrayList<>(); // Kompletní seznam kategorií
+    private static CategoryListModel categoryListModel = new CategoryListModel(allCategories);
 
     private static final String[] iconNames = {"NormalRide.png", "Express.png", "Luxuary.png"};
 
@@ -99,7 +99,15 @@ public class RidesCategories {
 
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
+        // starting with these test categories
+        Category testCategory = new Category("standard", new ImageIcon (RidesCategories.class.getResource("/icons/" + "NormalRide.png")));
+        allCategories.add(testCategory);
+
         return panel;
+    }
+
+    public static CategoryListModel getCategoryListModel() {
+        return categoryListModel;
     }
 
     private static void showContextMenu(Component component, int x, int y, Category selectedCategory,  int selectedCount, List<Category> xd) {
