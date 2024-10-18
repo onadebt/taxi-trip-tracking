@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
 
 public class RidesCategories {
 
-    private static List<Category> allCategories = new ArrayList<>(); // Kompletní seznam kategorií
+    private static List<Category> allCategories = new ArrayList<>();
     private static CategoryListModel categoryListModel = new CategoryListModel(allCategories);
 
-    private static final String[] iconNames = {"NormalRide.png", "Express.png", "Luxuary.png"};
-
+    private static final String[] iconNames = {"NormalRide.png", "Express.png", "Luxuary.png", "sport-car.png", "convertible-car.png","limousine-car.png",
+            "normal-car.png", "small-car.png", "truck-car.png"};
+    
     public static JPanel createRidesCategoriesPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -30,7 +31,6 @@ public class RidesCategories {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        // Vyhledávací pole pro dynamické filtrování
         JTextField searchField = new JTextField(20);
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -77,14 +77,12 @@ public class RidesCategories {
         deleteButton.addActionListener(e -> deleteCategory(categoryList.getSelectedValuesList()));
         buttonsPanel.add(deleteButton);
 
-        // Povolení/zakázání tlačítek podle počtu vybraných záznamů
         categoryList.addListSelectionListener(e -> {
             int selectedCount = categoryList.getSelectedIndices().length;
-            editButton.setEnabled(selectedCount == 1); // Edit povoleno jen pro jednu kategorii
-            deleteButton.setEnabled(selectedCount > 0); // Delete povoleno pro jednu nebo více kategorií
+            editButton.setEnabled(selectedCount == 1);
+            deleteButton.setEnabled(selectedCount > 0);
         });
 
-        // Kontextové menu (pravé tlačítko myši)
         categoryList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -99,7 +97,6 @@ public class RidesCategories {
 
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
-        // starting with these test categories
         Category testCategory = new Category("standard", new ImageIcon (RidesCategories.class.getResource("/icons/" + "NormalRide.png")));
         allCategories.add(testCategory);
 
@@ -138,26 +135,23 @@ public class RidesCategories {
             if (icon != null) {
                 Category newCategory = new Category(name, icon);
                 categoryListModel.addCategory(newCategory);
-                allCategories.add(newCategory); // Přidat novou kategorii do kompletního seznamu
+                allCategories.add(newCategory);
             }
         }
     }
 
     private static void editCategory(Category selectedCategory) {
         if (selectedCategory != null) {
-            // Změna názvu
             String newName = JOptionPane.showInputDialog("Edit category name:", selectedCategory.getName());
             if (newName != null && !newName.trim().isEmpty()) {
                 selectedCategory.setName(newName);
             }
 
-            // Změna ikony
-            Icon newIcon = chooseIcon(); // Metoda pro výběr nové ikony
+            Icon newIcon = chooseIcon();
             if (newIcon != null) {
                 selectedCategory.setIcon(newIcon);
             }
 
-            // Aktualizace vybrané kategorie v modelu
             int index = categoryListModel.indexOf(selectedCategory);
             if (index >= 0) {
                 categoryListModel.updateCategory(index, selectedCategory);
@@ -195,7 +189,6 @@ public class RidesCategories {
         return null;
     }
 
-    // Dynamické filtrování kategorií na základě vstupu ve vyhledávacím poli
     private static void filterCategories(String searchText) {
         List<Category> filteredCategories = allCategories.stream()
                 .filter(category -> category.getName().toLowerCase().contains(searchText.toLowerCase()))
