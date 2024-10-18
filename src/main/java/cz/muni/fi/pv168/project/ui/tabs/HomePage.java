@@ -1,6 +1,10 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.ui.Currencies;
+import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
+import cz.muni.fi.pv168.project.ui.model.Currency;
+import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -80,7 +84,8 @@ public class HomePage {
         Border lineBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
         statsPanel.setBorder(BorderFactory.createTitledBorder(lineBorder, "Total Statistics"));
 
-        addButton.addActionListener(new ActionListener() {
+        addButton.addActionListener(new NewRideAction(panel, new CurrencyListModel(new ArrayList<>()), new CategoryListModel(new ArrayList<>())));
+        /*addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String distanceText = distanceField.getText();
@@ -117,7 +122,7 @@ public class HomePage {
                     JOptionPane.showMessageDialog(panel, "Please enter valid numbers.");
                 }
             }
-        });
+        });*/
 
         panel.add(statsPanel, BorderLayout.CENTER);
         panel.add(inputPanel, BorderLayout.NORTH);
