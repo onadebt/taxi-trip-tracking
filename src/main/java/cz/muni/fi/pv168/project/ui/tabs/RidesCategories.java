@@ -1,62 +1,99 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
+import cz.muni.fi.pv168.project.ui.model.Category;
+import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
+import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
+
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RidesCategories {
 
-    // List to hold categories
-    private static DefaultListModel<Category> categoryListModel = new DefaultListModel<>();
+    private static CategoryListModel categoryListModel = new CategoryListModel(new ArrayList<>());
+    private static List<Category> allCategories = new ArrayList<>(); // Kompletní seznam kategorií
 
-    // Array of icon file names (located in resources/icons folder)
-    private static String[] iconNames = {"NormalRide.png", "Express.png", "Luxuary.png"};
+    private static final String[] iconNames = {"NormalRide.png", "Express.png", "Luxuary.png"};
 
     public static JPanel createRidesCategoriesPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        // Title label
         JLabel titleLabel = new JLabel("Manage Ride Categories");
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        // Category List
+        // Vyhledávací pole pro dynamické filtrování
+        JTextField searchField = new JTextField(20);
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterCategories(searchField.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterCategories(searchField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterCategories(searchField.getText());
+            }
+        });
+
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        panel.add(searchPanel, BorderLayout.NORTH);
+
         JList<Category> categoryList = new JList<>(categoryListModel);
-        categoryList.setCellRenderer(new CategoryRenderer()); // Custom renderer for color and icon
+        categoryList.setCellRenderer(new CategoryRenderer());
 
         JScrollPane listScrollPane = new JScrollPane(categoryList);
-        listScrollPane.setBorder(new TitledBorder("Categories"));
+        listScrollPane.setBorder(BorderFactory.createTitledBorder("Categories"));
         panel.add(listScrollPane, BorderLayout.CENTER);
 
-        // Buttons Panel
         JPanel buttonsPanel = new JPanel(new FlowLayout());
 
-        // Add Category button
         JButton addButton = new JButton("Add Category");
         addButton.addActionListener(e -> addCategory());
         buttonsPanel.add(addButton);
 
-        // Edit Category button
         JButton editButton = new JButton("Edit Category");
+        editButton.setEnabled(false);
         editButton.addActionListener(e -> editCategory(categoryList.getSelectedValue()));
         buttonsPanel.add(editButton);
 
         JButton deleteButton = new JButton("Delete Category");
-        deleteButton.setEnabled(false); // Tlačítko je výchozí zakázané
-        deleteButton.addActionListener(e -> deleteCategory(categoryList.getSelectedValue()));
+        deleteButton.setEnabled(false);
+        deleteButton.addActionListener(e -> deleteCategory(categoryList.getSelectedValuesList()));
         buttonsPanel.add(deleteButton);
 
-        categoryList.addListSelectionListener(new ListSelectionListener() {
+        // Povolení/zakázání tlačítek podle počtu vybraných záznamů
+        categoryList.addListSelectionListener(e -> {
+            int selectedCount = categoryList.getSelectedIndices().length;
+            editButton.setEnabled(selectedCount == 1); // Edit povoleno jen pro jednu kategorii
+            deleteButton.setEnabled(selectedCount > 0); // Delete povoleno pro jednu nebo více kategorií
+        });
+
+        // Kontextové menu (pravé tlačítko myši)
+        categoryList.addMouseListener(new MouseAdapter() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int selectedCount = categoryList.getSelectedIndices().length;
-                // Povolení/zakázání tlačítka edit podle počtu vybraných záznamů
-                editButton.setEnabled(selectedCount == 1); // Povolit pouze pro jeden vybraný záznam
-                deleteButton.setEnabled(selectedCount >= 1); // Povolit mazání, když je vybrán alespoň jeden záznam
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int[] selectedIndices = categoryList.getSelectedIndices();
+                    Category selectedCategory = categoryList.getSelectedValue();
+                    List<Category> xd = categoryList.getSelectedValuesList();
+                    showContextMenu(e.getComponent(), e.getX(), e.getY(), selectedCategory, selectedIndices.length, xd);
+                }
             }
         });
 
@@ -65,51 +102,74 @@ public class RidesCategories {
         return panel;
     }
 
-    private static void deleteCategory(Category selectedCategory) {
-        if (selectedCategory != null) {
-            int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this category?",
-                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                categoryListModel.removeElement(selectedCategory);
-            }
-        }
+    private static void showContextMenu(Component component, int x, int y, Category selectedCategory,  int selectedCount, List<Category> xd) {
+        JPopupMenu contextMenu = new JPopupMenu();
+
+        JMenuItem addItem = new JMenuItem("Add Category");
+        addItem.addActionListener(e -> addCategory());
+        contextMenu.add(addItem);
+
+        JMenuItem editItem = new JMenuItem("Edit Category");
+        editItem.setEnabled(selectedCount == 1);
+        editItem.addActionListener(e -> editCategory(selectedCategory));
+        contextMenu.add(editItem);
+
+        JMenuItem deleteItem = new JMenuItem("Delete Category");
+        deleteItem.setEnabled(selectedCount > 0);
+        deleteItem.addActionListener(e -> deleteCategory(xd));
+        contextMenu.add(deleteItem);
+
+        contextMenu.show(component, x, y);
+
     }
 
-    // Method to add a new category
     private static void addCategory() {
         String name = JOptionPane.showInputDialog("Enter category name:");
         if (name != null && !name.trim().isEmpty()) {
-            Color color = JColorChooser.showDialog(null, "Choose Category Color", Color.BLACK);
-            Icon icon = chooseIcon(); // Call method to choose an icon
+            Icon icon = chooseIcon();
             if (icon != null) {
-                categoryListModel.addElement(new Category(name, color, icon));
+                Category newCategory = new Category(name, icon);
+                categoryListModel.addCategory(newCategory);
+                allCategories.add(newCategory); // Přidat novou kategorii do kompletního seznamu
             }
         }
     }
 
-    // Method to edit the selected category
     private static void editCategory(Category selectedCategory) {
         if (selectedCategory != null) {
+            // Změna názvu
             String newName = JOptionPane.showInputDialog("Edit category name:", selectedCategory.getName());
             if (newName != null && !newName.trim().isEmpty()) {
                 selectedCategory.setName(newName);
             }
-            Color newColor = JColorChooser.showDialog(null, "Choose new color", selectedCategory.getColor());
-            if (newColor != null) {
-                selectedCategory.setColor(newColor);
-            }
-            Icon newIcon = chooseIcon(); // Allow user to choose a new icon
+
+            // Změna ikony
+            Icon newIcon = chooseIcon(); // Metoda pro výběr nové ikony
             if (newIcon != null) {
                 selectedCategory.setIcon(newIcon);
             }
-            // Notify the list model that data changed to refresh the UI
-            categoryListModel.set(categoryListModel.indexOf(selectedCategory), selectedCategory);
+
+            // Aktualizace vybrané kategorie v modelu
+            int index = categoryListModel.indexOf(selectedCategory);
+            if (index >= 0) {
+                categoryListModel.updateCategory(index, selectedCategory);
+            }
         }
     }
 
-    // Method to choose an icon from the predefined icons
+    private static void deleteCategory(List<Category> categoryList) {
+        if (!categoryList.isEmpty()) {
+            int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected categories?",
+                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                for (Category category : categoryList) {
+                    categoryListModel.removeCategory(category);
+                }
+            }
+        }
+    }
+
     private static Icon chooseIcon() {
-        // Create an array of ImageIcons
         ImageIcon[] icons = new ImageIcon[iconNames.length];
         for (int i = 0; i < iconNames.length; i++) {
             java.net.URL iconURL = RidesCategories.class.getResource("/icons/" + iconNames[i]);
@@ -118,13 +178,8 @@ public class RidesCategories {
             }
         }
 
-        // Create JComboBox with icons
         JComboBox<ImageIcon> iconComboBox = new JComboBox<>(icons);
-        iconComboBox.setRenderer(new ComboBoxRenderer());
-
-        // Show dialog to select icon
-        int result = JOptionPane.showConfirmDialog(null, iconComboBox,
-                "Select an icon", JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, iconComboBox, "Select an icon", JOptionPane.OK_CANCEL_OPTION);
 
         if (result == JOptionPane.OK_OPTION) {
             return (ImageIcon) iconComboBox.getSelectedItem();
@@ -132,76 +187,11 @@ public class RidesCategories {
         return null;
     }
 
-    // Category class to hold name, color, and icon
-    static class Category {
-        private String name;
-        private Color color;
-        private Icon icon;
-
-        public Category(String name, Color color, Icon icon) {
-            this.name = name;
-            this.color = color;
-            this.icon = icon;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-
-        public void setColor(Color color) {
-            this.color = color;
-        }
-
-        public Icon getIcon() {
-            return icon;
-        }
-
-        public void setIcon(Icon icon) {
-            this.icon = icon;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-
-    // Custom renderer to display category name with color and icon
-    static class CategoryRenderer extends DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            Category category = (Category) value;
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            label.setText(category.getName());
-            label.setIcon(category.getIcon());
-            label.setForeground(category.getColor());
-            return label;
-        }
-    }
-
-    // Renderer for JComboBox to display icons
-    private static class ComboBoxRenderer extends JLabel implements ListCellRenderer<ImageIcon> {
-
-        @Override
-        public Component getListCellRendererComponent(JList<? extends ImageIcon> list, ImageIcon value, int index, boolean isSelected, boolean cellHasFocus) {
-            setIcon(value);
-            if (isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-            setOpaque(true); // Ensures background is painted
-            return this;
-        }
+    // Dynamické filtrování kategorií na základě vstupu ve vyhledávacím poli
+    private static void filterCategories(String searchText) {
+        List<Category> filteredCategories = allCategories.stream()
+                .filter(category -> category.getName().toLowerCase().contains(searchText.toLowerCase()))
+                .collect(Collectors.toList());
+        categoryListModel.setCategories(filteredCategories);
     }
 }

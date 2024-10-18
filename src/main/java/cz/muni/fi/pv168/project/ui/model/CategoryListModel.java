@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.util.List;
 
 public class CategoryListModel extends AbstractListModel<Category> {
-    private final List<Category> categories;
+    public List<Category> categories;
 
     public CategoryListModel(List<Category> categories) {
         this.categories = categories;
@@ -18,5 +18,33 @@ public class CategoryListModel extends AbstractListModel<Category> {
     @Override
     public Category getElementAt(int index) {
         return categories.get(index);
+    }
+
+    public void addCategory(Category category) {
+        categories.add(category);
+        fireIntervalAdded(this, categories.size() - 1, categories.size() - 1);
+    }
+
+    public void removeCategory(Category category) {
+        int index = categories.indexOf(category);
+        if (index >= 0) {
+            categories.remove(category);
+            fireIntervalRemoved(this, index, index);
+        }
+    }
+
+    public void updateCategory(int index, Category category) {
+        categories.set(index, category);
+        fireContentsChanged(this, index, index);
+    }
+
+    public void setCategories(List<Category> newCategories) {
+        this.categories = newCategories;
+        fireContentsChanged(this, 0, getSize() - 1);
+    }
+
+    // Přidání metody indexOf, která chyběla
+    public int indexOf(Category category) {
+        return categories.indexOf(category);
     }
 }
