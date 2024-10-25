@@ -28,6 +28,13 @@ public class MainWindow {
         JPanel ridesCategories = RidesCategories.createRidesCategoriesPanel();
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
+        JPanel settings = Settings.createSettingsPanel();
+        tabbedPane.addTab("Settings", settings);
+
+        JPanel aboutUs = AboutUs.createAboutUsPanel();
+        tabbedPane.addTab("About Us", aboutUs);
+
+
         // Add the tabbed pane to the frame
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
     }
