@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
+import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.model.RideModel;
 
 import javax.swing.*;
@@ -13,6 +14,9 @@ import java.util.List;
 
 public class RidesHistory {
 
+    // Sample data for the table (will be loaded from db)
+    public static List<RideModel> rideHistory = getSampleRideHistory();
+
     public static JPanel createRidesHistoryPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -20,19 +24,16 @@ public class RidesHistory {
         JLabel label = new JLabel("History of taxi rides:");
         panel.add(label, BorderLayout.NORTH);
 
-        // Sample data for the table (will be loaded from db)
-        List<RideModel> rideHistory = getSampleRideHistory();
-
-        JTable table = createRidesTable(rideHistory);
-        JScrollPane scrollPane = new JScrollPane(table);
+        JTable rideHistoryTable = createRidesTable();
+        JScrollPane scrollPane = new JScrollPane(rideHistoryTable);
 
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
     }
 
-    private static JTable createRidesTable(List<RideModel> rideHistory) {
-        String[] columnNames = {"Amount", "Currency", "Distance", "Category", "Date"};
+    private static JTable createRidesTable() {
+        String[] columnNames = {"Amount", "Currency", "Distance", "Category", "Personal Ride", "Date"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -46,6 +47,7 @@ public class RidesHistory {
                 ride.getCurrency(),
                 ride.getDistance(),
                 ride.getCategoryName(),
+                ride.getPersonalRide() ? "YES" : "NO",
                 ride.getCreatedDate()
             };
             tableModel.addRow(rowData);
@@ -58,8 +60,16 @@ public class RidesHistory {
         JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "EUR", "USD"});
         currencyColumn.setCellEditor(new DefaultCellEditor(currencyComboBox));
 
+        CategoryListModel categoryListModel = RidesCategories.getCategoryListModel();
+        List<String> categoriesNames = new ArrayList<>();
+
+        for (int i = 0; i < categoryListModel.categories.size(); i++) {
+            categoriesNames.add(categoryListModel.categories.get(i).getName());
+        }
+        String[] categoriesNamesArray = categoriesNames.toArray(new String[0]);
+
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
-        JComboBox<String> categoryComboBox = new JComboBox<>(new String[]{"Premium", "Comfort", "Standard"});
+        JComboBox<String> categoryComboBox = new JComboBox<>(categoriesNamesArray);
         categoryColumn.setCellEditor(new DefaultCellEditor(categoryComboBox));
 
         // Add mouse listener to detect right-clicks
@@ -96,6 +106,12 @@ public class RidesHistory {
                 try {
                     double newAmount = Double.parseDouble(newAmountStr);
                     tableModel.setValueAt(newAmount, row, 0);
+                    rideHistory.get(row).setAmountCurrency(newAmount);
+
+                    System.out.println("Updated Ride History:");
+                    for (RideModel ride : rideHistory) {
+                        System.out.println(ride.getAmountCurrency());
+                    }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(table, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -148,6 +164,21 @@ public class RidesHistory {
             }
         });
 
+        // Edit Personal Ride Option
+        JMenuItem editPersonalRideItem = new JMenuItem("Edit Personal Opinion");
+        editPersonalRideItem.addActionListener(event -> {
+            for (int row : table.getSelectedRows()) {
+                Object currentPersonalRide = tableModel.getValueAt(row, 4);
+                JComboBox<String> personalRideComboBox = new JComboBox<>(new String[]{"YES", "NO"});
+                personalRideComboBox.setSelectedItem(currentPersonalRide);
+                int option = JOptionPane.showConfirmDialog(table, personalRideComboBox, "Edit Personal Ride", JOptionPane.OK_CANCEL_OPTION);
+
+                if (option == JOptionPane.OK_OPTION) {
+                    tableModel.setValueAt(personalRideComboBox.getSelectedItem(), row, 4);
+                }
+            }
+        });
+
         // Delete Selected Rows Option
         JMenuItem deleteRowsItem = new JMenuItem("Delete Selected Rows");
         deleteRowsItem.addActionListener(event -> {
@@ -168,6 +199,7 @@ public class RidesHistory {
         popupMenu.add(editCurrencyItem);
         popupMenu.add(editDistanceItem);
         popupMenu.add(editCategoryItem);
+        popupMenu.add(editPersonalRideItem);
         popupMenu.addSeparator();
         popupMenu.add(deleteRowsItem);
 
@@ -178,9 +210,19 @@ public class RidesHistory {
     // this will be loaded from database in future
     public static List<RideModel> getSampleRideHistory() {
         List<RideModel> rides = new ArrayList<>();
-        rides.add(new RideModel(100.50, "USD", 15.2, "Standard", Timestamp.valueOf("2024-01-10 10:10:10")));
-        rides.add(new RideModel(250.00, "EUR", 35.0, "Premium", Timestamp.valueOf("2024-02-12 14:20:30")));
-        rides.add(new RideModel(75.75, "CZK", 8.6, "Comfort", Timestamp.valueOf("2024-03-05 16:50:00")));
+        // Keeping the price close to 1 EUR per km, with slight variations for ride types and currency conversions
+        rides.add(new RideModel(15.20, "USD", 17.2, "Standard", Timestamp.valueOf("2024-01-10 10:10:10")));  // 1 USD/km
+        rides.add(new RideModel(35.00, "EUR", 35.0, "Premium", Timestamp.valueOf("2024-02-12 14:20:30")));   // 1 EUR/km
+        rides.add(new RideModel(86.00, "CZK", 8.6, "Comfort", Timestamp.valueOf("2024-03-05 16:50:00")));    // ~10 CZK/km
+        rides.add(new RideModel(10.00, "EUR", 12.0, "Standard", Timestamp.valueOf("2024-04-15 09:45:12")));  // 1 EUR/km
+        rides.add(new RideModel(20.00, "USD", 25.0, "Premium", Timestamp.valueOf("2024-05-01 08:30:20")));   // 1 USD/km
+        rides.add(new RideModel(300.00, "CZK", 30.0, "Premium", Timestamp.valueOf("2024-06-23 18:40:00")));  // 10 CZK/km
+        rides.add(new RideModel(105.00, "CZK", 10.5, "Comfort", Timestamp.valueOf("2024-07-08 13:35:45")));  // 10 CZK/km
+        rides.add(new RideModel(22.00, "USD", 22.0, "Premium", Timestamp.valueOf("2024-08-15 19:15:10")));   // 1 USD/km
+        rides.add(new RideModel(5.00, "EUR", 8.0, "Standard", Timestamp.valueOf("2024-09-03 17:00:25")));    // 1 EUR/km
+        rides.add(new RideModel(60.00, "CZK", 6.0, "Standard", Timestamp.valueOf("2024-10-11 20:55:45")));   // 10 CZK/km
+        rides.add(new RideModel(9.50, "EUR", 8.5, "Comfort", Timestamp.valueOf("2024-11-20 22:30:15")));     // 1 EUR/km
+        rides.add(new RideModel(12.00, "USD", 10.0, "Standard", Timestamp.valueOf("2024-12-05 12:45:30")));  // 1 USD/km
         return rides;
     }
 }

@@ -7,6 +7,7 @@ public class RideModel {
     private String currency;
     private double distance;
     private String categoryName;
+    private Boolean personalRide;
     private Timestamp createdDate;
 
     // Constructor
@@ -15,6 +16,7 @@ public class RideModel {
         this.currency = currency;
         this.distance = distance;
         this.categoryName = categoryName;
+        this.personalRide = false;
         this.createdDate = createdDate;
     }
 
@@ -35,7 +37,32 @@ public class RideModel {
         return categoryName;
     }
 
+    public Boolean getPersonalRide() {
+        return personalRide;
+    }
+
     public Timestamp getCreatedDate() {
         return createdDate;
+    }
+
+    // Setters
+    public void setAmountCurrency(double amountCurrency) {
+        this.amountCurrency = amountCurrency;
+    }
+    
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+    
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+    
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public void setPersonalRide(Boolean personalRide) {
+        this.personalRide = personalRide;
     }
 }
