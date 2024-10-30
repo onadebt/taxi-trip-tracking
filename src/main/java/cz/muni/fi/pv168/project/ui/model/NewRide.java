@@ -1,11 +1,12 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 public class NewRide {
-    public double amountCurrency;
-    public double distance;
-    public Currency currencyType;
-    public Category category;
-    public boolean isPaidTravel;
+    private double amountCurrency;
+    private double distance;
+    private Currency currencyType;
+    private int passengers;
+    private Category category;
+    private boolean isPaidTravel;
 
     public boolean isPaidTravel() {
         return isPaidTravel;
@@ -46,4 +47,8 @@ public class NewRide {
     public void setAmountCurrency(double amountCurrency) {
         this.amountCurrency = amountCurrency;
     }
+
+    public int getPassengers() { return passengers; }
+
+    public void setPassengers(int passengers) { this.passengers = passengers; }
 }

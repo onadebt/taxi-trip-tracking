@@ -17,6 +17,7 @@ import java.awt.event.ItemListener;
 public class NewRideDialog extends EntityDialog<NewRide> {
     private final JTextField amountField = new JTextField("0.0");
     private final JTextField distanceField = new JTextField("0.0");
+    private final JTextField passengersField = new JTextField("1");
     private final ComboBoxModel<Currency> currencyModel;
     private final ComboBoxModel<Category> categoryModel;
     private final ComboBoxModel<TripType> tripTypeModel = new DefaultComboBoxModel<>(TripType.values());
@@ -36,12 +37,15 @@ public class NewRideDialog extends EntityDialog<NewRide> {
     NewRide getEntity() {
         double amount = 0;
         double distance = 0;
+        int passengers = 1;
         var err = "";
         try {
             err = "Invalid number format in \"amount\" field";
             amount = Double.parseDouble(amountField.getText());
             err = "Invalid number format in \"distance\" field";
             distance = Double.parseDouble(distanceField.getText());
+            err = "Invalid number format in \"passengers\" field";
+            passengers = Integer.parseInt(passengersField.getText());
         }
         catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this.panel, err, "Error", JOptionPane.ERROR_MESSAGE);
@@ -50,6 +54,7 @@ public class NewRideDialog extends EntityDialog<NewRide> {
         }
         newRide.setAmountCurrency(amountField.isEnabled() ? amount : 0);
         newRide.setDistance(distance);
+        newRide.setPassengers(passengers);
         newRide.setCurrencyType((Currency) currencyModel.getSelectedItem());
         newRide.setCategory((Category) categoryModel.getSelectedItem());
         return newRide;
@@ -68,6 +73,7 @@ public class NewRideDialog extends EntityDialog<NewRide> {
         add("Amount:", amountField);
         add("Currency:", currencyBox);
         add("Distance:", distanceField);
+        add("Number of passengers:", passengersField);
         add("Category:", categoryBox);
         add("Trip type", tripTypeBox);
     }

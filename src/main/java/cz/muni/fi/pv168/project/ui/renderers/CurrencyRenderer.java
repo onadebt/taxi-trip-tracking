@@ -13,8 +13,6 @@ public class CurrencyRenderer extends AbstractRenderer<Currency>{
     protected void updateLabel(JLabel label, Currency value) {
         if (value != null) {
             label.setText(value.getCurrencyCode());
-            label.setIcon(null); // TODO - resolve icons
         }
     }
 }
-
