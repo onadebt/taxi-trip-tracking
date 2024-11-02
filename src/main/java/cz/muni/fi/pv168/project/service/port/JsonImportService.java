@@ -6,4 +6,9 @@ public class JsonImportService implements ImportService {
     public void importData(String path) {
 
     }
+
+    @Override
+    public boolean isValid() {
+        return false;
+    }
 }
