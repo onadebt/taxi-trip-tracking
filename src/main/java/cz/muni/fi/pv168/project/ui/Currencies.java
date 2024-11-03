@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Currencies {
 
-    private final List<String> currencies = Arrays.asList("CZK", "USD", "EURO");
+    private final List<String> currencies = Arrays.asList("CZK", "USD", "EUR", "GBP");
     private String currentCurrency;
 
     // constructor sets default currency

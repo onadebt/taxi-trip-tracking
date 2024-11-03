@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import cz.muni.fi.pv168.project.ui.Currencies;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
@@ -95,7 +96,7 @@ public class RidesHistory {
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         TableColumn currencyColumn = table.getColumnModel().getColumn(1);
-        JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "EUR", "USD"});
+        JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "USD", "EUR", "GBP", "JPY"});
         currencyColumn.setCellEditor(new DefaultCellEditor(currencyComboBox));
 
         CategoryListModel categoryListModel = RidesCategories.getCategoryListModel();
@@ -185,7 +186,7 @@ public class RidesHistory {
     private static void editCurrency(JTable table, DefaultTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentCurrency = tableModel.getValueAt(row, 1);
-            JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "EUR", "USD"});
+            JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "EUR", "USD", "GBP", "JPY"});
             currencyComboBox.setSelectedItem(currentCurrency);
             int option = JOptionPane.showConfirmDialog(table, currencyComboBox, "Choose new currency", JOptionPane.OK_CANCEL_OPTION);
 
@@ -258,7 +259,7 @@ public class RidesHistory {
         rides.add(new RideModel(35.00, "EUR", 35.0, "Premium", Timestamp.valueOf("2024-02-12 14:20:30")));   // 1 EUR/km
         rides.add(new RideModel(86.00, "CZK", 8.6, "Comfort", Timestamp.valueOf("2024-03-05 16:50:00")));    // ~10 CZK/km
         rides.add(new RideModel(10.00, "EUR", 12.0, "Standard", Timestamp.valueOf("2024-04-15 09:45:12")));  // 1 EUR/km
-        rides.add(new RideModel(20.00, "USD", 25.0, "Premium", Timestamp.valueOf("2024-05-01 08:30:20")));   // 1 USD/km
+        rides.add(new RideModel(20.00, "GBP", 29.0, "Premium", Timestamp.valueOf("2024-05-01 08:30:20")));   // 1 USD/km
         rides.add(new RideModel(300.00, "CZK", 30.0, "Premium", Timestamp.valueOf("2024-06-23 18:40:00")));  // 10 CZK/km
         rides.add(new RideModel(105.00, "CZK", 10.5, "Comfort", Timestamp.valueOf("2024-07-08 13:35:45")));  // 10 CZK/km
         rides.add(new RideModel(22.00, "USD", 22.0, "Premium", Timestamp.valueOf("2024-08-15 19:15:10")));   // 1 USD/km
@@ -266,6 +267,7 @@ public class RidesHistory {
         rides.add(new RideModel(60.00, "CZK", 6.0, "Standard", Timestamp.valueOf("2024-10-11 20:55:45")));   // 10 CZK/km
         rides.add(new RideModel(9.50, "EUR", 8.5, "Comfort", Timestamp.valueOf("2024-11-20 22:30:15")));     // 1 EUR/km
         rides.add(new RideModel(12.00, "USD", 10.0, "Standard", Timestamp.valueOf("2024-12-05 12:45:30")));  // 1 USD/km
+        rides.add(new RideModel(600.00, "JPY", 3.5, "Standard", Timestamp.valueOf("2024-12-05 12:45:30")));  // 1 USD/km
         return rides;
     }
 }

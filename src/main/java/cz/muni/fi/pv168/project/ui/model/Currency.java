@@ -3,7 +3,7 @@ package cz.muni.fi.pv168.project.ui.model;
 public class Currency {
     private String name;
     private String currencyCode;
-    private double amountPerDefault;
+    private double exchangeRate;
 
     public String getName() {
         return name;
@@ -21,11 +21,11 @@ public class Currency {
         this.currencyCode = currencyCode;
     }
 
-    public double getAmountPerDefault() {
-        return amountPerDefault;
+    public double getExchangeRate() {
+        return exchangeRate;
     }
 
-    public void setAmountPerDefault(double amountPerDefault) {
-        this.amountPerDefault = amountPerDefault;
+    public void setExchangeRate(double exchangeRate) {
+        this.exchangeRate = exchangeRate;
     }
 }

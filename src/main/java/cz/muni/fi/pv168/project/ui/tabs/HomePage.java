@@ -85,17 +85,19 @@ public class HomePage {
 
     private static double calculateTotalAmount(List<RideModel> rideHistory) {
         double total = 0;
-        double eurToCzkRate = 25.0;
-        double usdToCzkRate = 22.0;
-
+    
         for (RideModel ride : rideHistory) {
             double tempAmount = ride.getAmountCurrency();
             String currency = ride.getCurrency();
-
+    
             if (currency.equals("EUR")) {
-                total += tempAmount * eurToCzkRate;
+                total += tempAmount * Settings.getEurToCzkRate();
             } else if (currency.equals("USD")) {
-                total += tempAmount * usdToCzkRate;
+                total += tempAmount * Settings.getUsdToCzkRate();
+            } else if (currency.equals("GBP")) {
+                total += tempAmount * Settings.getGbpToCzkRate();
+            } else if (currency.equals("JPY")) {
+                total += tempAmount * Settings.getJpyToCzkRate();
             } else { // CZK
                 total += tempAmount;
             }
