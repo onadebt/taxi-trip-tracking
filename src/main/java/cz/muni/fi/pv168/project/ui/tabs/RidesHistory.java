@@ -1,11 +1,14 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
-import cz.muni.fi.pv168.project.ui.model.RideModel;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
+import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
+import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
+import cz.muni.fi.pv168.project.ui.model.RideModel;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Timestamp;
@@ -14,7 +17,6 @@ import java.util.List;
 
 public class RidesHistory {
 
-    // Sample data for the table (will be loaded from db)
     public static List<RideModel> rideHistory = getSampleRideHistory();
 
     public static JPanel createRidesHistoryPanel() {
@@ -27,9 +29,45 @@ public class RidesHistory {
         JTable rideHistoryTable = createRidesTable();
         JScrollPane scrollPane = new JScrollPane(rideHistoryTable);
 
+        JToolBar toolBar = createToolBar(rideHistoryTable, (DefaultTableModel) rideHistoryTable.getModel(), panel);
+        panel.add(toolBar, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
+    }
+
+    private static JToolBar createToolBar(JTable table, DefaultTableModel tableModel, JPanel parentPanel) {
+        JToolBar toolBar = new JToolBar();
+        
+        JButton addButton = new JButton("Add New Ride");
+        addButton.addActionListener(new NewRideAction(parentPanel, new CurrencyListModel(new ArrayList<>()), new CategoryListModel(new ArrayList<>())));
+        toolBar.add(addButton);
+
+        JButton editAmountButton = new JButton("Edit Amount");
+        editAmountButton.addActionListener(e -> editAmount(table, tableModel));
+        toolBar.add(editAmountButton);
+
+        JButton editCurrencyButton = new JButton("Edit Currency");
+        editCurrencyButton.addActionListener(e -> editCurrency(table, tableModel));
+        toolBar.add(editCurrencyButton);
+
+        JButton editDistanceButton = new JButton("Edit Distance");
+        editDistanceButton.addActionListener(e -> editDistance(table, tableModel));
+        toolBar.add(editDistanceButton);
+
+        JButton editCategoryButton = new JButton("Edit Category");
+        editCategoryButton.addActionListener(e -> editCategory(table, tableModel));
+        toolBar.add(editCategoryButton);
+
+        JButton editPersonalRideButton = new JButton("Edit Personal Ride");
+        editPersonalRideButton.addActionListener(e -> editPersonalRide(table, tableModel));
+        toolBar.add(editPersonalRideButton);
+
+        JButton deleteRowsButton = new JButton("Delete Selected Rows");
+        deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
+        toolBar.add(deleteRowsButton);
+
+        return toolBar;
     }
 
     private static JTable createRidesTable() {
@@ -37,7 +75,7 @@ public class RidesHistory {
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true; // All cells are editable
+                return true;
             }
         };
 
@@ -54,7 +92,7 @@ public class RidesHistory {
         }
 
         JTable table = new JTable(tableModel);
-        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); // Allow multi-row selection
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         TableColumn currencyColumn = table.getColumnModel().getColumn(1);
         JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "EUR", "USD"});
@@ -96,114 +134,115 @@ public class RidesHistory {
     private static void showPopupMenu(MouseEvent e, JTable table, DefaultTableModel tableModel) {
         JPopupMenu popupMenu = new JPopupMenu();
 
-        // Edit Amount Option
         JMenuItem editAmountItem = new JMenuItem("Edit Amount");
-        editAmountItem.addActionListener(event -> {
-            for (int row : table.getSelectedRows()) {
-                Object currentAmount = tableModel.getValueAt(row, 0);
-                String newAmountStr = JOptionPane.showInputDialog(table, "Enter new amount:", currentAmount);
-
-                try {
-                    double newAmount = Double.parseDouble(newAmountStr);
-                    tableModel.setValueAt(newAmount, row, 0);
-                    rideHistory.get(row).setAmountCurrency(newAmount);
-
-                    System.out.println("Updated Ride History:");
-                    for (RideModel ride : rideHistory) {
-                        System.out.println(ride.getAmountCurrency());
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(table, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        // Edit Currency Option
-        JMenuItem editCurrencyItem = new JMenuItem("Edit Currency");
-        editCurrencyItem.addActionListener(event -> {
-            for (int row : table.getSelectedRows()) {
-                Object currentCurrency = tableModel.getValueAt(row, 1);
-                JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "EUR", "USD"});
-                currencyComboBox.setSelectedItem(currentCurrency);
-                int option = JOptionPane.showConfirmDialog(table, currencyComboBox, "Choose new currency", JOptionPane.OK_CANCEL_OPTION);
-
-                if (option == JOptionPane.OK_OPTION) {
-                    tableModel.setValueAt(currencyComboBox.getSelectedItem(), row, 1);
-                }
-            }
-        });
-
-        // Edit Distance Option
-        JMenuItem editDistanceItem = new JMenuItem("Edit Distance");
-        editDistanceItem.addActionListener(event -> {
-            for (int row : table.getSelectedRows()) {
-                Object currentDistance = tableModel.getValueAt(row, 2);
-                String newDistanceStr = JOptionPane.showInputDialog(table, "Enter new distance:", currentDistance);
-
-                try {
-                    double newDistance = Double.parseDouble(newDistanceStr);
-                    tableModel.setValueAt(newDistance, row, 2);
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(table, "Invalid distance entered.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        // Edit Category Name Option
-        JMenuItem editCategoryItem = new JMenuItem("Edit Category");
-        editCategoryItem.addActionListener(event -> {
-            for (int row : table.getSelectedRows()) {
-                Object currentCategory = tableModel.getValueAt(row, 3);
-                JComboBox<String> categoryComboBox = new JComboBox<>(new String[]{"Premium", "Comfort", "Standard"});
-                categoryComboBox.setSelectedItem(currentCategory);
-                int option = JOptionPane.showConfirmDialog(table, categoryComboBox, "Choose new category", JOptionPane.OK_CANCEL_OPTION);
-
-                if (option == JOptionPane.OK_OPTION) {
-                    tableModel.setValueAt(categoryComboBox.getSelectedItem(), row, 3);
-                }
-            }
-        });
-
-        // Edit Personal Ride Option
-        JMenuItem editPersonalRideItem = new JMenuItem("Edit Personal Opinion");
-        editPersonalRideItem.addActionListener(event -> {
-            for (int row : table.getSelectedRows()) {
-                Object currentPersonalRide = tableModel.getValueAt(row, 4);
-                JComboBox<String> personalRideComboBox = new JComboBox<>(new String[]{"YES", "NO"});
-                personalRideComboBox.setSelectedItem(currentPersonalRide);
-                int option = JOptionPane.showConfirmDialog(table, personalRideComboBox, "Edit Personal Ride", JOptionPane.OK_CANCEL_OPTION);
-
-                if (option == JOptionPane.OK_OPTION) {
-                    tableModel.setValueAt(personalRideComboBox.getSelectedItem(), row, 4);
-                }
-            }
-        });
-
-        // Delete Selected Rows Option
-        JMenuItem deleteRowsItem = new JMenuItem("Delete Selected Rows");
-        deleteRowsItem.addActionListener(event -> {
-            int[] selectedRows = table.getSelectedRows();
-            if (selectedRows.length > 0) {
-                int confirm = JOptionPane.showConfirmDialog(table, "Are you sure you want to delete the selected rows?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) {
-                    for (int i = selectedRows.length - 1; i >= 0; i--) {
-                        tableModel.removeRow(selectedRows[i]);
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(table, "No rows selected for deletion.", "Warning", JOptionPane.WARNING_MESSAGE);
-            }
-        });
-
+        editAmountItem.addActionListener(event -> editAmount(table, tableModel));
         popupMenu.add(editAmountItem);
+
+        JMenuItem editCurrencyItem = new JMenuItem("Edit Currency");
+        editCurrencyItem.addActionListener(event -> editCurrency(table, tableModel));
         popupMenu.add(editCurrencyItem);
+
+        JMenuItem editDistanceItem = new JMenuItem("Edit Distance");
+        editDistanceItem.addActionListener(event -> editDistance(table, tableModel));
         popupMenu.add(editDistanceItem);
+
+        JMenuItem editCategoryItem = new JMenuItem("Edit Category");
+        editCategoryItem.addActionListener(event -> editCategory(table, tableModel));
         popupMenu.add(editCategoryItem);
+
+        JMenuItem editPersonalRideItem = new JMenuItem("Edit Personal Ride");
+        editPersonalRideItem.addActionListener(event -> editPersonalRide(table, tableModel));
         popupMenu.add(editPersonalRideItem);
+
         popupMenu.addSeparator();
+
+        JMenuItem deleteRowsItem = new JMenuItem("Delete Selected Rows");
+        deleteRowsItem.addActionListener(event -> deleteSelectedRows(table, tableModel));
         popupMenu.add(deleteRowsItem);
 
-        popupMenu.show((Component) e.getSource(), e.getX(), e.getY());
+        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    private static void editAmount(JTable table, DefaultTableModel tableModel) {
+        for (int row : table.getSelectedRows()) {
+            Object currentAmount = tableModel.getValueAt(row, 0);
+            String newAmountStr = JOptionPane.showInputDialog(table, "Enter new amount:", currentAmount);
+
+            try {
+                double newAmount = Double.parseDouble(newAmountStr);
+                tableModel.setValueAt(newAmount, row, 0);
+                rideHistory.get(row).setAmountCurrency(newAmount);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(table, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private static void editCurrency(JTable table, DefaultTableModel tableModel) {
+        for (int row : table.getSelectedRows()) {
+            Object currentCurrency = tableModel.getValueAt(row, 1);
+            JComboBox<String> currencyComboBox = new JComboBox<>(new String[]{"CZK", "EUR", "USD"});
+            currencyComboBox.setSelectedItem(currentCurrency);
+            int option = JOptionPane.showConfirmDialog(table, currencyComboBox, "Choose new currency", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                tableModel.setValueAt(currencyComboBox.getSelectedItem(), row, 1);
+            }
+        }
+    }
+
+    private static void editDistance(JTable table, DefaultTableModel tableModel) {
+        for (int row : table.getSelectedRows()) {
+            Object currentDistance = tableModel.getValueAt(row, 2);
+            String newDistanceStr = JOptionPane.showInputDialog(table, "Enter new distance:", currentDistance);
+
+            try {
+                double newDistance = Double.parseDouble(newDistanceStr);
+                tableModel.setValueAt(newDistance, row, 2);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(table, "Invalid distance entered.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private static void editCategory(JTable table, DefaultTableModel tableModel) {
+        for (int row : table.getSelectedRows()) {
+            Object currentCategory = tableModel.getValueAt(row, 3);
+            JComboBox<String> categoryComboBox = new JComboBox<>(new String[]{"Premium", "Comfort", "Standard"});
+            categoryComboBox.setSelectedItem(currentCategory);
+            int option = JOptionPane.showConfirmDialog(table, categoryComboBox, "Choose new category", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                tableModel.setValueAt(categoryComboBox.getSelectedItem(), row, 3);
+            }
+        }
+    }
+
+    private static void editPersonalRide(JTable table, DefaultTableModel tableModel) {
+        for (int row : table.getSelectedRows()) {
+            Object currentPersonalRide = tableModel.getValueAt(row, 4);
+            JComboBox<String> personalRideComboBox = new JComboBox<>(new String[]{"YES", "NO"});
+            personalRideComboBox.setSelectedItem(currentPersonalRide);
+            int option = JOptionPane.showConfirmDialog(table, personalRideComboBox, "Edit Personal Ride", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                tableModel.setValueAt(personalRideComboBox.getSelectedItem(), row, 4);
+            }
+        }
+    }
+
+    private static void deleteSelectedRows(JTable table, DefaultTableModel tableModel) {
+        int[] selectedRows = table.getSelectedRows();
+        if (selectedRows.length > 0) {
+            int confirm = JOptionPane.showConfirmDialog(table, "Are you sure you want to delete the selected rows?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                for (int i = selectedRows.length - 1; i >= 0; i--) {
+                    tableModel.removeRow(selectedRows[i]);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(table, "No rows selected for deletion.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     // data for testing purposes
