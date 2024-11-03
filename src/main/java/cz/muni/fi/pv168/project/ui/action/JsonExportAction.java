@@ -2,7 +2,7 @@ package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.service.IRideService;
 import cz.muni.fi.pv168.project.service.port.DataPortException;
-import cz.muni.fi.pv168.project.service.port.JsonExportService;
+import cz.muni.fi.pv168.project.service.port.ExportService;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -10,13 +10,12 @@ import java.awt.event.ActionEvent;
 
 public class JsonExportAction extends AbstractAction {
     private final JComponent parent;
-    private final JsonExportService jsonExportService;
-    private final IRideService rideService;
+    private final ExportService jsonExportService;
 
-    public JsonExportAction(JComponent parent, JsonExportService jsonExportService, IRideService rideService) {
+    public JsonExportAction(JComponent parent, ExportService jsonExportService, IRideService rideService) {
+        super("Export");
         this.parent = parent;
         this.jsonExportService = jsonExportService;
-        this.rideService = rideService;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -27,11 +26,11 @@ public class JsonExportAction extends AbstractAction {
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                jsonExportService.exportData(chooser.getSelectedFile().getPath(), rideService.get());
+                jsonExportService.exportData(chooser.getSelectedFile().getPath());
             } catch (DataPortException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-
         }
+        JOptionPane.showMessageDialog(parent, "Export successful");
     }
 }

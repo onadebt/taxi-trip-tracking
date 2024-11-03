@@ -9,13 +9,21 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RideService implements IRideService {
+    private final ICategoryService categoryService;
+    private final ICurrencyService currencyService;
+
+    public RideService(ICategoryService categoryService, ICurrencyService currencyService) {
+        this.categoryService = categoryService;
+        this.currencyService = currencyService;
+    }
+
     @Override
-    public void create(NewRide ride) {
+    public void create(RideDbModel ride) {
 
     }
 
     @Override
-    public void update(NewRide ride) {
+    public void update(RideDbModel ride) {
 
     }
 
@@ -32,6 +40,17 @@ public class RideService implements IRideService {
     @Override
     public List<RideDbModel> get() {
         return TestRides.get();
+    }
+
+    @Override
+    public boolean isValid(RideDbModel ride) {
+        return ride.getDistance() > 0
+                && ride.getAmountCurrency() >= 0
+                && ride.getRideId() > 0
+                && ride.getPassengers() >= 0
+                && (ride.getCategoryId() <= 0 || categoryService.getById(ride.getCategoryId()) != null)
+                && (ride.getCurrencyId() > 0 && currencyService.getById(ride.getCurrencyId()) != null);
+
     }
 
     private static class TestRides {
