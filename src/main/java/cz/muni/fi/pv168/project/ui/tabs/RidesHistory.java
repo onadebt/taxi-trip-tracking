@@ -75,7 +75,7 @@ public class RidesHistory {
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true;
+                return column == 0 || column == 1 || column == 2 || column == 3 || column == 4;
             }
         };
 
@@ -109,6 +109,10 @@ public class RidesHistory {
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
         JComboBox<String> categoryComboBox = new JComboBox<>(categoriesNamesArray);
         categoryColumn.setCellEditor(new DefaultCellEditor(categoryComboBox));
+
+        TableColumn personalRideColumn = table.getColumnModel().getColumn(4);
+        JComboBox<String> personalRideComboBox = new JComboBox<>(new String[]{"YES", "NO"});
+        personalRideColumn.setCellEditor(new DefaultCellEditor(personalRideComboBox));
 
         // Add mouse listener to detect right-clicks
         table.addMouseListener(new MouseAdapter() {
