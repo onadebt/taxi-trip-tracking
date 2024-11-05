@@ -61,7 +61,9 @@ public class RidesCategories {
         listScrollPane.setBorder(BorderFactory.createTitledBorder("Categories"));
         panel.add(listScrollPane, BorderLayout.CENTER);
 
-        JPanel buttonsPanel = new JPanel(new FlowLayout());
+        JToolBar buttonsPanel = new JToolBar();
+        buttonsPanel.setFloatable(false);
+        buttonsPanel.add(Box.createHorizontalGlue());
 
         JButton addButton = new JButton("Add Category");
         addButton.addActionListener(e -> addCategory());
@@ -76,6 +78,7 @@ public class RidesCategories {
         deleteButton.setEnabled(false);
         deleteButton.addActionListener(e -> deleteCategory(categoryList.getSelectedValuesList()));
         buttonsPanel.add(deleteButton);
+        buttonsPanel.add(Box.createHorizontalGlue());
 
         categoryList.addListSelectionListener(e -> {
             int selectedCount = categoryList.getSelectedIndices().length;
@@ -95,7 +98,7 @@ public class RidesCategories {
             }
         });
 
-        panel.add(buttonsPanel, BorderLayout.SOUTH);
+        panel.add(buttonsPanel, BorderLayout.NORTH);
 
         Category testCategory = new Category("standard", new ImageIcon (RidesCategories.class.getResource("/icons/" + "NormalRide.png")));
         allCategories.add(testCategory);
