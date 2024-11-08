@@ -8,6 +8,7 @@ public interface IRideRepository {
     void create(RideDbModel ride);
     void update(RideDbModel ride);
     void delete(int rideId);
+    void deleteAll();
     RideDbModel getById(int rideId);
     List<RideDbModel> get();
 }
