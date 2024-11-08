@@ -1,20 +1,25 @@
 package cz.muni.fi.pv168.project.model;
 
+import cz.muni.fi.pv168.project.ui.model.NewRide;
+import org.jetbrains.annotations.Nullable;
+
 import java.time.Instant;
+import java.util.UUID;
 
 public class RideDbModel {
     private int rideId;
     private double amountCurrency;
     private int currencyId;
     private double distance;
-    private int categoryId;
+    private @Nullable Integer categoryId;
     private int passengers;
     private TripType tripType;
     private Instant createdDate;
+    private UUID uuid;
 
     public RideDbModel(){};
-    public RideDbModel(int rideId, double amountCurrency, int currencyId, double distance, int categoryId,
-                       int passengers, TripType tripType, Instant createdDate) {
+    public RideDbModel(int rideId, double amountCurrency, int currencyId, double distance, @Nullable Integer categoryId,
+                       int passengers, TripType tripType, Instant createdDate, UUID uuid) {
         this.rideId = rideId;
         this.amountCurrency = amountCurrency;
         this.categoryId = categoryId;
@@ -23,6 +28,20 @@ public class RideDbModel {
         this.passengers = passengers;
         this.tripType = tripType;
         this.createdDate = createdDate;
+        this.uuid = uuid;
+    }
+
+    public RideDbModel(NewRide ride) {
+        this.amountCurrency = ride.getAmountCurrency();
+        if (ride.getCategory() != null) {
+            this.categoryId = ride.getCategory().getId();
+        }
+        this.currencyId = ride.getCurrencyType().getId();
+        this.distance = ride.getDistance();
+        this.passengers = ride.getPassengers();
+        this.tripType = ride.getTripType();
+        this.createdDate = Instant.now();
+        this.uuid = UUID.randomUUID();
     }
 
     public int getRideId() {
@@ -57,11 +76,11 @@ public class RideDbModel {
         this.distance = distance;
     }
 
-    public int getCategoryId() {
+    public @Nullable Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(@Nullable Integer categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -87,5 +106,13 @@ public class RideDbModel {
 
     public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

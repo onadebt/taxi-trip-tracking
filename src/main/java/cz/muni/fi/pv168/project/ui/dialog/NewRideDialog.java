@@ -57,6 +57,7 @@ public class NewRideDialog extends EntityDialog<NewRide> {
         newRide.setPassengers(passengers);
         newRide.setCurrencyType((Currency) currencyModel.getSelectedItem());
         newRide.setCategory((Category) categoryModel.getSelectedItem());
+        newRide.setTripType((TripType) tripTypeModel.getSelectedItem());
         return newRide;
     }
 

@@ -1,26 +1,29 @@
 package cz.muni.fi.pv168.project.ui.model;
 
+import cz.muni.fi.pv168.project.model.TripType;
+import org.jetbrains.annotations.Nullable;
+
 public class NewRide {
     private double amountCurrency;
     private double distance;
     private Currency currencyType;
     private int passengers;
-    private Category category;
-    private boolean isPaidTravel;
+    private @Nullable Category category;
+    private TripType tripType;
 
-    public boolean isPaidTravel() {
-        return isPaidTravel;
+    public TripType getTripType() {
+        return tripType;
     }
 
-    public void setPaidTravel(boolean paidTravel) {
-        isPaidTravel = paidTravel;
+    public void setTripType(TripType tripType) {
+        this.tripType = tripType;
     }
 
-    public Category getCategory() {
+    public @Nullable Category getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(@Nullable Category category) {
         this.category = category;
     }
 
