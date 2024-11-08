@@ -5,6 +5,4 @@ import cz.muni.fi.pv168.project.ui.model.ImportMode;
 
 public interface ImportService {
     void importData(String path, ImportMode mode);
-
-    boolean isValid(RideDbModel[] ride);
 }

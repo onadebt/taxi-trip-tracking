@@ -13,6 +13,8 @@ public interface IRideService {
 
     void delete(int rideId);
 
+    void deleteAll();
+
     RideDbModel getById(int rideId);
 
     List<RideDbModel> get();
