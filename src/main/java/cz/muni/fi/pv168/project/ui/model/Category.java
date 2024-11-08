@@ -1,14 +1,23 @@
 package cz.muni.fi.pv168.project.ui.model;
 
+import cz.muni.fi.pv168.project.model.CategoryDbModel;
+
 import javax.swing.*;
 
 public class Category {
+    private int id = 0;
     private String name;
     private Icon icon;
 
     public Category(String name, Icon icon) {
         this.name = name;
         this.icon = icon;
+    }
+
+    public Category(CategoryDbModel categoryDbModel) {
+        this.id = categoryDbModel.getCategoryId();
+        this.name = categoryDbModel.getCategoryName();
+        this.icon = categoryDbModel.getIcon();
     }
 
     public String getName() {
@@ -25,6 +34,10 @@ public class Category {
 
     public void setIcon(Icon icon) {
         this.icon = icon;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
