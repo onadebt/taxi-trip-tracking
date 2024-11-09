@@ -8,14 +8,35 @@ import java.util.List;
 
 public interface ICategoryService {
 
+    /**
+     * Create category according to model
+     * @param category
+     */
     void create(Category category);
 
+    /**
+     * Update category according to model
+     * @param category
+     */
     void update(Category category);
 
+    /**
+     * Delete category with given ID
+     * @param categoryId
+     */
     void delete(int categoryId);
 
+    /**
+     * Get category by id
+     * @param categoryId
+     * @return category, or null if not existing
+     */
     @Nullable CategoryDbModel getById(int categoryId);
-
     @Nullable CategoryDbModel getByName(String name);
+
+    /**
+     * Get all categories
+     * @return all categories
+     */
     List<CategoryDbModel> get();
 }

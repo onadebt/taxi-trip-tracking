@@ -1,15 +1,11 @@
 package cz.muni.fi.pv168.project.providers;
 
-import cz.muni.fi.pv168.project.repository.ICategoryRepository;
-import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
-import cz.muni.fi.pv168.project.repository.IRideRepository;
-import cz.muni.fi.pv168.project.repository.ISettingsRepository;
-import cz.muni.fi.pv168.project.service.ICategoryService;
-import cz.muni.fi.pv168.project.service.ICurrencyService;
-import cz.muni.fi.pv168.project.service.IRideService;
-import cz.muni.fi.pv168.project.service.ISettingsService;
+import cz.muni.fi.pv168.project.repository.*;
+import cz.muni.fi.pv168.project.service.*;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
+import cz.muni.fi.pv168.project.service.port.JsonExportService;
+import cz.muni.fi.pv168.project.service.port.JsonImportService;
 
 public class DIProvider {
     private IRideRepository rideRepository;
@@ -25,6 +21,56 @@ public class DIProvider {
     private ImportService jsonImportService;
 
     public DIProvider() {
-        // TODO - implement
+        this.rideRepository = new RideRepository();
+        this.categoryRepository = new CategoryRepository();
+        this.currencyRepository = new CurrencyRepository();
+        this.settingsRepository = new SettingsRepository();
+
+        this.currencyService = new CurrencyService(currencyRepository);
+        this.categoryService = new CategoryService(categoryRepository);
+        this.settingsService = new SettingsService(settingsRepository);
+        this.rideService = new RideService(categoryService, currencyService, rideRepository);
+        this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
+        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
+    }
+
+    public IRideRepository getRideRepository() {
+        return rideRepository;
+    }
+
+    public ICurrencyRepository getCurrencyRepository() {
+        return currencyRepository;
+    }
+
+    public ICategoryRepository getCategoryRepository() {
+        return categoryRepository;
+    }
+
+    public ISettingsRepository getSettingsRepository() {
+        return settingsRepository;
+    }
+
+    public IRideService getRideService() {
+        return rideService;
+    }
+
+    public ICategoryService getCategoryService() {
+        return categoryService;
+    }
+
+    public ICurrencyService getCurrencyService() {
+        return currencyService;
+    }
+
+    public ISettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    public ExportService getJsonExportService() {
+        return jsonExportService;
+    }
+
+    public ImportService getJsonImportService() {
+        return jsonImportService;
     }
 }

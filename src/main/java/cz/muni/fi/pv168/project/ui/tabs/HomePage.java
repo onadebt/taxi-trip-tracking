@@ -1,18 +1,21 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
+import cz.muni.fi.pv168.project.providers.DIProvider;
+
+import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
-import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
+
 import cz.muni.fi.pv168.project.ui.model.RideModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class HomePage {
 
     public static JPanel createHomePagePanel() {
+        DIProvider diProvider = new DIProvider();
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 

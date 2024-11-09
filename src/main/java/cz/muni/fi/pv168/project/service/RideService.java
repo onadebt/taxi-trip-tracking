@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.RideDbModel;
-import cz.muni.fi.pv168.project.model.RidePortModel;
 import cz.muni.fi.pv168.project.model.TripType;
 import cz.muni.fi.pv168.project.repository.IRideRepository;
 import cz.muni.fi.pv168.project.ui.model.NewRide;
@@ -25,14 +24,14 @@ public class RideService implements IRideService {
     @Override
     public void create(NewRide newRide) {
         RideDbModel ride = new RideDbModel(newRide);
+        create(ride);
+    }
+    @Override
+    public void create(RideDbModel ride) {
         if (!isValid(ride)) {
             // TODO - logging, maybe exception?
         }
         rideRepository.create(ride);
-    }
-
-    public void create(RidePortModel ride) {
-
     }
 
     @Override
