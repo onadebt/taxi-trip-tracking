@@ -1,12 +1,19 @@
 package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.CategoryDbModel;
+import cz.muni.fi.pv168.project.repository.ICategoryRepository;
 import cz.muni.fi.pv168.project.ui.model.Category;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CategoryService implements ICategoryService{
+    ICategoryRepository categoryRepository;
+
+    public CategoryService(ICategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
+    
     @Override
     public void create(Category category) {
 

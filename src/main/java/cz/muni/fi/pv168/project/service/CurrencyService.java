@@ -1,12 +1,17 @@
 package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
 import cz.muni.fi.pv168.project.ui.model.Currency;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CurrencyService implements ICurrencyService{
+public class CurrencyService implements ICurrencyService {
+    ICurrencyRepository currencyRepository;
+    public CurrencyService(ICurrencyRepository currencyRepository) {
+        this.currencyRepository = currencyRepository;
+    }
     @Override
     public void create(Currency currency) {
 
