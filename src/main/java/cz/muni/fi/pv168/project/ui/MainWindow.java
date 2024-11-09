@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui;
 
+import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.ui.tabs.*;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ public class MainWindow {
 
     private final JFrame frame;
     private final JTabbedPane tabbedPane;
+    private final DIProvider diProvider = new DIProvider();
 
     public MainWindow() {
         frame = new JFrame("Taxi trip tracking");
@@ -19,10 +21,10 @@ public class MainWindow {
         tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Arial", Font.BOLD, 18));
 
-        JPanel homePage = HomePage.createHomePagePanel();
+        JPanel homePage = HomePage.createHomePagePanel(diProvider);
         tabbedPane.addTab("Home Page", homePage);
 
-        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel();
+        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(diProvider);
         tabbedPane.addTab("Rides History", ridesHistory);
 
         JPanel ridesCategories = RidesCategories.createRidesCategoriesPanel();

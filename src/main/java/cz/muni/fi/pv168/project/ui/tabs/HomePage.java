@@ -14,8 +14,7 @@ import java.util.List;
 
 public class HomePage {
 
-    public static JPanel createHomePagePanel() {
-        DIProvider diProvider = new DIProvider();
+    public static JPanel createHomePagePanel(DIProvider diProvider) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
@@ -74,7 +73,7 @@ public class HomePage {
 
         // Add the button below the stats panel
         JButton addButton = new JButton("Add");
-        addButton.addActionListener(new NewRideAction(panel, new CurrencyListModel(new ArrayList<>()), new CategoryListModel(new ArrayList<>())));
+        addButton.addActionListener(new NewRideAction(panel, diProvider.getRideService(), diProvider.getCurrencyService(), diProvider.getCategoryService()));
 
         addButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         gbc.gridy = 1;  // Move to the next row for the button

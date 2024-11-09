@@ -5,6 +5,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.service.IRideService;
 import cz.muni.fi.pv168.project.service.RideService;
 import cz.muni.fi.pv168.project.ui.Currencies;
@@ -27,7 +28,7 @@ public class RidesHistory {
 
     public static List<RideModel> rideHistory = getSampleRideHistory();
 
-    public static JPanel createRidesHistoryPanel() {
+    public static JPanel createRidesHistoryPanel(DIProvider diProvider) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
@@ -37,7 +38,7 @@ public class RidesHistory {
         JTable rideHistoryTable = createRidesTable();
         JScrollPane scrollPane = new JScrollPane(rideHistoryTable);
 
-        JToolBar toolBar = createToolBar(rideHistoryTable, (DefaultTableModel) rideHistoryTable.getModel(), panel);
+        JToolBar toolBar = createToolBar(rideHistoryTable, (DefaultTableModel) rideHistoryTable.getModel(), panel, diProvider);
         panel.add(toolBar, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -47,11 +48,11 @@ public class RidesHistory {
         return panel;
     }
 
-    private static JToolBar createToolBar(JTable table, DefaultTableModel tableModel, JPanel parentPanel) {
+    private static JToolBar createToolBar(JTable table, DefaultTableModel tableModel, JPanel parentPanel, DIProvider diProvider) {
         JToolBar toolBar = new JToolBar();
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(parentPanel, new CurrencyListModel(new ArrayList<>()), new CategoryListModel(new ArrayList<>())));
+        addButton.addActionListener(new NewRideAction(parentPanel, diProvider.getRideService(), diProvider.getCurrencyService(), diProvider.getCategoryService()));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
