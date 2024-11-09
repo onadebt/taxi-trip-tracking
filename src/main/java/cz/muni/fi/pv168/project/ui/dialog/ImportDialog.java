@@ -7,32 +7,27 @@ import javax.swing.*;
 
 public class ImportDialog extends EntityDialog<ImportMode> {
     ButtonGroup selection = new ButtonGroup();
-    JRadioButton overwrite = new JRadioButton("Overwrite all rides");
-    JRadioButton update = new JRadioButton("Update rides from source file. Matching by ride ID");
-    JRadioButton addSane = new JRadioButton("Add only rides ");
-    JRadioButton addAll = new JRadioButton("Add all rides from source file");
+    JRadioButton overwrite = new JRadioButton("Overwrite all rides with imported");
+    JRadioButton create = new JRadioButton("Add all missing rides, do not update existing");
+    JRadioButton createUpdate = new JRadioButton("Add all missing rides, update existing");
 
     public ImportDialog() {
         selection.add(overwrite);
-        selection.add(update);
-        selection.add(addSane);
-        selection.add(addAll);
+        selection.add(create);
+        selection.add(createUpdate);
         panel.add(overwrite);
-        panel.add(update);
-        panel.add(addSane);
-        panel.add(addAll);
+        panel.add(create);
+        panel.add(createUpdate);
     }
 
     @Override
     ImportMode getEntity() {
         if (overwrite.isSelected()) {
             return ImportMode.Overwrite;
-        } else if (addSane.isSelected()) {
-            return ImportMode.AddSafe;
-        } else if (update.isSelected()) {
-            return ImportMode.Update;
+        } else if (create.isSelected()) {
+            return ImportMode.Create;
         } else {
-            return ImportMode.AddAll;
+            return ImportMode.CreateUpdate;
         }
     }
 }

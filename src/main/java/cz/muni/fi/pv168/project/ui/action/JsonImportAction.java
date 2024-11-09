@@ -42,5 +42,6 @@ public class JsonImportAction extends AbstractAction {
             }
 
         }
+        // TODO - refresh ridesHistory and HomePage rides and stats
     }
 }
