@@ -9,16 +9,20 @@ public class RideModel {
     private String categoryName;
     private Boolean personalRide;
     private Timestamp createdDate;
+    private int numberOfPeople;
 
     // Constructor
-    public RideModel(double amountCurrency, String currency, double distance, String categoryName, Timestamp createdDate) {
+    public RideModel(double amountCurrency, String currency, double distance, String categoryName, Timestamp createdDate, int numberOfPeople) {
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;
         this.categoryName = categoryName;
         this.personalRide = false;
+        this.numberOfPeople = numberOfPeople;
         this.createdDate = createdDate;
+
     }
+
 
     // Getters
     public double getAmountCurrency() {
@@ -45,19 +49,21 @@ public class RideModel {
         return createdDate;
     }
 
+    public int getNumberOfPeople(){ return numberOfPeople; }
+
     // Setters
     public void setAmountCurrency(double amountCurrency) {
         this.amountCurrency = amountCurrency;
     }
-    
+
     public void setCurrency(String currency) {
         this.currency = currency;
     }
-    
+
     public void setDistance(double distance) {
         this.distance = distance;
     }
-    
+
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
@@ -65,4 +71,7 @@ public class RideModel {
     public void setPersonalRide(Boolean personalRide) {
         this.personalRide = personalRide;
     }
+
+    public void setNumberOfPeople(int numberOfPeople) { this.numberOfPeople = numberOfPeople; }
 }
+
