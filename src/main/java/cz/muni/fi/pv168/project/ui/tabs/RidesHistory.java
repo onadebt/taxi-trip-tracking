@@ -9,6 +9,8 @@ import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.service.IRideService;
 import cz.muni.fi.pv168.project.service.RideService;
 import cz.muni.fi.pv168.project.ui.Currencies;
+import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
+import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
@@ -78,6 +80,13 @@ public class RidesHistory {
         JButton deleteRowsButton = new JButton("Delete Selected Rows");
         deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
         toolBar.add(deleteRowsButton);
+
+        JButton importButton = new JButton("Import");
+        importButton.addActionListener(new JsonImportAction(parentPanel, diProvider.getJsonImportService()));
+        JButton exportButton = new JButton("Export");
+        exportButton.addActionListener(new JsonExportAction(parentPanel, diProvider.getJsonExportService(), diProvider.getRideService()));
+        toolBar.add(importButton);
+        toolBar.add(exportButton);
 
         return toolBar;
     }

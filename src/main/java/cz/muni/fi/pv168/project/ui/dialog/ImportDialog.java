@@ -12,12 +12,13 @@ public class ImportDialog extends EntityDialog<ImportMode> {
     JRadioButton createUpdate = new JRadioButton("Add all missing rides, update existing");
 
     public ImportDialog() {
-        selection.add(overwrite);
         selection.add(create);
         selection.add(createUpdate);
-        panel.add(overwrite);
+        selection.add(overwrite);
+        create.setSelected(true);
         panel.add(create);
         panel.add(createUpdate);
+        panel.add(overwrite);
     }
 
     @Override
