@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.model;
 
+import cz.muni.fi.pv168.project.ui.resources.Icons;
+
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
@@ -12,34 +14,16 @@ import java.io.IOException;
 public class CategoryDbModel {
     private int categoryId;
     private String categoryName;
-    private byte[] icon;
+    private String iconPath;
 
-    public Icon getIcon() {
-        try {
-            BufferedImage iconImage = ImageIO.read(new ByteArrayInputStream(icon));
-            return new ImageIcon(iconImage);
-        }  catch (IOException e) {
-            return null;
-        }
+    public CategoryDbModel(int categoryId, String categoryName, String iconPath) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.iconPath = iconPath;
     }
 
-    public void setIcon(Icon icon) {
-        BufferedImage img = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = img.createGraphics();
-        icon.paintIcon(null, g2d, 0, 0);
-        g2d.dispose();
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
-            try {
-                ImageIO.write(img, "png", ios);
-            } finally {
-                ios.close();
-            }
-            this.icon = baos.toByteArray();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    public Icon getIcon() {
+        return Icons.getByName(iconPath);
     }
 
     public int getCategoryId() {

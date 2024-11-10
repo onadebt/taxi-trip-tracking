@@ -5,7 +5,9 @@ import cz.muni.fi.pv168.project.repository.ICategoryRepository;
 import cz.muni.fi.pv168.project.ui.model.Category;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CategoryService implements ICategoryService{
     ICategoryRepository categoryRepository;
@@ -31,7 +33,7 @@ public class CategoryService implements ICategoryService{
 
     @Override
     public @Nullable CategoryDbModel getById(int categoryId) {
-        return null;
+        return TestCategories.getById(categoryId);
     }
 
     @Override
@@ -41,6 +43,20 @@ public class CategoryService implements ICategoryService{
 
     @Override
     public List<CategoryDbModel> get() {
-        return List.of();
+        return TestCategories.getTest();
+    }
+
+    private class TestCategories {
+        private static Map<Integer, CategoryDbModel> categories = new HashMap<>(){
+            {put(1, new CategoryDbModel(1, "CategoryA", "truck-car.png"));}
+            {put(2, new CategoryDbModel(2, "CategoryB", "truck-car.png"));}
+            {put(3,  new CategoryDbModel(3, "CategoryC", "truck-car.png"));}
+        };
+        public static List<CategoryDbModel> getTest() {
+            return categories.values().stream().toList();
+        }
+        public static CategoryDbModel getById(int id) {
+            return categories.get(id);
+        }
     }
 }

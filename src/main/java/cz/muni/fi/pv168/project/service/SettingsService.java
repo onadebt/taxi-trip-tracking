@@ -13,12 +13,12 @@ public class SettingsService implements ISettingsService {
     }
     @Override
     public CurrencyDbModel getDefaultCurrency() {
-        return null;
+        return TestSettings.getDefaultCurrency();
     }
 
     @Override
     public DistanceUnit getDefaultDistance() {
-        return null;
+        return TestSettings.getDistUnit();
     }
 
     @Override
@@ -29,5 +29,15 @@ public class SettingsService implements ISettingsService {
     @Override
     public void setDefaultDistance(DistanceUnit unit) {
 
+    }
+
+    private class TestSettings {
+        public static DistanceUnit getDistUnit() {
+            return DistanceUnit.Kilometer;
+        }
+
+        public static CurrencyDbModel getDefaultCurrency() {
+            return new CurrencyDbModel(1, "Euro", "EUR", 1.0);
+        }
     }
 }

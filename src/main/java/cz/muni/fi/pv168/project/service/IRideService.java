@@ -27,6 +27,12 @@ public interface IRideService {
     void update(NewRide ride);
 
     /**
+     * Update ride according to model
+     * @param ride
+     */
+    void update(RideDbModel ride);
+
+    /**
      * Delete ride with given id
      * @param rideId
      */

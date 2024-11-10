@@ -40,6 +40,11 @@ public class RideService implements IRideService {
     }
 
     @Override
+    public void update(RideDbModel ride) {
+
+    }
+
+    @Override
     public void delete(int rideId) {
         rideRepository.delete(rideId);
     }
@@ -67,7 +72,7 @@ public class RideService implements IRideService {
     public boolean isValid(RideDbModel ride) {
         return ride.getDistance() > 0
                 && ride.getAmountCurrency() >= 0
-                && ride.getRideId() > 0
+                && ride.getRideId() >= 0
                 && ride.getPassengers() >= 0
                 && (ride.getCategoryId() == null || (ride.getCategoryId() > 0 && categoryService.getById(ride.getCategoryId()) != null))
                 && (ride.getCurrencyId() > 0 && currencyService.getById(ride.getCurrencyId()) != null)
@@ -78,10 +83,12 @@ public class RideService implements IRideService {
     private static class TestRides {
         public static List<RideDbModel> get() {
             return Arrays.asList(
-                    new RideDbModel(1, 150, 1, 0.80, 1, 2,
+                    new RideDbModel(1, 30, 1, 0.80, 1, 2,
                             TripType.Paid, Instant.now(), UUID.randomUUID()),
-                    new RideDbModel(2, 1500, 1, 25.2, 1, 4,
-                            TripType.Paid, Instant.ofEpochSecond(1000000000L), UUID.randomUUID())
+                    new RideDbModel(2, 100, 2, 25.2, 2, 4,
+                            TripType.Paid, Instant.ofEpochSecond(1000000000L), UUID.randomUUID()),
+                    new RideDbModel(3, 800, 3, 12.2, null, 3,
+                            TripType.Paid, Instant.now(), UUID.randomUUID())
             );
         }
     }

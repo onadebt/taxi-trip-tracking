@@ -6,6 +6,13 @@ public class CurrencyDbModel {
     private String tag;
     private double rate;
 
+    public CurrencyDbModel(int currencyId, String name, String tag, double rate) {
+        this.currencyId = currencyId;
+        this.tag = tag;
+        this.name = name;
+        this.rate = rate;
+    }
+
     public int getCurrencyId() {
         return currencyId;
     }
