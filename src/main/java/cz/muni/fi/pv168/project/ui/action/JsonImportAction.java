@@ -37,6 +37,7 @@ public class JsonImportAction extends AbstractAction {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 jsonImportService.importData(chooser.getSelectedFile().getPath(), mode);
+                JOptionPane.showMessageDialog(parent, "Import successful", "Import", JOptionPane.INFORMATION_MESSAGE);
             } catch (DataPortException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

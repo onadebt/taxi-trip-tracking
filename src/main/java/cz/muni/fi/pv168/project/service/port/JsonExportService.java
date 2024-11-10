@@ -42,7 +42,7 @@ public class JsonExportService implements ExportService {
 
         List<RidePortModel> rideExports = new ArrayList<>();
         for (var ride : rides) {
-            var catName = ride.getCategoryId() == null ?
+            var catName = ride.getCategoryId() != null ?
                     categories.stream()
                     .filter(cat -> cat.getCategoryId() == ride.getCategoryId())
                     .map(CategoryDbModel::getCategoryName)
