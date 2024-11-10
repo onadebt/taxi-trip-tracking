@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.RideDbModel;
 import cz.muni.fi.pv168.project.model.TripType;
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.repository.IRideRepository;
 import cz.muni.fi.pv168.project.ui.model.NewRide;
 
@@ -30,6 +31,7 @@ public class RideService implements IRideService {
     public void create(RideDbModel ride) {
         if (!isValid(ride)) {
             // TODO - logging, maybe exception?
+            throw new ValidationException("Created ride is not valid");
         }
         rideRepository.create(ride);
     }

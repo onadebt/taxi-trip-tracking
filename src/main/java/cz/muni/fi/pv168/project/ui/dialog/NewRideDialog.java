@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.ui.model.Currency;
 import cz.muni.fi.pv168.project.ui.model.NewRide;
 import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.CurrencyRenderer;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
@@ -52,11 +53,17 @@ public class NewRideDialog extends EntityDialog<NewRide> {
             validationOk = false;
             return newRide;
         }
+
+        if (currencyModel.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this.panel, "All fields except category has to be filled", "Error", JOptionPane.ERROR_MESSAGE);
+            validationOk = false;
+            return newRide;
+        }
         newRide.setAmountCurrency(amountField.isEnabled() ? amount : 0);
         newRide.setDistance(distance);
         newRide.setPassengers(passengers);
         newRide.setCurrencyType((Currency) currencyModel.getSelectedItem());
-        newRide.setCategory((Category) categoryModel.getSelectedItem());
+        newRide.setCategory((@Nullable Category) categoryModel.getSelectedItem());
         newRide.setTripType((TripType) tripTypeModel.getSelectedItem());
         return newRide;
     }

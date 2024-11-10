@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui.action;
 
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.service.ICategoryService;
 import cz.muni.fi.pv168.project.service.ICurrencyService;
 import cz.muni.fi.pv168.project.service.IRideService;
@@ -14,7 +15,7 @@ import java.awt.event.ActionEvent;
 import java.util.stream.Collectors;
 
 public class NewRideAction extends AbstractAction {
-    private JComponent parent;
+    private final JComponent parent;
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
 
@@ -22,6 +23,7 @@ public class NewRideAction extends AbstractAction {
 
     public NewRideAction(JComponent parentComponent, IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService) {
         super("Add ride");
+        this.parent = parentComponent;
         this.rideService = rideService;
         this.categoryListModel = new CategoryListModel(categoryService.get().stream().map(Category::new).collect(Collectors.toList()));
         this.currencyListModel = new CurrencyListModel(currencyService.get().stream().map(Currency::new).collect(Collectors.toList()));
@@ -36,7 +38,12 @@ public class NewRideAction extends AbstractAction {
                 ride = dialog.show(parent, "Add ride");
             } while (!dialog.isValidationOk());
         }
-        ride.ifPresent(rideService::create);
+        try {
+            ride.ifPresent(rideService::create);
+        } catch (ValidationException ex) {
+            JOptionPane.showMessageDialog(parent, ex.getMessage(), "Invalid entry", JOptionPane.ERROR_MESSAGE);
+        }
+
         // TODO - refresh ridesHistory and HomePage history + stats
     }
 }
