@@ -16,23 +16,21 @@ import java.util.stream.Collectors;
 
 public class RidesCategoriesPanel extends JPanel {
 
-    private final JPanel panel;
     private final CategoryListModel categoryListModel;
 
     private RidesCategoriesPanel(CategoryListModel categoryListModel) {
-        this.panel = new JPanel();
-        this.categoryListModel = categoryListModel;
+        super(new BorderLayout());
 
+        this.categoryListModel = categoryListModel;
         initComponents();
     }
 
     private void initComponents(){
-        panel.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("Manage Ride Categories");
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(titleLabel, BorderLayout.NORTH);
+        this.add(titleLabel, BorderLayout.NORTH);
 
         JTextField searchField = new JTextField(20);
         searchField.getDocument().addDocumentListener(new DocumentListener() {
@@ -55,14 +53,14 @@ public class RidesCategoriesPanel extends JPanel {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
         searchPanel.add(searchField, BorderLayout.CENTER);
-        panel.add(searchPanel, BorderLayout.NORTH);
+        this.add(searchPanel, BorderLayout.NORTH);
 
         JList<Category> categoryList = new JList<>(categoryListModel);
         categoryList.setCellRenderer(new CategoryRenderer());
 
         JScrollPane listScrollPane = new JScrollPane(categoryList);
         listScrollPane.setBorder(BorderFactory.createTitledBorder("Categories"));
-        panel.add(listScrollPane, BorderLayout.CENTER);
+        this.add(listScrollPane, BorderLayout.CENTER);
 
         JToolBar buttonsPanel = new JToolBar();
         buttonsPanel.setFloatable(false);
@@ -101,7 +99,7 @@ public class RidesCategoriesPanel extends JPanel {
             }
         });
 
-        panel.add(buttonsPanel, BorderLayout.NORTH);
+        this.add(buttonsPanel, BorderLayout.NORTH);
 
 //        Category testCategory = new Category("standard", new ImageIcon (Category.class.getResource("/icons/" + "NormalRide.png")));
 //        allCategories.add(testCategory);

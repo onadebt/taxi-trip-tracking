@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.service;
 import cz.muni.fi.pv168.project.model.CategoryDbModel;
 import cz.muni.fi.pv168.project.repository.ICategoryRepository;
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.ui.resources.Icons;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 public class CategoryService implements ICategoryService{
     ICategoryRepository categoryRepository;
+    Category categorySample = new Category( "CategoryA", Icons.getByName("truck-car.png"));
 
     public CategoryService(ICategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -49,7 +51,7 @@ public class CategoryService implements ICategoryService{
 
     @Override
     public List<Category> findAll() {
-        return null;
+        return List.of(categorySample);
     }
 
 

@@ -16,7 +16,7 @@ public class Ride {
     private Instant createdAt;
     private Integer numberOfPassengers;
 
-    public Ride(Long id, Double amountCurrency, Currency currency, Double distance, DistanceUnit distanceUnit, Category category, TripType tripType, Instant createdAt, Integer numberOfPassengers) {
+    public Ride(Long id, Double amountCurrency, Currency currency, Double distance, DistanceUnit distanceUnit, Category category, TripType tripType, Integer numberOfPassengers, Instant createdAt) {
         this.id = id;
         this.amountCurrency = amountCurrency;
         this.currency = currency;
@@ -28,7 +28,7 @@ public class Ride {
         this.createdAt = createdAt;
     }
 
-    public Ride(Double amountCurrency, Currency currency, Double distance, DistanceUnit distanceUnit, Category category, TripType tripType, Instant createdAt, Integer numberOfPassengers) {
+    public Ride(Double amountCurrency, Currency currency, Double distance, DistanceUnit distanceUnit, Category category, TripType tripType,  Integer numberOfPassengers, Instant createdAt) {
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;

@@ -19,7 +19,6 @@ public class MainWindow {
         DIProvider diProvider = new DIProvider();
         ICategoryService categoryService = diProvider.getCategoryService();
         CategoryListModel categoryListModel = new CategoryListModel(categoryService);
-        CategoryListModel categoryListModel = new CategoryListModel(diProvider.getCategoryService());
 
         frame = new JFrame("Taxi trip tracking");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,8 +31,8 @@ public class MainWindow {
         JPanel homePage = HomePage.createHomePagePanel(diProvider);
         tabbedPane.addTab("Home Page", homePage);
 
-        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(diProvider);
-        tabbedPane.addTab("Rides History", ridesHistory);
+//        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(diProvider);
+//        tabbedPane.addTab("Rides History", ridesHistory);
 
         JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryListModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);
