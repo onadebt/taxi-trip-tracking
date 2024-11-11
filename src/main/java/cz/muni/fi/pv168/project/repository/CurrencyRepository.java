@@ -1,38 +1,35 @@
 package cz.muni.fi.pv168.project.repository;
 
+import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.enums.CurrencyCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CurrencyRepository implements ICurrencyRepository {
     @Override
-    public void create(CurrencyDbModel currency) {
+    public void create(Currency currency) {
 
     }
 
     @Override
-    public void update(CurrencyDbModel currencyDbModel) {
+    public void update(Currency currency) {
 
     }
 
     @Override
-    public void delete(int currencyId) {
+    public void deleteById(Long currencyId) {
 
     }
 
     @Override
-    public @Nullable CurrencyDbModel getById() {
+    public @Nullable Currency getById(Long currencyId) {
         return null;
     }
 
     @Override
-    public @Nullable CurrencyDbModel getByTag(String tag) {
-        return null;
-    }
-
-    @Override
-    public List<CurrencyDbModel> get() {
+    public List<Currency> getAll() {
         return List.of();
     }
 }

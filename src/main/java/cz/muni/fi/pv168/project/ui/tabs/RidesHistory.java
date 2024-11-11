@@ -6,15 +6,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import cz.muni.fi.pv168.project.providers.DIProvider;
-import cz.muni.fi.pv168.project.service.IRideService;
-import cz.muni.fi.pv168.project.service.RideService;
-import cz.muni.fi.pv168.project.ui.Currencies;
 import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
 import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
-import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
-import cz.muni.fi.pv168.project.ui.model.RideModel;
 
 import java.awt.*;
 import java.awt.event.*;

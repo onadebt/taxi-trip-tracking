@@ -1,15 +1,15 @@
 package cz.muni.fi.pv168.project.repository;
 
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
+import cz.muni.fi.pv168.project.model.Category;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public interface ICategoryRepository {
-    public void create(CategoryDbModel category);
-    public void update(CategoryDbModel category);
-    public void delete(int categoryId);
-    public @Nullable CategoryDbModel getById(int categoryId);
-    public @Nullable CategoryDbModel getByName(String name);
-    public List<CategoryDbModel> get();
+    void create(Category category);
+    void update(Category category);
+    void delete(int categoryId);
+    @Nullable Category getById(int categoryId);
+    @Nullable Category getByName(String name);
+    List<Category> getAll();
 }

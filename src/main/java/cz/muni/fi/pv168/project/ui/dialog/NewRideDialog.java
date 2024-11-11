@@ -1,10 +1,9 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
-import cz.muni.fi.pv168.project.model.TripType;
-import cz.muni.fi.pv168.project.ui.model.Category;
+import cz.muni.fi.pv168.project.model.enums.TripType;
+import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
-import cz.muni.fi.pv168.project.ui.model.Currency;
-import cz.muni.fi.pv168.project.ui.model.NewRide;
+import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.CurrencyRenderer;
 import org.jetbrains.annotations.Nullable;

@@ -1,24 +1,23 @@
-package cz.muni.fi.pv168.project.ui.model;
-
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
+package cz.muni.fi.pv168.project.model;
 
 import javax.swing.*;
 
 public class Category {
-    private int id = 0;
+    private Long id = 0L;
     private String name;
     private Icon icon;
+
+    public Category(Long id, String name, Icon icon) {
+        this.id = id;
+        this.name = name;
+        this.icon = icon;
+    }
 
     public Category(String name, Icon icon) {
         this.name = name;
         this.icon = icon;
     }
 
-    public Category(CategoryDbModel categoryDbModel) {
-        this.id = categoryDbModel.getCategoryId();
-        this.name = categoryDbModel.getCategoryName();
-        this.icon = categoryDbModel.getIcon();
-    }
 
     public String getName() {
         return name;
@@ -36,8 +35,12 @@ public class Category {
         this.icon = icon;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

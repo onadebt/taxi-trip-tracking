@@ -2,7 +2,7 @@ package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.CategoryDbModel;
 import cz.muni.fi.pv168.project.repository.ICategoryRepository;
-import cz.muni.fi.pv168.project.ui.model.Category;
+import cz.muni.fi.pv168.project.model.Category;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -27,24 +27,31 @@ public class CategoryService implements ICategoryService{
     }
 
     @Override
-    public void delete(int categoryId) {
+    public void deleteById(Long categoryId) {
 
     }
 
     @Override
-    public @Nullable CategoryDbModel getById(int categoryId) {
-        return TestCategories.getById(categoryId);
+    public void deleteAll() {
+
     }
 
     @Override
-    public @Nullable CategoryDbModel getByName(String name) {
+    public @Nullable Category getById(Long categoryId) {
         return null;
     }
 
     @Override
-    public List<CategoryDbModel> get() {
-        return TestCategories.getTest();
+    public @Nullable Category getByName(String name) {
+        return null;
     }
+
+
+    @Override
+    public List<Category> findAll() {
+        return null;
+    }
+
 
     private class TestCategories {
         private static Map<Integer, CategoryDbModel> categories = new HashMap<>(){

@@ -1,5 +1,8 @@
 package cz.muni.fi.pv168.project.model;
 
+import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
+import cz.muni.fi.pv168.project.model.enums.TripType;
+
 import java.time.Instant;
 import java.util.UUID;
 

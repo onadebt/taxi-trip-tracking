@@ -1,18 +1,18 @@
 package cz.muni.fi.pv168.project.repository;
 
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
+import cz.muni.fi.pv168.project.model.Category;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CategoryRepository implements ICategoryRepository {
     @Override
-    public void create(CategoryDbModel category) {
+    public void create(Category category) {
 
     }
 
     @Override
-    public void update(CategoryDbModel category) {
+    public void update(Category category) {
 
     }
 
@@ -22,17 +22,17 @@ public class CategoryRepository implements ICategoryRepository {
     }
 
     @Override
-    public @Nullable CategoryDbModel getById(int categoryId) {
+    public @Nullable Category getById(int categoryId) {
         return null;
     }
 
     @Override
-    public @Nullable CategoryDbModel getByName(String name) {
+    public @Nullable Category getByName(String name) {
         return null;
     }
 
     @Override
-    public List<CategoryDbModel> get() {
-        return List.of();
+    public List<Category> getAll() {
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package cz.muni.fi.pv168.project.ui.renderers;
 
-import cz.muni.fi.pv168.project.ui.model.Currency;
+import cz.muni.fi.pv168.project.model.Currency;
 
 import javax.swing.*;
 
@@ -12,7 +12,7 @@ public class CurrencyRenderer extends AbstractRenderer<Currency>{
     @Override
     protected void updateLabel(JLabel label, Currency value) {
         if (value != null) {
-            label.setText(value.getCurrencyCode());
+            label.setText(value.getCode());
         }
     }
 }

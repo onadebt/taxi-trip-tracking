@@ -1,17 +1,16 @@
 package cz.muni.fi.pv168.project.repository;
 
-import cz.muni.fi.pv168.project.model.RideDbModel;
+import cz.muni.fi.pv168.project.model.Ride;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
+
 
 public interface IRideRepository {
-    void create(RideDbModel ride);
-    void update(RideDbModel ride);
+    void create(Ride ride);
+    void update(Ride ride);
     void delete(int rideId);
     void deleteAll();
-    @Nullable RideDbModel getById(int rideId);
-    @Nullable RideDbModel getByUuid(UUID uuid);
-    List<RideDbModel> get();
+    @Nullable Ride getById(int rideId);
+    List<Ride> getAll();
 }

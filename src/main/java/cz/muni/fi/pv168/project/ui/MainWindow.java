@@ -1,6 +1,9 @@
 package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.providers.DIProvider;
+import cz.muni.fi.pv168.project.service.CategoryService;
+import cz.muni.fi.pv168.project.service.ICategoryService;
+import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.tabs.*;
 
 import javax.swing.*;
@@ -13,6 +16,11 @@ public class MainWindow {
     private final DIProvider diProvider = new DIProvider();
 
     public MainWindow() {
+        DIProvider diProvider = new DIProvider();
+        ICategoryService categoryService = diProvider.getCategoryService();
+        CategoryListModel categoryListModel = new CategoryListModel(categoryService);
+        CategoryListModel categoryListModel = new CategoryListModel(diProvider.getCategoryService());
+
         frame = new JFrame("Taxi trip tracking");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 800);
@@ -27,7 +35,7 @@ public class MainWindow {
         JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(diProvider);
         tabbedPane.addTab("Rides History", ridesHistory);
 
-        JPanel ridesCategories = RidesCategories.createRidesCategoriesPanel();
+        JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryListModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
         JPanel settings = Settings.createSettingsPanel();

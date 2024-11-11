@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.repository;
 
+import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.RideDbModel;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,12 +9,12 @@ import java.util.UUID;
 
 public class RideRepository implements IRideRepository{
     @Override
-    public void create(RideDbModel ride) {
+    public void create(Ride ride) {
 
     }
 
     @Override
-    public void update(RideDbModel ride) {
+    public void update(Ride ride) {
 
     }
 
@@ -28,17 +29,12 @@ public class RideRepository implements IRideRepository{
     }
 
     @Override
-    public @Nullable RideDbModel getById(int rideId) {
+    public @Nullable Ride getById(int rideId) {
         return null;
     }
 
     @Override
-    public @Nullable RideDbModel getByUuid(UUID uuid) {
+    public List<Ride> getAll() {
         return null;
-    }
-
-    @Override
-    public List<RideDbModel> get() {
-        return List.of();
     }
 }

@@ -1,8 +1,8 @@
 package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import cz.muni.fi.pv168.project.model.DistanceUnit;
-import cz.muni.fi.pv168.project.ui.model.Currency;
+import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
+import cz.muni.fi.pv168.project.model.Currency;
 
 public interface ISettingsService {
 

@@ -38,7 +38,7 @@ public class JsonExportService implements ExportService {
     public void exportData(String path) {
         List<RideDbModel> rides = rideService.get();
         List<CategoryDbModel> categories = categoryService.get();
-        List<CurrencyDbModel> currencies = currencyService.get();
+        List<CurrencyDbModel> currencies = currencyService.getAll();
 
         List<RidePortModel> rideExports = new ArrayList<>();
         for (var ride : rides) {

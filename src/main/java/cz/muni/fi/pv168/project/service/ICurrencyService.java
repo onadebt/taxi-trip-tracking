@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.project.service;
 
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import cz.muni.fi.pv168.project.ui.model.Currency;
+import cz.muni.fi.pv168.project.model.Currency;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -23,20 +22,20 @@ public interface ICurrencyService {
      * Delete currency with specified id
      * @param currencyId
      */
-    void delete(int currencyId);
+    void delete(Long currencyId);
 
     /**
      * Get currency by given id
      * @param currencyId
      * @return currency, null if not found
      */
-    @Nullable CurrencyDbModel getById(int currencyId);
+    @Nullable Currency getById(Long currencyId);
 
-    @Nullable CurrencyDbModel getByTag(String tag);
+    @Nullable Currency getByTag(String tag);
 
     /**
      * Get all currencies
      * @return currencies
      */
-    List<CurrencyDbModel> get();
+    List<Currency> getAll();
 }

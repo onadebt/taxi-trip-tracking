@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.service.port;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.service.ICategoryService;
 import cz.muni.fi.pv168.project.service.ICurrencyService;
 import cz.muni.fi.pv168.project.service.IRideService;
@@ -49,7 +50,7 @@ public class JsonImportService implements ImportService {
 
         var allRides = rideService.get();
         var allCategories = categoryService.get();
-        var allCurrencies = currencyService.get();
+        var allCurrencies = currencyService.getAll();
 
         switch (mode) {
             case Create -> create(data, allRides, allCurrencies, allCategories);
@@ -60,7 +61,7 @@ public class JsonImportService implements ImportService {
 
     private void validate(List<RidePortModel> rides) {
         var allCategories = categoryService.get();
-        var allCurrencies = currencyService.get();
+        var allCurrencies = currencyService.getAll();
         for (var ride : rides) {
             CategoryDbModel category = null;
             if (!Objects.equals(ride.getCategoryName(), "")) {
