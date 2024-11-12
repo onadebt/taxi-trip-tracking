@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.service.ICategoryService;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
 

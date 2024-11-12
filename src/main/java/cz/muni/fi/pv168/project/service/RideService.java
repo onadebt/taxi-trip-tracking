@@ -2,6 +2,9 @@ package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.repository.IRideRepository;
+import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -54,7 +57,7 @@ public class RideService implements IRideService {
     }
 
     @Override
-    public List<Ride> findAll() {
+    public List<Ride> getAll() {
         return List.of();
     }
 

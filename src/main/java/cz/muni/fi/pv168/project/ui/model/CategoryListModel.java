@@ -1,7 +1,7 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.service.ICategoryService;
+import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 
 import javax.swing.*;
 

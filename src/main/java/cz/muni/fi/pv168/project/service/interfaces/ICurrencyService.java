@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.project.service;
+package cz.muni.fi.pv168.project.service.interfaces;
 
 import cz.muni.fi.pv168.project.model.Currency;
 import org.jetbrains.annotations.Nullable;

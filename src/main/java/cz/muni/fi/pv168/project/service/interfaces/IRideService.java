@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.project.service;
+package cz.muni.fi.pv168.project.service.interfaces;
 
 import cz.muni.fi.pv168.project.model.Ride;
 import org.jetbrains.annotations.Nullable;
@@ -40,5 +40,5 @@ public interface IRideService {
      * Get all rides
      * @return
      */
-    List<Ride> findAll();
+    List<Ride> getAll();
 }

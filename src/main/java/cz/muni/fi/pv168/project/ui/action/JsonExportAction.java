@@ -1,6 +1,6 @@
 package cz.muni.fi.pv168.project.ui.action;
 
-import cz.muni.fi.pv168.project.service.IRideService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.port.DataPortException;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 

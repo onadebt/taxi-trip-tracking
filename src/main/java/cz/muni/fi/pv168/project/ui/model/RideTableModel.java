@@ -28,11 +28,11 @@ public class RideTableModel extends AbstractTableModel {
 
     public RideTableModel(RideService rideService) {
         this.rideService = rideService;
-        this.rides = new ArrayList<>(rideService.findAll());
+        this.rides = new ArrayList<>(rideService.getAll());
     }
 
     public void refresh() {
-        this.rides = new ArrayList<>(rideService.findAll());
+        this.rides = new ArrayList<>(rideService.getAll());
         fireTableDataChanged();
     }
 

@@ -1,16 +1,14 @@
 package cz.muni.fi.pv168.project.service;
 
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
 import cz.muni.fi.pv168.project.repository.ICategoryRepository;
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class CategoryService implements ICategoryService{
+public class CategoryService implements ICategoryService {
     ICategoryRepository categoryRepository;
 
     public CategoryService(ICategoryRepository categoryRepository) {

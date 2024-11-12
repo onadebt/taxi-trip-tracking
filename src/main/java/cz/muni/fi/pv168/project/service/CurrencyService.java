@@ -1,14 +1,12 @@
 package cz.muni.fi.pv168.project.service;
 
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
 import cz.muni.fi.pv168.project.model.enums.CurrencyCode;
 import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
 import cz.muni.fi.pv168.project.model.Currency;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CurrencyService implements ICurrencyService {
     ICurrencyRepository currencyRepository;

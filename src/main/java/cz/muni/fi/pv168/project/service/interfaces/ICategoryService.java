@@ -1,6 +1,5 @@
-package cz.muni.fi.pv168.project.service;
+package cz.muni.fi.pv168.project.service.interfaces;
 
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
 import cz.muni.fi.pv168.project.model.Category;
 import org.jetbrains.annotations.Nullable;
 

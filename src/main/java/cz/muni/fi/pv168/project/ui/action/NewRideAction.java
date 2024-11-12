@@ -1,9 +1,9 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.exception.ValidationException;
-import cz.muni.fi.pv168.project.service.ICategoryService;
-import cz.muni.fi.pv168.project.service.ICurrencyService;
-import cz.muni.fi.pv168.project.service.IRideService;
+import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.ui.dialog.NewRideDialog;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
@@ -12,7 +12,6 @@ import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.stream.Collectors;
 
 public class NewRideAction extends AbstractAction {
     private final JComponent parent;
