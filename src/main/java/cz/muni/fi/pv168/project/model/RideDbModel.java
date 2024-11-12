@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 public class RideDbModel {
-    private Long rideId;
+    private @Nullable Long rideId;
     private double amountCurrency;
     private Long currencyId;
     private double distance;
@@ -18,7 +18,7 @@ public class RideDbModel {
     private UUID uuid;
 
     public RideDbModel(){};
-    public RideDbModel(Long rideId, double amountCurrency, Long currencyId, double distance, @Nullable Long categoryId,
+    public RideDbModel(@Nullable Long rideId, double amountCurrency, Long currencyId, double distance, @Nullable Long categoryId,
                        Integer passengers, TripType tripType, Instant createdDate, UUID uuid) {
         this.rideId = rideId;
         this.amountCurrency = amountCurrency;
@@ -41,15 +41,15 @@ public class RideDbModel {
         this.distance = ride.getDistance();
         this.passengers = ride.getNumberOfPassengers();
         this.tripType = ride.getTripType();
-        this.createdDate = Instant.now();
-        this.uuid = UUID.randomUUID();
+        this.createdDate = ride.getCreatedAt();
+        this.uuid = ride.getUuid();
     }
 
-    public Long getRideId() {
+    public @Nullable Long getRideId() {
         return rideId;
     }
 
-    public void setRideId(Long rideId) {
+    public void setRideId(@Nullable Long rideId) {
         this.rideId = rideId;
     }
 
