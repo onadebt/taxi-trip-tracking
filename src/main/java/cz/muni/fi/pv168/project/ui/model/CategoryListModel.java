@@ -13,7 +13,7 @@ public class CategoryListModel extends AbstractListModel<Category> {
 
     public CategoryListModel(ICategoryService categoryService) {
         this.categoryService = categoryService;
-        this.categories = List.copyOf(categoryService.findAll());
+        this.categories = List.copyOf(categoryService.getAll());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class CategoryListModel extends AbstractListModel<Category> {
 
 
     public void refresh() {
-        this.categories = List.copyOf(categoryService.findAll());
+        this.categories = List.copyOf(categoryService.getAll());
         fireContentsChanged(this, 0, getSize() - 1);
     }
 

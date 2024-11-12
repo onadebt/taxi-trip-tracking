@@ -2,21 +2,22 @@ package cz.muni.fi.pv168.project.model;
 
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 
 public class Ride {
-    private Long id = 0L;
+    private @Nullable Long id;
     private Double amountCurrency;
     private Currency currency;
     private Double distance;
     private DistanceUnit distanceUnit;
-    private Category category;
+    private @Nullable Category category;
     private TripType tripType;
     private Instant createdAt;
     private Integer numberOfPassengers;
 
-    public Ride(Long id, Double amountCurrency, Currency currency, Double distance, DistanceUnit distanceUnit, Category category, TripType tripType, Integer numberOfPassengers, Instant createdAt) {
+    public Ride(@Nullable Long id, Double amountCurrency, Currency currency, Double distance, DistanceUnit distanceUnit, @Nullable Category category, TripType tripType, Integer numberOfPassengers, Instant createdAt) {
         this.id = id;
         this.amountCurrency = amountCurrency;
         this.currency = currency;
@@ -28,15 +29,7 @@ public class Ride {
         this.createdAt = createdAt;
     }
 
-    public Ride(Double amountCurrency, Currency currency, Double distance, DistanceUnit distanceUnit, Category category, TripType tripType,  Integer numberOfPassengers, Instant createdAt) {
-        this.amountCurrency = amountCurrency;
-        this.currency = currency;
-        this.distance = distance;
-        this.distanceUnit = distanceUnit;
-        this.category = category;
-        this.tripType = tripType;
-        this.numberOfPassengers = numberOfPassengers;
-        this.createdAt = createdAt;
+    public Ride() {
     }
 
     public DistanceUnit getDistanceUnit() {
@@ -47,11 +40,11 @@ public class Ride {
         this.distanceUnit = distanceUnit;
     }
 
-    public Long getId() {
+    public @Nullable Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 
@@ -79,11 +72,11 @@ public class Ride {
         this.distance = distance;
     }
 
-    public Category getCategory() {
+    public @Nullable Category getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(@Nullable Category category) {
         this.category = category;
     }
 

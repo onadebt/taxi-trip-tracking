@@ -31,8 +31,8 @@ public class MainWindow {
         JPanel homePage = HomePage.createHomePagePanel(diProvider);
         tabbedPane.addTab("Home Page", homePage);
 
-//        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(diProvider);
-//        tabbedPane.addTab("Rides History", ridesHistory);
+        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(diProvider);
+        tabbedPane.addTab("Rides History", ridesHistory);
 
         JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryListModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);

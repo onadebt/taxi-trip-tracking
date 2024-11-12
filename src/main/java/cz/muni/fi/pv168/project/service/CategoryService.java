@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class CategoryService implements ICategoryService{
     ICategoryRepository categoryRepository;
-    Category categorySample = new Category( "CategoryA", Icons.getByName("truck-car.png"));
 
     public CategoryService(ICategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -50,22 +49,22 @@ public class CategoryService implements ICategoryService{
 
 
     @Override
-    public List<Category> findAll() {
-        return List.of(categorySample);
+    public List<Category> getAll() {
+        return getTestCategories();
     }
 
+    public String[] getStringArray() {
+        return getTestCategories().stream().map(Category::getName).toArray(String[]::new);
+    }
 
-    private class TestCategories {
-        private static Map<Integer, CategoryDbModel> categories = new HashMap<>(){
-            {put(1, new CategoryDbModel(1, "CategoryA", "truck-car.png"));}
-            {put(2, new CategoryDbModel(2, "CategoryB", "truck-car.png"));}
-            {put(3,  new CategoryDbModel(3, "CategoryC", "truck-car.png"));}
-        };
-        public static List<CategoryDbModel> getTest() {
-            return categories.values().stream().toList();
-        }
-        public static CategoryDbModel getById(int id) {
-            return categories.get(id);
-        }
+    public List<Category> getTestCategories() {
+        return List.of(
+                new Category( "CategoryA", Icons.getByName("truck-car.png")),
+                new Category( "CategoryB", Icons.getByName("normal-car.png")),
+                new Category( "CategoryC", Icons.getByName("sport-car.png")),
+                new Category( "CategoryD", Icons.getByName("convertible-car.png")),
+                new Category( "CategoryE", Icons.getByName("truck-car.png"))
+        );
     }
 }
+

@@ -39,5 +39,5 @@ public interface ICategoryService {
      * Get all categories
      * @return all categories
      */
-    List<Category> findAll();
+    List<Category> getAll();
 }

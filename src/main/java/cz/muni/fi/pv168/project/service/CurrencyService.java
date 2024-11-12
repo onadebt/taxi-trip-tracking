@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.enums.CurrencyCode;
 import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
 import cz.muni.fi.pv168.project.model.Currency;
 import org.jetbrains.annotations.Nullable;
@@ -41,8 +42,9 @@ public class CurrencyService implements ICurrencyService {
 
     @Override
     public List<Currency> getAll() {
-        return null;
+        return testCurrencies;
     }
+
 //    private class TestCurrencies {
 //        private static Map<Integer, CurrencyDbModel> currencies = new HashMap<>() {
 //            {put(1, new CurrencyDbModel(1, "Euro", "EUR", 1.0));}
@@ -57,4 +59,12 @@ public class CurrencyService implements ICurrencyService {
 //            return currencies.get(id);
 //        }
 //    }
+
+    private final List<Currency>  testCurrencies = List.of(
+        new Currency("US Dollar", CurrencyCode.USD, 22D),
+        new Currency("Euro", CurrencyCode.EUR, 25D),
+        new Currency("British Pound", CurrencyCode.GBP, 29D),
+        new Currency("Japanese Yen", CurrencyCode.JPY, 0.2D),
+        new Currency("Czech Crown", CurrencyCode.CZK, 1D)
+    );
 }
