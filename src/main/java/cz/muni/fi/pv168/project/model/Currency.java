@@ -1,6 +1,5 @@
 package cz.muni.fi.pv168.project.model;
 
-import cz.muni.fi.pv168.project.model.enums.CurrencyCode;
 import org.jetbrains.annotations.Nullable;
 
 public class Currency {

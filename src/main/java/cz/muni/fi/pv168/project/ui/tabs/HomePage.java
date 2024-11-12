@@ -23,10 +23,10 @@ public class HomePage extends JPanel {
         JPanel filterPanel = createFilterPanel();
         this.add(filterPanel, BorderLayout.NORTH);
 
-        JPanel statsPanel = createStatsPanel(RidesHistory.getSampleRideHistory());
+        JPanel statsPanel = createStatsPanel(diProvider.getRideService().getAll());
         this.add(statsPanel, BorderLayout.CENTER);
 
-        JPanel snapshotPanel = createLastRidesPanel(RidesHistory.getSampleRideHistory());
+        JPanel snapshotPanel = createLastRidesPanel(diProvider.getRideService().getAll());
         this.add(snapshotPanel, BorderLayout.SOUTH);
 
         JButton addButton = new JButton("Add Ride");

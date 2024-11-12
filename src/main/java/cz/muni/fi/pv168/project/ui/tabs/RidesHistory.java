@@ -5,23 +5,18 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.model.enums.CurrencyCode;
-import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
 import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
-//import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -29,14 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.toedter.calendar.JDateChooser;
-import cz.muni.fi.pv168.project.ui.resources.Icons;
+import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class RidesHistory extends JPanel {
 
-    public List<Ride> rideHistory = getSampleRideHistory();
+    public List<Ride> rideHistory;
     private final DIProvider diProvider;
 
     private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
@@ -47,6 +43,7 @@ public class RidesHistory extends JPanel {
     private RidesHistory(DIProvider diProvider) {
         super(new BorderLayout());
         this.diProvider = diProvider;
+        rideHistory = diProvider.getRideService().getAll();
 
 
         JLabel label = new JLabel("History of taxi rides:");
@@ -135,7 +132,7 @@ public class RidesHistory extends JPanel {
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         TableColumn currencyColumn = table.getColumnModel().getColumn(1);
-        JComboBox<CurrencyCode> currencyComboBox = new JComboBox<>(CurrencyCode.values());
+        JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
         currencyColumn.setCellEditor(new DefaultCellEditor(currencyComboBox));
 
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
@@ -146,7 +143,6 @@ public class RidesHistory extends JPanel {
         JComboBox<TripType> tripTypeComboBox = new JComboBox<>(TripType.values());
         tripTypeColumn.setCellEditor(new DefaultCellEditor(tripTypeComboBox));
 
-        // Add mouse listener to detect right-clicks
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -216,7 +212,7 @@ public class RidesHistory extends JPanel {
     private void editCurrency(JTable table, DefaultTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentCurrency = tableModel.getValueAt(row, 1);
-            JComboBox<CurrencyCode> currencyComboBox = new JComboBox<>(CurrencyCode.values());
+            JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
             currencyComboBox.setSelectedItem(currentCurrency);
             int option = JOptionPane.showConfirmDialog(table, currencyComboBox, "Choose new currency", JOptionPane.OK_CANCEL_OPTION);
 
@@ -225,6 +221,7 @@ public class RidesHistory extends JPanel {
             }
         }
     }
+
 
     private void editDistance(JTable table, DefaultTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
@@ -281,27 +278,27 @@ public class RidesHistory extends JPanel {
     }
 
     // for test
-    public static List<Ride> getSampleRideHistory() {
-        List<Ride> rides = new ArrayList<>();
-        Category premium = new Category("Premium", Icons.getByName("convertible-car.png"));
-        Category comfort = new Category("Sport", Icons.getByName("sport-car.png"));
-        Category standard = new Category("Standard", Icons.getByName("normal-car.png"));
-
-        Currency usd = new Currency("US Dollar", CurrencyCode.USD, 22D);
-        Currency eur = new Currency("Euro", CurrencyCode.EUR, 25D);
-        Currency gbp = new Currency("British Pound", CurrencyCode.GBP, 29D);
-        Currency jpy = new Currency("Japanese Yen", CurrencyCode.JPY, 0.2D);
-        Currency czk = new Currency("Czech Crown", CurrencyCode.CZK, 1D);
-
-        rides.add(new Ride(null,100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-        rides.add(new Ride(null, 100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-        rides.add(new Ride(null, 50D, usd, 5D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
-        rides.add(new Ride(null, 75D, eur, 7.5D, DistanceUnit.Kilometer, standard, TripType.Paid, 3, Instant.now()));
-        rides.add(new Ride(null, 120D, gbp, 12D, DistanceUnit.Kilometer, premium, TripType.Paid, 4, Instant.now()));
-        rides.add(new Ride(null, 30D, jpy, 3D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
-
-        return rides;
-    }
+//    public static List<Ride> getSampleRideHistory() {
+//        List<Ride> rides = new ArrayList<>();
+//        Category premium = new Category("Premium", Icons.getByName("convertible-car.png"));
+//        Category comfort = new Category("Sport", Icons.getByName("sport-car.png"));
+//        Category standard = new Category("Standard", Icons.getByName("normal-car.png"));
+//
+//        Currency usd = new Currency("US Dollar", CurrencyCode.USD, 22D);
+//        Currency eur = new Currency("Euro", CurrencyCode.EUR, 25D);
+//        Currency gbp = new Currency("British Pound", CurrencyCode.GBP, 29D);
+//        Currency jpy = new Currency("Japanese Yen", CurrencyCode.JPY, 0.2D);
+//        Currency czk = new Currency("Czech Crown", CurrencyCode.CZK, 1D);
+//
+//        rides.add(new Ride(null,100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
+//        rides.add(new Ride(null, 100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
+//        rides.add(new Ride(null, 50D, usd, 5D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
+//        rides.add(new Ride(null, 75D, eur, 7.5D, DistanceUnit.Kilometer, standard, TripType.Paid, 3, Instant.now()));
+//        rides.add(new Ride(null, 120D, gbp, 12D, DistanceUnit.Kilometer, premium, TripType.Paid, 4, Instant.now()));
+//        rides.add(new Ride(null, 30D, jpy, 3D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
+//
+//        return rides;
+//    }
 
     private JPanel createFilterPanel(JTable table, DefaultTableModel tableModel) {
         JPanel filterPanel = new JPanel(new GridBagLayout());
@@ -326,7 +323,7 @@ public class RidesHistory extends JPanel {
         // Currency filter
         gbc.gridx = 4;
         filterPanel.add(new JLabel("Currency"), gbc);
-        JComboBox<CurrencyCode> currencyField = new JComboBox<>(CurrencyCode.values());
+        JComboBox<String> currencyField = new JComboBox<>(getCurrencyCodesArray());
         gbc.gridx = 5;
         filterPanel.add(currencyField, gbc);
 
@@ -406,7 +403,7 @@ public class RidesHistory extends JPanel {
 
     private void applyFilters(JTable table, DefaultTableModel tableModel,
                               JTextField minAmountField, JTextField maxAmountField,
-                              JComboBox<CurrencyCode> currencyField, JTextField minDistanceField,
+                              JComboBox<String> currencyField, JTextField minDistanceField,
                               JTextField maxDistanceField, JComboBox<String> categoryField,
                               JComboBox<TripType> tripTypeField, JTextField minPeopleField,
                               JTextField maxPeopleField, JDateChooser startDateChooser, JDateChooser endDateChooser) {
@@ -490,5 +487,12 @@ public class RidesHistory extends JPanel {
         String[] categoriesNamesArray = categoriesNames.toArray(new String[0]);
 
         return new JComboBox<>(categoriesNamesArray);
+    }
+
+    private String[] getCurrencyCodesArray() {
+        List<String> currencyCodes = diProvider.getCurrencyService().getAll().stream()
+                .map(Currency::getCode)
+                .toList();
+        return currencyCodes.toArray(new String[0]);
     }
 }

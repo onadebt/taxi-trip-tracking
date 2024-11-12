@@ -1,8 +1,6 @@
 package cz.muni.fi.pv168.project.repository;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import cz.muni.fi.pv168.project.model.enums.CurrencyCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

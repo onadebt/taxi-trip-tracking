@@ -12,7 +12,7 @@ public class CurrencyRenderer extends AbstractRenderer<Currency>{
     @Override
     protected void updateLabel(JLabel label, Currency value) {
         if (value != null) {
-            label.setText(value.getCode().name());
+            label.setText(value.getCode());
         }
     }
 }
