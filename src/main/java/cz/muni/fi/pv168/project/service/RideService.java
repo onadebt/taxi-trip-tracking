@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.service;
 
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.RideDbModel;
 import cz.muni.fi.pv168.project.model.enums.TripType;
@@ -7,6 +9,7 @@ import cz.muni.fi.pv168.project.repository.IRideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
+import cz.muni.fi.pv168.project.ui.resources.Icons;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
@@ -63,19 +66,24 @@ public class RideService implements IRideService {
 
     @Override
     public List<Ride> getAll() {
-        return List.of();
+        return TestRides.get();
     }
 
 
-    private static class TestRides {
-        public static List<RideDbModel> get() {
+    private class TestRides {
+        static Currency euro = new Currency(1L, "Euro", "EUR", 1D);
+        static Currency dollar = new Currency(2L, "Dollar", "USD", 1.07);
+        static Currency czk = new Currency(3L, "Czech crown", "CZK", 25.21);
+
+        static Category categoryA = new Category(1L, "CategoryA", Icons.getByName("truck-car.png"));
+        static Category categoryB = new Category(2L, "CategoryB", Icons.getByName("truck-car.png"));
+        static Category categoryC = new Category(3L, "CategoryC", Icons.getByName("truck-car.png"));
+
+        public static List<Ride> get() {
             return Arrays.asList(
-                    new RideDbModel(1L, 30, 1L, 0.80, 1L, 2,
-                            TripType.Paid, Instant.now(), UUID.randomUUID()),
-                    new RideDbModel(2L, 100, 2L, 25.2, 2L, 4,
-                            TripType.Paid, Instant.ofEpochSecond(1000000000L), UUID.randomUUID()),
-                    new RideDbModel(3L, 800.0, 3L, 12.2, null, 3,
-                            TripType.Paid, Instant.now(), UUID.randomUUID())
+                    new Ride(1L, 30.0, euro, 100D, categoryA, TripType.Paid, 1, Instant.now(), UUID.randomUUID()),
+                    new Ride(2L, 50.0, dollar, 200D, categoryB, TripType.Personal, 2, Instant.now(), UUID.randomUUID()),
+                    new Ride(3L, 70.0, czk, 300D, categoryC, TripType.Paid, 3, Instant.now(), UUID.randomUUID())
             );
         }
     }

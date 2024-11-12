@@ -45,20 +45,20 @@ public class CurrencyService implements ICurrencyService {
 
     @Override
     public List<Currency> getAll() {
-        return List.of();
+        return TestCurrencies.getTest();
     }
 
     private class TestCurrencies {
-        private static Map<Integer, CurrencyDbModel> currencies = new HashMap<>() {
-            {put(1, new CurrencyDbModel(1, "Euro", "EUR", 1.0));}
-            {put(2, new CurrencyDbModel(2, "Dollar", "USD", 1.07));}
-            {put(3,  new CurrencyDbModel(3, "Czech crown", "CZK", 25.21));}
+        private static Map<Integer, Currency> currencies = new HashMap<>() {
+            {put(1, new Currency(1L, "Euro", "EUR", 1.0));}
+            {put(2, new Currency(2L, "Dollar", "USD", 1.07));}
+            {put(3,  new Currency(3L, "Czech crown", "CZK", 25.21));}
         };
-        public static List<CurrencyDbModel> getTest() {
+        public static List<Currency> getTest() {
             return currencies.values().stream().toList();
 
         }
-        public static CurrencyDbModel getById(int id) {
+        public static Currency getById(int id) {
             return currencies.get(id);
         }
     }

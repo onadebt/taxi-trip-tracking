@@ -53,7 +53,7 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public List<Category> getAll() {
-        return List.of();
+        return TestCategories.getTest();
     }
 
 //    public String[] getStringArray() {
@@ -61,15 +61,15 @@ public class CategoryService implements ICategoryService {
 //    }
 
     private class TestCategories {
-        private static Map<Integer, CategoryDbModel> categories = new HashMap<>(){
-            {put(1, new CategoryDbModel(1, "CategoryA", "truck-car.png"));}
-            {put(2, new CategoryDbModel(2, "CategoryB", "truck-car.png"));}
-            {put(3,  new CategoryDbModel(3, "CategoryC", "truck-car.png"));}
+        private static Map<Integer, Category> categories = new HashMap<>(){
+            {put(1, new Category(1L, "CategoryA", Icons.getByName("truck-car.png")));}
+            {put(2, new Category(2L, "CategoryB", Icons.getByName("truck-car.png")));}
+            {put(3,  new Category(3L, "CategoryC", Icons.getByName("truck-car.png")));}
         };
-        public static List<CategoryDbModel> getTest() {
+        public static List<Category> getTest() {
             return categories.values().stream().toList();
         }
-        public static CategoryDbModel getById(int id) {
+        public static Category getById(int id) {
             return categories.get(id);
         }
     }

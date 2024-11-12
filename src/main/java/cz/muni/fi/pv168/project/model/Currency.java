@@ -1,31 +1,27 @@
 package cz.muni.fi.pv168.project.model;
 
 import cz.muni.fi.pv168.project.model.enums.CurrencyCode;
+import org.jetbrains.annotations.Nullable;
 
 public class Currency {
-    private Long id = 0L;
+    private @Nullable Long id;
     private String name;
-    private CurrencyCode code;
+    private String code;
     private Double exchangeRate;
 
-    public Currency(Long id, String name, CurrencyCode code, Double exchangeRate) {
+    public Currency(@Nullable Long id, String name, String code, Double exchangeRate) {
         this.id = id;
         this.name = name;
         this.code = code;
         this.exchangeRate = exchangeRate;
     }
 
-    public Currency(String name, CurrencyCode code, Double exchangeRate) {
-        this.name = name;
-        this.code = code;
-        this.exchangeRate = exchangeRate;
-    }
 
-    public Long getId() {
+    public @Nullable Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 
@@ -37,11 +33,11 @@ public class Currency {
         this.name = name;
     }
 
-    public CurrencyCode getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(CurrencyCode code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
