@@ -1,13 +1,18 @@
 package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.Ride;
+import cz.muni.fi.pv168.project.model.RideDbModel;
+import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.repository.IRideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class RideService implements IRideService {
     private final ICategoryService categoryService;
@@ -62,18 +67,16 @@ public class RideService implements IRideService {
     }
 
 
-//    private static class TestRides {
-//        public static List<RideDbModel> get() {
-//            return Arrays.asList(
-//                    new RideDbModel(1, 30, 1, 0.80, 1, 2,
-//                            TripType.Paid, Instant.now(), UUID.randomUUID()),
-//                    new RideDbModel(2, 100, 2, 25.2, 2, 4,
-//                            TripType.Paid, Instant.ofEpochSecond(1000000000L), UUID.randomUUID()),
-//                    new RideDbModel(3, 800, 3, 12.2, null, 3,
-//                            TripType.Paid, Instant.now(), UUID.randomUUID())
-//            );
-//        }
-//    }
-//}
-
+    private static class TestRides {
+        public static List<RideDbModel> get() {
+            return Arrays.asList(
+                    new RideDbModel(1L, 30, 1L, 0.80, 1L, 2,
+                            TripType.Paid, Instant.now(), UUID.randomUUID()),
+                    new RideDbModel(2L, 100, 2L, 25.2, 2L, 4,
+                            TripType.Paid, Instant.ofEpochSecond(1000000000L), UUID.randomUUID()),
+                    new RideDbModel(3L, 800.0, 3L, 12.2, null, 3,
+                            TripType.Paid, Instant.now(), UUID.randomUUID())
+            );
+        }
+    }
 }
