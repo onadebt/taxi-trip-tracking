@@ -9,8 +9,8 @@ import java.util.List;
 public interface IRideRepository {
     void create(Ride ride);
     void update(Ride ride);
-    void delete(int rideId);
+    void delete(Long rideId);
     void deleteAll();
-    @Nullable Ride getById(int rideId);
+    @Nullable Ride getById(Long rideId);
     List<Ride> getAll();
 }

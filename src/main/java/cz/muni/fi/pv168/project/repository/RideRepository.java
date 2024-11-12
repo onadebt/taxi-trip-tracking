@@ -26,7 +26,7 @@ public class RideRepository implements IRideRepository {
     }
 
     @Override
-    public void delete(int rideId) {
+    public void delete(Long rideId) {
 
     }
 
@@ -36,7 +36,7 @@ public class RideRepository implements IRideRepository {
     }
 
     @Override
-    public @Nullable Ride getById(int rideId) {
+    public @Nullable Ride getById(Long rideId) {
         return null;
     }
 
