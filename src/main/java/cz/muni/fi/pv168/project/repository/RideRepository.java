@@ -5,9 +5,16 @@ import cz.muni.fi.pv168.project.model.RideDbModel;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
-public class RideRepository implements IRideRepository{
+
+public class RideRepository implements IRideRepository {
+    private ICurrencyRepository currencyRepository;
+    private ICategoryRepository categoryRepository;
+
+    public RideRepository(ICurrencyRepository currencyRepository, ICategoryRepository categoryRepository) {
+        this.currencyRepository = currencyRepository;
+        this.categoryRepository = categoryRepository;
+    }
     @Override
     public void create(Ride ride) {
 

@@ -25,10 +25,11 @@ public class DIProvider {
     private ImportService jsonImportService;
 
     public DIProvider() {
-        this.rideRepository = new RideRepository();
+
         this.categoryRepository = new CategoryRepository();
         this.currencyRepository = new CurrencyRepository();
         this.settingsRepository = new SettingsRepository();
+        this.rideRepository = new RideRepository(currencyRepository, categoryRepository);
 
         this.currencyService = new CurrencyService(currencyRepository);
         this.categoryService = new CategoryService(categoryRepository);
