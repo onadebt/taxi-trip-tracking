@@ -43,7 +43,7 @@ public class RidesHistory extends JPanel {
     private RidesHistory(DIProvider diProvider) {
         super(new BorderLayout());
         this.diProvider = diProvider;
-        rideHistory = diProvider.getRideService().getAll();
+        this.rideHistory = diProvider.getRideService().getAll();
 
 
         JLabel label = new JLabel("History of taxi rides:");

@@ -13,6 +13,7 @@ public interface IRideRepository {
     void create(RideDbModel ride);
     void update(RideDbModel ride);
     void deleteByUUID(UUID rideUUID);
+    void deleteById(Long rideId);
     void deleteAll();
     @Nullable Ride getById(Long rideId);
     RideDbModel getByUUID(UUID rideUUID);

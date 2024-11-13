@@ -27,10 +27,10 @@ public class JsonExportAction extends AbstractAction {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 jsonExportService.exportData(chooser.getSelectedFile().getPath());
+                JOptionPane.showMessageDialog(parent, "Export successful");
             } catch (DataPortException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        JOptionPane.showMessageDialog(parent, "Export successful");
     }
 }

@@ -40,6 +40,11 @@ public class RideRepository implements IRideRepository {
     }
 
     @Override
+    public void deleteById(Long rideId) {
+
+    }
+
+    @Override
     public void deleteAll() {
 
     }

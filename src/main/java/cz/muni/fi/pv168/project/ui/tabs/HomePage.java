@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.tabs;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.providers.DIProvider;
 //import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
 
@@ -30,7 +31,7 @@ public class HomePage extends JPanel {
         this.add(snapshotPanel, BorderLayout.SOUTH);
 
         JButton addButton = new JButton("Add Ride");
-//        addButton.addActionListener(new NewRideAction(this, new CurrencyListModel(new ArrayList<>()), new CategoryListModel(new ArrayList<>())));
+        addButton.addActionListener(new NewRideAction(this, diProvider.getRideService(), diProvider.getCurrencyService(), diProvider.getCategoryService()));
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());

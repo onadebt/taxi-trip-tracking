@@ -43,18 +43,21 @@ public class RideService implements IRideService {
 
     @Override
     public void create(Ride ride) {
-        RideDbModel rideDbModel = new RideDbModel();
+        validate(ride);
+        RideDbModel rideDbModel = new RideDbModel(ride);
         rideRepository.create(rideDbModel);
     }
 
     @Override
     public void update(Ride ride) {
-
+        validate(ride);
+        RideDbModel rideDbModel = new RideDbModel(ride);
+        rideRepository.update(rideDbModel);
     }
 
     @Override
     public void deleteById(Long rideId) {
-
+        rideRepository.deleteById(rideId);
     }
 
     @Override
@@ -81,6 +84,25 @@ public class RideService implements IRideService {
     @Override
     public List<Ride> getAll() {
         return TestRides.get();
+    }
+
+    @Override
+    public void validate(Ride ride) throws ValidationException {
+        String error = "";
+        if (ride.getAmountCurrency() < 0) {
+            error = "Amount of money obtained cannot be negative";
+        }
+
+        if (ride.getDistance() < 0) {
+            error = "Distance driven cannot be negative";
+        }
+
+        if (ride.getNumberOfPassengers() < 0) {
+            error = "Number of passengers driven cannot be negative";
+        }
+        if (!error.isEmpty()) {
+            throw new ValidationException(error);
+        }
     }
 
 

@@ -53,6 +53,7 @@ public class Ride {
         this.distance = rideDb.getDistance();
         this.category = category;
         this.tripType = rideDb.getTripType();
+        this.numberOfPassengers = rideDb.getPassengers();
         this.createdAt = rideDb.getCreatedDate();
         this.uuid = rideDb.getUuid();
     }
@@ -64,6 +65,7 @@ public class Ride {
         this.distance = port.getDistance();
         this.category = category;
         this.tripType = port.getTripType();
+        this.numberOfPassengers = port.getPassengers();
         this.createdAt = port.getCreatedDate();
         this.uuid = port.getUuid();
     }

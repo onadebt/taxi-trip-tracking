@@ -2,10 +2,7 @@ package cz.muni.fi.pv168.project.service.port;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import cz.muni.fi.pv168.project.model.RideDbModel;
-import cz.muni.fi.pv168.project.model.RidePortModel;
+import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
@@ -36,25 +33,12 @@ public class JsonExportService implements ExportService {
 
     @Override
     public void exportData(String path) {
-        List<RideDbModel> rides = rideService.get();
-        List<CategoryDbModel> categories = categoryService.get();
-        List<CurrencyDbModel> currencies = currencyService.getAll();
+        List<Ride> rides = rideService.getAll();
+        var distUnit = settingsService.getDefaultDistance();
 
         List<RidePortModel> rideExports = new ArrayList<>();
         for (var ride : rides) {
-            var catName = ride.getCategoryId() != null ?
-                    categories.stream()
-                    .filter(cat -> cat.getCategoryId() == ride.getCategoryId())
-                    .map(CategoryDbModel::getCategoryName)
-                    .findFirst().orElse("")
-                    : "";
-            var currTag = currencies.stream()
-                    .filter(curr -> curr.getCurrencyId() == ride.getCurrencyId())
-                    .map(CurrencyDbModel::getTag)
-                    .findFirst().orElseThrow();
-            var distUnit = settingsService.getDefaultDistance();
-
-            rideExports.add(new RidePortModel(ride, catName, currTag, distUnit));
+            rideExports.add(new RidePortModel(ride, distUnit));
         }
         try (var writer = Files.newBufferedWriter(Path.of(PathHelper.AddExtensionIfMissing(path, "json")), StandardCharsets.UTF_8)) {
             gson.toJson(rideExports, writer);

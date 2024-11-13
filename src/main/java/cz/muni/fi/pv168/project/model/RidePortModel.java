@@ -19,16 +19,16 @@ public class RidePortModel {
 
     public RidePortModel(){}
 
-    public RidePortModel(RideDbModel ride, String categoryName, String currencyTag, DistanceUnit distanceUnit) {
+    public RidePortModel(Ride ride, DistanceUnit distanceUnit) {
         this.uuid = ride.getUuid();
         this.amountCurrency = ride.getAmountCurrency();
-        this.currencyTag = currencyTag;
+        this.currencyTag = ride.getCurrency().getCode();
         this.distance = ride.getDistance();
         this.distanceUnit = distanceUnit;
-        this.categoryName = categoryName;
-        this.passengers = ride.getPassengers();
+        this.categoryName = ride.getCategory() != null ? ride.getCategory().getName() : "";
+        this.passengers = ride.getNumberOfPassengers();
         this.tripType = ride.getTripType();
-        this.createdDate = ride.getCreatedDate();
+        this.createdDate = ride.getCreatedAt();
     }
 
     public UUID getUuid() {
