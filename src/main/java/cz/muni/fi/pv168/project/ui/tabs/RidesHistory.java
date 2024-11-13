@@ -36,7 +36,7 @@ import java.util.Locale;
 
 public class RidesHistory extends JPanel {
 
-    public List<Ride> rideHistory = getSampleRideHistory();
+    public List<Ride> rideHistory;
     private final DIProvider diProvider;
 
     private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
@@ -47,6 +47,7 @@ public class RidesHistory extends JPanel {
     private RidesHistory(DIProvider diProvider) {
         super(new BorderLayout());
         this.diProvider = diProvider;
+        this.rideHistory = diProvider.getRideService().getAll();
 
 
         JLabel label = new JLabel("History of taxi rides:");
@@ -281,7 +282,7 @@ public class RidesHistory extends JPanel {
     }
 
     // for test
-    public static List<Ride> getSampleRideHistory() {
+    /*public static List<Ride> getSampleRideHistory() {
         List<Ride> rides = new ArrayList<>();
         Category premium = new Category("Premium", Icons.getByName("convertible-car.png"));
         Category comfort = new Category("Sport", Icons.getByName("sport-car.png"));
@@ -293,15 +294,15 @@ public class RidesHistory extends JPanel {
         Currency jpy = new Currency("Japanese Yen", CurrencyCode.JPY, 0.2D);
         Currency czk = new Currency("Czech Crown", CurrencyCode.CZK, 1D);
 
-        rides.add(new Ride(null,100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-        rides.add(new Ride(null, 100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-        rides.add(new Ride(null, 50D, usd, 5D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
-        rides.add(new Ride(null, 75D, eur, 7.5D, DistanceUnit.Kilometer, standard, TripType.Paid, 3, Instant.now()));
-        rides.add(new Ride(null, 120D, gbp, 12D, DistanceUnit.Kilometer, premium, TripType.Paid, 4, Instant.now()));
-        rides.add(new Ride(null, 30D, jpy, 3D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
+        rides.add(new Ride(null,100D, czk, 10D, premium, TripType.Paid, 2, Instant.now()));
+        rides.add(new Ride(null, 100D, czk, 10D, premium, TripType.Paid, 2, Instant.now()));
+        rides.add(new Ride(null, 50D, usd, 5D, comfort, TripType.Personal, 1, Instant.now()));
+        rides.add(new Ride(null, 75D, eur, 7.5D, standard, TripType.Paid, 3, Instant.now()));
+        rides.add(new Ride(null, 120D, gbp, 12D, premium, TripType.Paid, 4, Instant.now()));
+        rides.add(new Ride(null, 30D, jpy, 3D, comfort, TripType.Personal, 1, Instant.now()));
 
         return rides;
-    }
+    }*/
 
     private JPanel createFilterPanel(JTable table, DefaultTableModel tableModel) {
         JPanel filterPanel = new JPanel(new GridBagLayout());
