@@ -3,18 +3,19 @@ package cz.muni.fi.pv168.project.ui.tabs;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.ui.dialog.NewCurrencyDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.List;
 
 public class Currencies extends JPanel{
     public List<Currency> currencies;
     private final DIProvider diProvider;
-
 
 
     private Currencies(DIProvider diProvider) {
@@ -42,7 +43,11 @@ public class Currencies extends JPanel{
         JToolBar toolBar = new JToolBar();
 
         JButton addButton = new JButton("Add New Currency");
-        addButton.addActionListener(new NewRideAction(this, diProvider.getRideService(), diProvider.getCurrencyService(), diProvider.getCategoryService()));
+        addButton.addActionListener(e -> {
+            NewCurrencyDialog dialog = new NewCurrencyDialog((Frame) SwingUtilities.getWindowAncestor(this), diProvider);
+            dialog.setVisible(true);
+            refreshCurrenciesTable(table, tableModel);
+        });
         toolBar.add(addButton);
 
         JButton editNameButton = new JButton("Edit Name");
@@ -56,6 +61,10 @@ public class Currencies extends JPanel{
         JButton editExchangeRateButton = new JButton("Edit Exchange Rate");
         editExchangeRateButton.addActionListener(e -> editExchangeRate(table, tableModel));
         toolBar.add(editExchangeRateButton);
+
+        JButton deleteRowsButton = new JButton("Delete");
+        deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
+        toolBar.add(deleteRowsButton);
 
         return toolBar;
     }
@@ -116,6 +125,10 @@ public class Currencies extends JPanel{
         editExchangeRate.addActionListener(event -> editExchangeRate(table, tableModel));
         popupMenu.add(editExchangeRate);
 
+        JMenuItem deleteRows = new JMenuItem("Delete");
+        deleteRows.addActionListener(event -> deleteSelectedRows(table, tableModel));
+        popupMenu.add(deleteRows);
+
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
@@ -168,6 +181,34 @@ public class Currencies extends JPanel{
         Currency currency = currencies.get(selectedRow);
         currency.setExchangeRate(Double.parseDouble(newExchangeRate));
         diProvider.getCurrencyService().update(currency);
+    }
+
+    private void deleteSelectedRows(JTable table, DefaultTableModel tableModel) {
+        int[] selectedRows = table.getSelectedRows();
+        if (selectedRows.length == 0) {
+            return;
+        }
+
+        Arrays.sort(selectedRows);
+        for (int i = selectedRows.length - 1; i >= 0; i--) {
+            int row = selectedRows[i];
+            tableModel.removeRow(row);
+        }
+    }
+
+    private void refreshCurrenciesTable(JTable table, DefaultTableModel tableModel) {
+        tableModel.setRowCount(0);
+
+        currencies = diProvider.getCurrencyService().getAll();
+
+        for (Currency currency : currencies) {
+            Object[] rowData = {
+                    currency.getName(),
+                    currency.getCode(),
+                    currency.getExchangeRate()
+            };
+            tableModel.addRow(rowData);
+        }
     }
 
 }
