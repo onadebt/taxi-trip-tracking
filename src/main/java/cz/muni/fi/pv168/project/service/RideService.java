@@ -3,8 +3,8 @@ package cz.muni.fi.pv168.project.service;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.model.RideDbModel;
 import cz.muni.fi.pv168.project.model.enums.TripType;
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.repository.IRideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
@@ -29,44 +29,55 @@ public class RideService implements IRideService {
     }
 
 
-//    @Override
-//    public void create(RideDbModel ride) {
-//        if (!isValid(ride)) {
-//            // TODO - logging, maybe exception?
-//            throw new ValidationException("Created ride is not valid");
-//        }
-//        rideRepository.create(ride);
-//    }
-
-
     @Override
     public void create(Ride ride) {
-
+        validate(ride);
+        rideRepository.create(ride);
     }
 
     @Override
     public void update(Ride ride) {
-
+        validate(ride);
+        rideRepository.update(ride);
     }
 
     @Override
     public void deleteById(Long rideId) {
-
+        rideRepository.delete(rideId);
     }
 
     @Override
     public void deleteAll() {
-
+        rideRepository.deleteAll();
     }
 
     @Override
     public @Nullable Ride getById(Long rideId) {
-        return null;
+        return rideRepository.getById(rideId);
     }
 
     @Override
     public List<Ride> getAll() {
         return TestRides.get();
+    }
+
+    @Override
+    public void validate(Ride ride) throws ValidationException {
+        String error = "";
+        if (ride.getAmountCurrency() < 0) {
+            error = "Amount of money obtained cannot be negative";
+        }
+
+        if (ride.getDistance() < 0) {
+            error = "Distance driven cannot be negative";
+        }
+
+        if (ride.getNumberOfPassengers() < 0) {
+            error = "Number of passengers driven cannot be negative";
+        }
+        if (!error.isEmpty()) {
+            throw new ValidationException(error);
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.service.interfaces;
 
 import cz.muni.fi.pv168.project.model.Ride;
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -41,4 +42,11 @@ public interface IRideService {
      * @return
      */
     List<Ride> getAll();
+
+    /**
+     * Checks whether ride values are valid
+     * @throws ValidationException validation did not end well, returns reason
+     */
+    void validate(Ride ride) throws ValidationException;
+
 }

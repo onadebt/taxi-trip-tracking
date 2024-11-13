@@ -8,8 +8,8 @@ import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.interfaces.ISettingsService;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
-//import cz.muni.fi.pv168.project.service.port.JsonExportService;
-//import cz.muni.fi.pv168.project.service.port.JsonImportService;
+import cz.muni.fi.pv168.project.service.port.JsonExportService;
+import cz.muni.fi.pv168.project.service.port.JsonImportService;
 
 public class DIProvider {
     private IRideRepository rideRepository;
@@ -35,8 +35,8 @@ public class DIProvider {
         this.categoryService = new CategoryService(categoryRepository);
         this.settingsService = new SettingsService(settingsRepository);
         this.rideService = new RideService(categoryService, currencyService, rideRepository);
-//        this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
-//        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
+       this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
+       this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
     }
 
     public IRideRepository getRideRepository() {
