@@ -39,7 +39,7 @@ public class MainWindow {
         JPanel currencies = Currencies.createCurrenciesPanel(diProvider);
         tabbedPane.addTab("Currencies", currencies);
 
-        JPanel settings = Settings.createSettingsPanel();
+        JPanel settings = Settings.createSettingsPanel(diProvider);
         tabbedPane.addTab("Settings", settings);
 
         JPanel aboutUs = AboutUs.createAboutUsPanel();

@@ -4,7 +4,9 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.RideDbModel;
+import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.repository.IRideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
@@ -41,7 +43,8 @@ public class RideService implements IRideService {
 
     @Override
     public void create(Ride ride) {
-
+        RideDbModel rideDbModel = new RideDbModel();
+        rideRepository.create(rideDbModel);
     }
 
     @Override
@@ -63,6 +66,17 @@ public class RideService implements IRideService {
     public @Nullable Ride getById(Long rideId) {
         return null;
     }
+
+    @Override
+    public RideDbModel getByUUID(Long rideUUID) {
+        return null;
+    }
+
+    @Override
+    public void recalculateDistances(DistanceUnit newUnit) {
+        rideRepository.recalculateDistances(newUnit);
+    }
+
 
     @Override
     public List<Ride> getAll() {
