@@ -441,9 +441,9 @@ public class RidesHistory extends JPanel {
             }
         }
 
-        String selectedRide = (String) tripTypeField.getSelectedItem();
-        if (!"Any".equals(selectedRide)) {
-            filters.add(RowFilter.regexFilter(selectedRide, 4));
+        TripType selectedRide = (TripType) tripTypeField.getSelectedItem();
+        if (selectedRide != null) {
+            filters.add(RowFilter.regexFilter(selectedRide.name(), 4));
         }
 
         Integer minPeople = parseIntField(minPeopleField.getText());
