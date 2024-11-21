@@ -1,12 +1,11 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.service.CurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.ui.dialog.NewCurrencyDialog;
+import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -14,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Currencies extends JPanel {
-    private List<Currency> currencies;
+    private final List<Currency> currencies;
     private final ICurrencyService currencyService;
 
     private Currencies(ICurrencyService currencyService) {
@@ -28,7 +27,7 @@ public class Currencies extends JPanel {
         JTable currenciesTable = createCurrenciesTable();
         JScrollPane scrollPane = new JScrollPane(currenciesTable);
 
-        JToolBar toolBar = createToolBar(currenciesTable, (DefaultTableModel) currenciesTable.getModel());
+        JToolBar toolBar = createToolBar(currenciesTable, (CurrencyTableModel) currenciesTable.getModel());
         this.add(toolBar, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
     }
@@ -37,14 +36,14 @@ public class Currencies extends JPanel {
         return new Currencies(currencyService);
     }
 
-    private JToolBar createToolBar(JTable table, DefaultTableModel tableModel) {
+    private JToolBar createToolBar(JTable table, CurrencyTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
 
         JButton addButton = new JButton("Add New Currency");
         addButton.addActionListener(e -> {
             NewCurrencyDialog dialog = new NewCurrencyDialog((Frame) SwingUtilities.getWindowAncestor(this), currencyService);
             dialog.setVisible(true);
-            refreshCurrenciesTable(table, tableModel);
+            refreshCurrenciesTable(tableModel);
         });
         toolBar.add(addButton);
 
@@ -68,24 +67,9 @@ public class Currencies extends JPanel {
     }
 
     private JTable createCurrenciesTable() {
-        String[] columnNames = {"Name", "Code", "Exchange Rate"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 0 || column == 1 || column == 2;
-            }
-        };
-
-        for (Currency currency : currencies) {
-            Object[] rowData = {
-                    currency.getName(),
-                    currency.getCode(),
-                    currency.getExchangeRate()
-            };
-            tableModel.addRow(rowData);
-        }
-
+        CurrencyTableModel tableModel = new CurrencyTableModel(currencyService);
         JTable table = new JTable(tableModel);
+
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         table.addMouseListener(new MouseAdapter() {
@@ -107,7 +91,7 @@ public class Currencies extends JPanel {
         return table;
     }
 
-    private void showPopupMenu(MouseEvent e, JTable table, DefaultTableModel tableModel) {
+    private void showPopupMenu(MouseEvent e, JTable table, CurrencyTableModel tableModel) {
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem editName = new JMenuItem("Edit Name");
@@ -129,7 +113,7 @@ public class Currencies extends JPanel {
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
-    private void editName(JTable table, DefaultTableModel tableModel) {
+    private void editName(JTable table, CurrencyTableModel tableModel) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             return;
@@ -146,7 +130,7 @@ public class Currencies extends JPanel {
         currencyService.update(currency);
     }
 
-    private void editCode(JTable table, DefaultTableModel tableModel) {
+    private void editCode(JTable table, CurrencyTableModel tableModel) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             return;
@@ -163,7 +147,7 @@ public class Currencies extends JPanel {
         currencyService.update(currency);
     }
 
-    private void editExchangeRate(JTable table, DefaultTableModel tableModel) {
+    private void editExchangeRate(JTable table, CurrencyTableModel tableModel) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             return;
@@ -180,7 +164,7 @@ public class Currencies extends JPanel {
         currencyService.update(currency);
     }
 
-    private void deleteSelectedRows(JTable table, DefaultTableModel tableModel) {
+    private void deleteSelectedRows(JTable table, CurrencyTableModel tableModel) {
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length == 0) {
             return;
@@ -193,21 +177,11 @@ public class Currencies extends JPanel {
             currencyService.delete(currency.getId());
             tableModel.removeRow(row);
         }
-        refreshCurrenciesTable(table, tableModel);
+        refreshCurrenciesTable(tableModel);
     }
 
-    private void refreshCurrenciesTable(JTable table, DefaultTableModel tableModel) {
-        tableModel.setRowCount(0);
-
-        currencies = currencyService.getAll();
-
-        for (Currency currency : currencies) {
-            Object[] rowData = {
-                    currency.getName(),
-                    currency.getCode(),
-                    currency.getExchangeRate()
-            };
-            tableModel.addRow(rowData);
-        }
+    private void refreshCurrenciesTable(CurrencyTableModel tableModel) {
+        List<Currency> updatedCurrencies = currencyService.getAll();
+        tableModel.updateCurrencyList(updatedCurrencies);
     }
 }

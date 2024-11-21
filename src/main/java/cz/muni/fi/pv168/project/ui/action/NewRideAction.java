@@ -8,7 +8,7 @@ import cz.muni.fi.pv168.project.ui.dialog.NewRideDialog;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
+import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -25,7 +25,9 @@ public class NewRideAction extends AbstractAction {
         this.parent = parentComponent;
         this.rideService = rideService;
         this.categoryListModel = new CategoryListModel(categoryService);
-        this.currencyListModel = new CurrencyListModel(currencyService);
+
+        // Using the updated CurrencyTableModel
+        this.currencyListModel = new CurrencyTableModel(currencyService);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
