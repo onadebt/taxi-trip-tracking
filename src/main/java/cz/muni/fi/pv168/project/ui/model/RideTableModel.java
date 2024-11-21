@@ -6,6 +6,7 @@ import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.RideService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class RideTableModel extends AbstractTableModel {
     private List<Ride> rides;
-    private final RideService rideService;
+    private final IRideService rideService;
 
     private final List<Column<Ride, ?>> columns = List.of(
             Column.editable("Amount currency", Double.class, Ride::getAmountCurrency, Ride::setAmountCurrency),
@@ -26,7 +27,7 @@ public class RideTableModel extends AbstractTableModel {
     );
 
 
-    public RideTableModel(RideService rideService) {
+    public RideTableModel(IRideService rideService) {
         this.rideService = rideService;
         this.rides = new ArrayList<>(rideService.getAll());
     }

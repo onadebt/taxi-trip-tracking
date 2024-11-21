@@ -66,9 +66,9 @@ public class RidesHistory extends JPanel {
         JTable rideHistoryTable = createRidesTable();
         JScrollPane scrollPane = new JScrollPane(rideHistoryTable);
 
-        JToolBar toolBar = createToolBar(rideHistoryTable, (DefaultTableModel) rideHistoryTable.getModel());
+        JToolBar toolBar = createToolBar(rideHistoryTable, (RideTableModel) rideHistoryTable.getModel());
 
-        JPanel filterPanel = createFilterPanel(rideHistoryTable, (DefaultTableModel) rideHistoryTable.getModel());
+        JPanel filterPanel = createFilterPanel(rideHistoryTable, (RideTableModel) rideHistoryTable.getModel());
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
@@ -83,7 +83,7 @@ public class RidesHistory extends JPanel {
         return new RidesHistory(rideService, currencyService, categoryService, importService, exportService);
     }
 
-    private JToolBar createToolBar(JTable table, DefaultTableModel tableModel) {
+    private JToolBar createToolBar(JTable table, RideTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
 
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -138,32 +138,13 @@ public class RidesHistory extends JPanel {
 
 
     private JTable createRidesTable() {
-        String[] columnNames = {"Amount", "Currency", "Distance", "Category", "Trip Type", "Number of People", "Date"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 0 || column == 1 || column == 2 || column == 3 || column == 4 || column == 5 || column == 6;
-            }
-        };
+        RideTableModel rideTableModel = new RideTableModel(this.rideService);
+        JTable table = new JTable(rideTableModel);
 
-        for (Ride ride : rideHistory) {
-            Object[] rowData = {
-                    ride.getAmountCurrency(),
-                    ride.getCurrency().getCode(),
-                    ride.getDistance(),
-                    ride.getCategory().getName(),
-                    ride.getTripType().name(),
-                    ride.getNumberOfPassengers(),
-                    DATE_TIME_FORMATTER.format(ride.getCreatedAt())
-
-            };
-            tableModel.addRow(rowData);
-        }
-
-        JTable table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        TableColumn currencyColumn = table.getColumnModel().getColumn(1);
+        /*
+        TableColumn currencyColumn = table.getColumnModel().getColumn(0);
         JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
         currencyColumn.setCellEditor(new DefaultCellEditor(currencyComboBox));
 
@@ -174,19 +155,20 @@ public class RidesHistory extends JPanel {
         TableColumn tripTypeColumn = table.getColumnModel().getColumn(4);
         JComboBox<TripType> tripTypeComboBox = new JComboBox<>(TripType.values());
         tripTypeColumn.setCellEditor(new DefaultCellEditor(tripTypeComboBox));
+        */
 
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    showPopupMenu(e, table, tableModel);
+                    showPopupMenu(e, table, rideTableModel);
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    showPopupMenu(e, table, tableModel);
+                    showPopupMenu(e, table, rideTableModel);
                 }
             }
         });
@@ -194,7 +176,8 @@ public class RidesHistory extends JPanel {
         return table;
     }
 
-    private void showPopupMenu(MouseEvent e, JTable table, DefaultTableModel tableModel) {
+
+    private void showPopupMenu(MouseEvent e, JTable table, RideTableModel tableModel) {
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem editAmountItem = new JMenuItem("Edit Amount");
@@ -226,7 +209,7 @@ public class RidesHistory extends JPanel {
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
-    private void editAmount(JTable table, DefaultTableModel tableModel) {
+    private void editAmount(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentAmount = tableModel.getValueAt(row, 0);
             String newAmountStr = JOptionPane.showInputDialog(table, "Enter new amount:", currentAmount);
@@ -241,7 +224,7 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    private void editCurrency(JTable table, DefaultTableModel tableModel) {
+    private void editCurrency(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentCurrency = tableModel.getValueAt(row, 1);
             JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
@@ -255,7 +238,7 @@ public class RidesHistory extends JPanel {
     }
 
 
-    private void editDistance(JTable table, DefaultTableModel tableModel) {
+    private void editDistance(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentDistance = tableModel.getValueAt(row, 2);
             String newDistanceStr = JOptionPane.showInputDialog(table, "Enter new distance:", currentDistance);
@@ -269,7 +252,7 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    private void editCategory(JTable table, DefaultTableModel tableModel) {
+    private void editCategory(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentCategory = tableModel.getValueAt(row, 3);
             JComboBox<String> categoryComboBox = new JComboBox<>(new String[]{"Premium", "Comfort", "Standard"});
@@ -282,7 +265,7 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    private void editTripType(JTable table, DefaultTableModel tableModel) {
+    private void editTripType(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentTripType = tableModel.getValueAt(row, 4);
             JComboBox<String> tripTypeComboBox = new JComboBox<>(new String[]{TripType.Paid.name(), TripType.Personal.name()});
@@ -295,7 +278,7 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    private void deleteSelectedRows(JTable table, DefaultTableModel tableModel) {
+    private void deleteSelectedRows(JTable table, RideTableModel tableModel) {
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length > 0) {
             int confirm = JOptionPane.showConfirmDialog(table, "Are you sure you want to delete the selected rows?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
@@ -332,7 +315,7 @@ public class RidesHistory extends JPanel {
 //        return rides;
 //    }
 
-    private JPanel createFilterPanel(JTable table, DefaultTableModel tableModel) {
+    private JPanel createFilterPanel(JTable table, RideTableModel tableModel) {
         JPanel filterPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);  // Space between components
@@ -435,14 +418,14 @@ public class RidesHistory extends JPanel {
         return filterPanel;
     }
 
-    private void applyFilters(JTable table, DefaultTableModel tableModel,
+    private void applyFilters(JTable table, RideTableModel tableModel,
                               JTextField minAmountField, JTextField maxAmountField,
                               JComboBox<String> currencyField, JTextField minDistanceField,
                               JTextField maxDistanceField, JComboBox<String> categoryField,
                               JComboBox<TripType> tripTypeField, JTextField minPeopleField,
                               JTextField maxPeopleField, JDateChooser startDateChooser, JDateChooser endDateChooser) {
 
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
+        TableRowSorter<RideTableModel> sorter = new TableRowSorter<>(tableModel);
         table.setRowSorter(sorter);
 
         List<RowFilter<Object, Object>> filters = new ArrayList<>();
