@@ -18,7 +18,7 @@ public class RideTableModel extends AbstractTableModel {
 
     private final List<Column<Ride, ?>> columns = List.of(
             Column.editable("Amount currency", Double.class, Ride::getAmountCurrency, Ride::setAmountCurrency),
-            Column.editable("Currency Type", Currency.class, Ride::getCurrency, Ride::setCurrency),
+            Column.editable("Currency Type", String.class, Ride::getCurrencyCode, Ride::setCurrencyCode),
             Column.editable("Distance", Double.class, Ride::getDistance, Ride::setDistance),
             Column.editable("Distance Unit", DistanceUnit.class, Ride::getDistanceUnit, Ride::setDistanceUnit),
             Column.editable("Category", Category.class, Ride::getCategory, Ride::setCategory),

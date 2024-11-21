@@ -80,6 +80,14 @@ public class Ride {
         this.currency = currency;
     }
 
+    public String getCurrencyCode() {
+        return currency.getCode();
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currency.setCode(currencyCode);
+    }
+
     public Double getDistance() {
         return distance;
     }
