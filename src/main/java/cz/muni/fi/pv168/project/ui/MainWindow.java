@@ -47,8 +47,8 @@ public class MainWindow {
         JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryListModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
-        //JPanel currencies = Currencies.createCurrenciesPanel(currencyService);
-        //tabbedPane.addTab("Currencies", currencies);
+        JPanel currencies = Currencies.createCurrenciesPanel(currencyService);
+        tabbedPane.addTab("Currencies", currencies);
 
         //JPanel settings = Settings.createSettingsPanel(settingsService);
         //tabbedPane.addTab("Settings", settings);

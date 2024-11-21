@@ -1,7 +1,8 @@
 package cz.muni.fi.pv168.project.ui.dialog;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.providers.DIProvider;
+import cz.muni.fi.pv168.project.service.CurrencyService;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,11 +14,11 @@ public class NewCurrencyDialog extends JDialog {
     private final JTextField nameField;
     private final JTextField codeField;
     private final JTextField exchangeRateField;
-    private final DIProvider diProvider;
+    private final ICurrencyService currencyService;
 
-    public NewCurrencyDialog(Frame parent, DIProvider diProvider) {
+    public NewCurrencyDialog(Frame parent, ICurrencyService currencyService) {
         super(parent, "Add New Currency", true);
-        this.diProvider = diProvider;
+        this.currencyService = currencyService;
 
         // Set layout and size
         setLayout(new GridBagLayout());
@@ -86,34 +87,18 @@ public class NewCurrencyDialog extends JDialog {
             String exchangeRateText = exchangeRateField.getText().trim();
 
             if (name.isEmpty() || code.isEmpty() || exchangeRateText.isEmpty()) {
-                JOptionPane.showMessageDialog(NewCurrencyDialog.this,
-                        "All fields must be filled out.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(NewCurrencyDialog.this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            double exchangeRate;
             try {
-                exchangeRate = Double.parseDouble(exchangeRateText);
+                double exchangeRate = Double.parseDouble(exchangeRateText);
+                Currency currency = new Currency(null, name, code, exchangeRate); // ID is null for a new currency for now
+                currencyService.create(currency);
+                dispose();
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(NewCurrencyDialog.this,
-                        "Exchange rate must be a valid number.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
+                JOptionPane.showMessageDialog(NewCurrencyDialog.this, "Invalid exchange rate.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            Currency newCurrency = new Currency(null, name, code, exchangeRate);
-            diProvider.getCurrencyService().create(newCurrency);
-
-            JOptionPane.showMessageDialog(NewCurrencyDialog.this,
-                    "Currency added successfully!",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-            dispose();
         }
     }
 }
-

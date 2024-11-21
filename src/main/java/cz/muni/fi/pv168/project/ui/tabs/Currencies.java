@@ -1,8 +1,8 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.providers.DIProvider;
-import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.service.CurrencyService;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.ui.dialog.NewCurrencyDialog;
 
 import javax.swing.*;
@@ -13,16 +13,14 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
 
-public class Currencies extends JPanel{
-    public List<Currency> currencies;
-    private final DIProvider diProvider;
+public class Currencies extends JPanel {
+    private List<Currency> currencies;
+    private final ICurrencyService currencyService;
 
-
-    private Currencies(DIProvider diProvider) {
+    private Currencies(ICurrencyService currencyService) {
         super(new BorderLayout());
-        this.diProvider = diProvider;
-        currencies = diProvider.getCurrencyService().getAll();
-
+        this.currencyService = currencyService;
+        this.currencies = currencyService.getAll();
 
         JLabel label = new JLabel("Currencies");
         this.add(label, BorderLayout.NORTH);
@@ -35,8 +33,8 @@ public class Currencies extends JPanel{
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    public static JPanel createCurrenciesPanel(DIProvider diProvider) {
-        return new Currencies(diProvider);
+    public static JPanel createCurrenciesPanel(ICurrencyService currencyService) {
+        return new Currencies(currencyService);
     }
 
     private JToolBar createToolBar(JTable table, DefaultTableModel tableModel) {
@@ -44,7 +42,7 @@ public class Currencies extends JPanel{
 
         JButton addButton = new JButton("Add New Currency");
         addButton.addActionListener(e -> {
-            NewCurrencyDialog dialog = new NewCurrencyDialog((Frame) SwingUtilities.getWindowAncestor(this), diProvider);
+            NewCurrencyDialog dialog = new NewCurrencyDialog((Frame) SwingUtilities.getWindowAncestor(this), currencyService);
             dialog.setVisible(true);
             refreshCurrenciesTable(table, tableModel);
         });
@@ -109,7 +107,6 @@ public class Currencies extends JPanel{
         return table;
     }
 
-
     private void showPopupMenu(MouseEvent e, JTable table, DefaultTableModel tableModel) {
         JPopupMenu popupMenu = new JPopupMenu();
 
@@ -146,7 +143,7 @@ public class Currencies extends JPanel{
         tableModel.setValueAt(newName, selectedRow, 0);
         Currency currency = currencies.get(selectedRow);
         currency.setName(newName);
-        diProvider.getCurrencyService().update(currency);
+        currencyService.update(currency);
     }
 
     private void editCode(JTable table, DefaultTableModel tableModel) {
@@ -163,7 +160,7 @@ public class Currencies extends JPanel{
         tableModel.setValueAt(newCode, selectedRow, 1);
         Currency currency = currencies.get(selectedRow);
         currency.setCode(newCode);
-        diProvider.getCurrencyService().update(currency);
+        currencyService.update(currency);
     }
 
     private void editExchangeRate(JTable table, DefaultTableModel tableModel) {
@@ -180,7 +177,7 @@ public class Currencies extends JPanel{
         tableModel.setValueAt(newExchangeRate, selectedRow, 2);
         Currency currency = currencies.get(selectedRow);
         currency.setExchangeRate(Double.parseDouble(newExchangeRate));
-        diProvider.getCurrencyService().update(currency);
+        currencyService.update(currency);
     }
 
     private void deleteSelectedRows(JTable table, DefaultTableModel tableModel) {
@@ -192,14 +189,17 @@ public class Currencies extends JPanel{
         Arrays.sort(selectedRows);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             int row = selectedRows[i];
+            Currency currency = currencies.get(row);
+            currencyService.delete(currency.getId());
             tableModel.removeRow(row);
         }
+        refreshCurrenciesTable(table, tableModel);
     }
 
     private void refreshCurrenciesTable(JTable table, DefaultTableModel tableModel) {
         tableModel.setRowCount(0);
 
-        currencies = diProvider.getCurrencyService().getAll();
+        currencies = currencyService.getAll();
 
         for (Currency currency : currencies) {
             Object[] rowData = {
@@ -210,5 +210,4 @@ public class Currencies extends JPanel{
             tableModel.addRow(rowData);
         }
     }
-
 }
