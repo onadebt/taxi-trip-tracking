@@ -143,11 +143,11 @@ public class RidesHistory extends JPanel {
 
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        /*
+
         TableColumn currencyColumn = table.getColumnModel().getColumn(0);
         JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
         currencyColumn.setCellEditor(new DefaultCellEditor(currencyComboBox));
-
+        /*
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
         JComboBox<String> categoryComboBox = createCategoryComboBox();
         categoryColumn.setCellEditor(new DefaultCellEditor(categoryComboBox));

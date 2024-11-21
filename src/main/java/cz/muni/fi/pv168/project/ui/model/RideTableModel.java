@@ -26,7 +26,6 @@ public class RideTableModel extends AbstractTableModel {
             Column.editable("Passengers", Integer.class, Ride::getNumberOfPassengers, Ride::setNumberOfPassengers)
     );
 
-
     public RideTableModel(IRideService rideService) {
         this.rideService = rideService;
         this.rides = new ArrayList<>(rideService.getAll());
@@ -65,8 +64,6 @@ public class RideTableModel extends AbstractTableModel {
         return rides.indexOf(ride);
     }
 
-
-
     @Override
     public int getRowCount() {
         return rides.size();
@@ -74,12 +71,18 @@ public class RideTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return rides.size();
+        return columns.size();
+    }
+
+    @Override
+    public String getColumnName(int columnIndex) {
+        return columns.get(columnIndex).getName();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return null;
+        Ride ride = rides.get(rowIndex);
+        return columns.get(columnIndex).getValue(ride);
     }
 
     @Override
@@ -91,8 +94,7 @@ public class RideTableModel extends AbstractTableModel {
         }
     }
 
-    public Ride getEntity(int rowIndex){
+    public Ride getEntity(int rowIndex) {
         return rides.get(rowIndex);
     }
-
 }
