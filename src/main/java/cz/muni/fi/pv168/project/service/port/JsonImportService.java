@@ -46,30 +46,24 @@ public class JsonImportService implements ImportService {
 
         validate(data);
 
-        var allRides = rideService.getAll();
-        var allCategories = categoryService.getAll();
-        var allCurrencies = currencyService.getAll();
-
         switch (mode) {
-            case Create -> create(data, allRides, allCurrencies, allCategories);
-            case CreateUpdate -> createUpdate(data, allRides, allCurrencies, allCategories);
-            case Overwrite -> overwrite(data, allRides, allCurrencies, allCategories);
+            case Create -> create(data);
+            case CreateUpdate -> createUpdate(data);
+            case Overwrite -> overwrite(data);
         }
     }
 
     private void validate(List<RidePortModel> rides) {
-        var allCategories = categoryService.getAll();
-        var allCurrencies = currencyService.getAll();
         for (var ride : rides) {
             Category category = null;
             if (!Objects.equals(ride.getCategoryName(), "")) {
-                category = allCategories.stream().filter(cat -> cat.getName().equals(ride.getCategoryName())).findFirst().orElse(null);
+                category = categoryService.getByName(ride.getCategoryName());
                 if (category == null) {
                     throw new DataPortException(String.format("Category of name \"%s\" does not exist. Import aborted.", ride.getCategoryName()));
                 }
             }
 
-            var currency = allCurrencies.stream().filter(curr -> curr.getCode().toString().equals(ride.getCurrencyTag())).findFirst().orElse(null);
+            var currency = currencyService.getByTag(ride.getCurrencyTag());
             if (currency == null) {
                 throw new DataPortException(String.format("Currency of tag \"%s\" does not exist. Import aborted.", ride.getCurrencyTag()));
             }
@@ -82,27 +76,27 @@ public class JsonImportService implements ImportService {
         }
     }
 
-    private void create(List<RidePortModel> rides, List<Ride> allRides, List<Currency> allCurrencies, List<Category> allCategories) {
+    private void create(List<RidePortModel> rides) {
         var defaultDistUnit = settingsService.getDefaultDistance();
         for (var ride : rides) {
-            if (allRides.stream().anyMatch(r -> r.getUuid() == ride.getUuid())) {
+            if (rideService.getAll().stream().anyMatch(r -> r.getUuid() == ride.getUuid())) {
                 continue;
             }
 
-            var currency = allCurrencies.stream().filter(c -> c.getCode().equals(ride.getCurrencyTag())).findFirst().orElseThrow();
-            var category = allCategories.stream().filter(c -> c.getName().equals(ride.getCategoryName())).findFirst().orElse(null);
+            var currency = currencyService.getByTag(ride.getCurrencyTag());
+            var category = categoryService.getByName(ride.getCategoryName());
 
             rideService.create(createRideFromPortModel(ride, currency, category, defaultDistUnit));
         }
     }
 
-    private void createUpdate(List<RidePortModel> rides, List<Ride> allRides, List<Currency> allCurrencies, List<Category> allCategories) {
+    private void createUpdate(List<RidePortModel> rides) {
         var defaultDistUnit = settingsService.getDefaultDistance();
         for (var ride : rides) {
-            var currency = allCurrencies.stream().filter(c -> c.getCode().equals(ride.getCurrencyTag())).findFirst().orElseThrow();
-            var category = allCategories.stream().filter(c -> c.getName().equals(ride.getCategoryName())).findFirst().orElse(null);
+            var currency = currencyService.getByTag(ride.getCurrencyTag());
+            var category = categoryService.getByName(ride.getCategoryName());
 
-            if (allRides.stream().anyMatch(r -> r.getUuid().equals(ride.getUuid()))) {
+            if (rideService.getAll().stream().anyMatch(r -> r.getUuid().equals(ride.getUuid()))) {
                 rideService.update(createRideFromPortModel(ride, currency, category, defaultDistUnit));
             } else {
                 rideService.create(createRideFromPortModel(ride, currency, category, defaultDistUnit));
@@ -110,10 +104,9 @@ public class JsonImportService implements ImportService {
         }
     }
 
-
-    private void overwrite(List<RidePortModel> rides, List<Ride> allRides, List<Currency> allCurrencies, List<Category> allCategories) {
+    private void overwrite(List<RidePortModel> rides) {
         rideService.deleteAll();
-        create(rides, allRides, allCurrencies, allCategories);
+        create(rides);
     }
 
     private Ride createRideFromPortModel(RidePortModel ridePortModel, Currency currency, @Nullable Category category, DistanceUnit defaultDistanceUnit) {
