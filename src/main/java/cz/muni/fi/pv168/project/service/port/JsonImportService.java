@@ -116,14 +116,16 @@ public class JsonImportService implements ImportService {
         create(rides, allRides, allCurrencies, allCategories);
     }
 
-    private Ride createRideFromPortModel(RidePortModel ride, Currency currency, @Nullable Category category, DistanceUnit defaultDistanceUnit) {
-        if (ride.getDistanceUnit() != defaultDistanceUnit) {
+    private Ride createRideFromPortModel(RidePortModel ridePortModel, Currency currency, @Nullable Category category, DistanceUnit defaultDistanceUnit) {
+        if (ridePortModel.getDistanceUnit() != defaultDistanceUnit) {
             if (defaultDistanceUnit == DistanceUnit.Kilometer) {
-                ride.setDistance(DistanceConversionHelper.milesToKilometers(ride.getDistance()));
+                ridePortModel.setDistance(DistanceConversionHelper.milesToKilometers(ridePortModel.getDistance()));
             } else {
-                ride.setDistance(DistanceConversionHelper.kilometersToMiles(ride.getDistance()));
+                ridePortModel.setDistance(DistanceConversionHelper.kilometersToMiles(ridePortModel.getDistance()));
             }
+            ridePortModel.setDistanceUnit(defaultDistanceUnit);
         }
-       return new Ride(ride, currency, category);
+
+        return RidePortConverter.fromPortModel(ridePortModel, currency, category);
     }
 }

@@ -46,30 +46,6 @@ public class Ride {
         this.uuid = uuid;
     }
 
-    /*Ride from DB*/
-    public Ride(RideDbModel rideDb, Currency currency, @Nullable Category category) {
-        this.amountCurrency = rideDb.getAmountCurrency();
-        this.currency = currency;
-        this.distance = rideDb.getDistance();
-        this.category = category;
-        this.tripType = rideDb.getTripType();
-        this.numberOfPassengers = rideDb.getPassengers();
-        this.createdAt = rideDb.getCreatedDate();
-        this.uuid = rideDb.getUuid();
-    }
-
-    /*Ride from import*/
-    public Ride(RidePortModel port, Currency currency, @Nullable Category category) {
-        this.amountCurrency = port.getAmountCurrency();
-        this.currency = currency;
-        this.distance = port.getDistance();
-        this.category = category;
-        this.tripType = port.getTripType();
-        this.numberOfPassengers = port.getPassengers();
-        this.createdAt = port.getCreatedDate();
-        this.uuid = port.getUuid();
-    }
-
     public Ride() {}
 
     public DistanceUnit getDistanceUnit() {
