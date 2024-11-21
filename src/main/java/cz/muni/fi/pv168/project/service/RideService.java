@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.service;
 
+import cz.muni.fi.pv168.project.database.RideDbConverter;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
@@ -44,14 +45,14 @@ public class RideService implements IRideService {
     @Override
     public void create(Ride ride) {
         validate(ride);
-        RideDbModel rideDbModel = new RideDbModel(ride);
+        RideDbModel rideDbModel = RideDbConverter.toDbModel(ride);
         rideRepository.create(rideDbModel);
     }
 
     @Override
     public void update(Ride ride) {
         validate(ride);
-        RideDbModel rideDbModel = new RideDbModel(ride);
+        RideDbModel rideDbModel = RideDbConverter.toDbModel(ride);
         rideRepository.update(rideDbModel);
     }
 

@@ -31,20 +31,6 @@ public class RideDbModel {
         this.uuid = uuid;
     }
 
-    public RideDbModel(Ride ride) {
-        this.rideId = ride.getId();
-        this.amountCurrency = ride.getAmountCurrency();
-        if (ride.getCategory() != null) {
-            this.categoryId = ride.getCategory().getId();
-        }
-        this.currencyId = ride.getCurrency().getId();
-        this.distance = ride.getDistance();
-        this.passengers = ride.getNumberOfPassengers();
-        this.tripType = ride.getTripType();
-        this.createdDate = ride.getCreatedAt();
-        this.uuid = ride.getUuid();
-    }
-
     public @Nullable Long getRideId() {
         return rideId;
     }
