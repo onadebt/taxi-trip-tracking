@@ -9,7 +9,6 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.TripType;
-import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.service.CategoryService;
 import cz.muni.fi.pv168.project.service.CurrencyService;
 import cz.muni.fi.pv168.project.service.RideService;

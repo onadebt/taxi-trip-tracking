@@ -50,8 +50,8 @@ public class MainWindow {
         JPanel currencies = Currencies.createCurrenciesPanel(currencyService);
         tabbedPane.addTab("Currencies", currencies);
 
-        //JPanel settings = Settings.createSettingsPanel(settingsService);
-        //tabbedPane.addTab("Settings", settings);
+        JPanel settings = Settings.createSettingsPanel(rideService);
+        tabbedPane.addTab("Settings", settings);
 
         JPanel aboutUs = AboutUs.createAboutUsPanel();
         tabbedPane.addTab("About Us", aboutUs);

@@ -1,22 +1,17 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
-import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Settings extends JPanel {
-    private DIProvider diProvider;
     private static DistanceUnit defaultDistanceUnit = DistanceUnit.Kilometer;
 
-    private Settings(DIProvider diProvider) {
+    private Settings(IRideService rideService) {
         super(new BorderLayout());
-        this.diProvider = diProvider;
-
 
         JPanel panel = new JPanel();
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 10));
@@ -34,13 +29,25 @@ public class Settings extends JPanel {
         JComboBox<DistanceUnit> distanceUnitComboBox = new JComboBox<>(DistanceUnit.values());
         distanceUnitComboBox.setPreferredSize(new Dimension(100, 20));
 
+        JButton applyButton = getjButton(rideService, distanceUnitComboBox);
+
+        this.add(currencyLabel);
+        this.add(currencyComboBox);
+        this.add(Box.createRigidArea(new Dimension(10, 0)));
+        this.add(distanceUnitLabel);
+        this.add(distanceUnitComboBox);
+        this.add(applyButton);
+        this.setPreferredSize(new Dimension(300, 150));
+    }
+
+    private @NotNull JButton getjButton(IRideService rideService, JComboBox<DistanceUnit> distanceUnitComboBox) {
         JButton applyButton = new JButton("Apply");
         applyButton.setPreferredSize(new Dimension(80, 25));
         applyButton.addActionListener(e -> {
             DistanceUnit selectedUnit = (DistanceUnit) distanceUnitComboBox.getSelectedItem();
             if (selectedUnit != null && selectedUnit != defaultDistanceUnit) {
                 setDefaultDistanceUnit(selectedUnit);
-                diProvider.getRideService().recalculateDistances(selectedUnit);
+                rideService.recalculateDistances(selectedUnit);
 
                 JOptionPane.showMessageDialog(this,
                         "Distance unit has been changed to " + selectedUnit + " and distances have been recalculated.",
@@ -53,19 +60,11 @@ public class Settings extends JPanel {
                         JOptionPane.WARNING_MESSAGE);
             }
         });
-
-        this.add(currencyLabel);
-        this.add(currencyComboBox);
-        this.add(Box.createRigidArea(new Dimension(10, 0)));
-        this.add(distanceUnitLabel);
-        this.add(distanceUnitComboBox);
-        this.add(applyButton);  // Add the Apply button
-        this.setPreferredSize(new Dimension(300, 150));
-
+        return applyButton;
     }
 
-    public static JPanel createSettingsPanel(DIProvider diProvider) {
-        return new Settings(diProvider);
+    public static JPanel createSettingsPanel(IRideService rideService) {
+        return new Settings(rideService);
     }
 
     public static DistanceUnit getDefaultDistanceUnit() {
