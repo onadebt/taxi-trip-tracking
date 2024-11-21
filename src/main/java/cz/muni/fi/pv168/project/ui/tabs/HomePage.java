@@ -1,37 +1,39 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.providers.DIProvider;
-//import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
-import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HomePage extends JPanel {
-    private final DIProvider diProvider;
+    private final IRideService rideService;
+    private final ICurrencyService currencyService;
+    private final ICategoryService categoryService;
 
-    private HomePage(DIProvider diProvider) {
+    public HomePage(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService) {
         super(new BorderLayout());
-        this.diProvider = diProvider;
+        this.rideService = rideService;
+        this.currencyService = currencyService;
+        this.categoryService = categoryService;
 
         JPanel filterPanel = createFilterPanel();
         this.add(filterPanel, BorderLayout.NORTH);
 
-        JPanel statsPanel = createStatsPanel(diProvider.getRideService().getAll());
+        List<Ride> rideHistory = rideService.getAll();
+
+        JPanel statsPanel = createStatsPanel(rideHistory);
         this.add(statsPanel, BorderLayout.CENTER);
 
-        JPanel snapshotPanel = createLastRidesPanel(diProvider.getRideService().getAll());
+        JPanel snapshotPanel = createLastRidesPanel(rideHistory);
         this.add(snapshotPanel, BorderLayout.SOUTH);
 
         JButton addButton = new JButton("Add Ride");
-        addButton.addActionListener(new NewRideAction(this, diProvider.getRideService(), diProvider.getCurrencyService(), diProvider.getCategoryService()));
+        addButton.addActionListener(new NewRideAction(this, rideService, currencyService, categoryService));
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -55,8 +57,8 @@ public class HomePage extends JPanel {
         this.add(centerPanel, BorderLayout.CENTER);
     }
 
-    public static JPanel createHomePagePanel(DIProvider diProvider) {
-        return new HomePage(diProvider);
+    public static JPanel createHomePagePanel(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService) {
+        return new HomePage(rideService, currencyService, categoryService);
     }
 
     private JPanel createFilterPanel() {
