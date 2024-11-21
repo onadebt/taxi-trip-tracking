@@ -24,8 +24,7 @@ public class RidesCategoriesPanel extends JPanel {
         initComponents();
     }
 
-    private void initComponents(){
-
+    private void initComponents() {
         JLabel titleLabel = new JLabel("Manage Ride Categories");
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
@@ -63,7 +62,7 @@ public class RidesCategoriesPanel extends JPanel {
 
         JToolBar buttonsPanel = new JToolBar();
         buttonsPanel.setFloatable(false);
-        buttonsPanel.add(Box.createHorizontalGlue());
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         JButton addButton = new JButton("Add Category");
         addButton.addActionListener(e -> addCategory());
@@ -78,7 +77,6 @@ public class RidesCategoriesPanel extends JPanel {
         deleteButton.setEnabled(false);
         deleteButton.addActionListener(e -> deleteCategory(categoryList.getSelectedValuesList()));
         buttonsPanel.add(deleteButton);
-        buttonsPanel.add(Box.createHorizontalGlue());
 
         categoryList.addListSelectionListener(e -> {
             int selectedCount = categoryList.getSelectedIndices().length;
@@ -97,14 +95,8 @@ public class RidesCategoriesPanel extends JPanel {
                 }
             }
         });
-
         this.add(buttonsPanel, BorderLayout.NORTH);
-
-//        Category testCategory = new Category("standard", new ImageIcon (Category.class.getResource("/icons/" + "NormalRide.png")));
-//        allCategories.add(testCategory);
     }
-
-
 
     private final String[] iconNames = {"NormalRide.png", "Express.png", "Luxuary.png", "sport-car.png", "convertible-car.png","limousine-car.png",
             "normal-car.png", "small-car.png", "truck-car.png"};

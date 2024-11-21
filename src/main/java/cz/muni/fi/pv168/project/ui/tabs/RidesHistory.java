@@ -67,11 +67,16 @@ public class RidesHistory extends JPanel {
         JScrollPane scrollPane = new JScrollPane(rideHistoryTable);
 
         JToolBar toolBar = createToolBar(rideHistoryTable, (DefaultTableModel) rideHistoryTable.getModel());
-        this.add(toolBar, BorderLayout.NORTH);
-        this.add(scrollPane, BorderLayout.CENTER);
 
         JPanel filterPanel = createFilterPanel(rideHistoryTable, (DefaultTableModel) rideHistoryTable.getModel());
-        this.add(filterPanel, BorderLayout.SOUTH);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(toolBar);
+        topPanel.add(filterPanel);
+
+        this.add(topPanel, BorderLayout.NORTH);
+        this.add(scrollPane, BorderLayout.CENTER);
     }
 
     public static JPanel createRidesHistoryPanel(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
@@ -81,43 +86,56 @@ public class RidesHistory extends JPanel {
     private JToolBar createToolBar(JTable table, DefaultTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
 
+        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+
         JButton addButton = new JButton("Add New Ride");
+        addButton.setMargin(new Insets(5, 10, 5, 10));
         addButton.addActionListener(new NewRideAction(this, rideService, currencyService, categoryService));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
+        editAmountButton.setMargin(new Insets(5, 10, 5, 10));
         editAmountButton.addActionListener(e -> editAmount(table, tableModel));
         toolBar.add(editAmountButton);
 
         JButton editCurrencyButton = new JButton("Edit Currency");
+        editCurrencyButton.setMargin(new Insets(5, 10, 5, 10));
         editCurrencyButton.addActionListener(e -> editCurrency(table, tableModel));
         toolBar.add(editCurrencyButton);
 
         JButton editDistanceButton = new JButton("Edit Distance");
+        editDistanceButton.setMargin(new Insets(5, 10, 5, 10));
         editDistanceButton.addActionListener(e -> editDistance(table, tableModel));
         toolBar.add(editDistanceButton);
 
         JButton editCategoryButton = new JButton("Edit Category");
+        editCategoryButton.setMargin(new Insets(5, 10, 5, 10));
         editCategoryButton.addActionListener(e -> editCategory(table, tableModel));
         toolBar.add(editCategoryButton);
 
         JButton editPersonalRideButton = new JButton("Edit Trip Type");
+        editPersonalRideButton.setMargin(new Insets(5, 10, 5, 10));
         editPersonalRideButton.addActionListener(e -> editTripType(table, tableModel));
         toolBar.add(editPersonalRideButton);
 
         JButton deleteRowsButton = new JButton("Delete Selected Rows");
+        deleteRowsButton.setMargin(new Insets(5, 10, 5, 10));
         deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
         toolBar.add(deleteRowsButton);
 
         JButton importButton = new JButton("Import");
+        importButton.setMargin(new Insets(5, 10, 5, 10));
         importButton.addActionListener(new JsonImportAction(this, importService));
-        JButton exportButton = new JButton("Export");
-        exportButton.addActionListener(new JsonExportAction(this, exportService, rideService));
         toolBar.add(importButton);
+
+        JButton exportButton = new JButton("Export");
+        exportButton.setMargin(new Insets(5, 10, 5, 10));
+        exportButton.addActionListener(new JsonExportAction(this, exportService, rideService));
         toolBar.add(exportButton);
 
         return toolBar;
     }
+
 
     private JTable createRidesTable() {
         String[] columnNames = {"Amount", "Currency", "Distance", "Category", "Trip Type", "Number of People", "Date"};
@@ -317,12 +335,15 @@ public class RidesHistory extends JPanel {
     private JPanel createFilterPanel(JTable table, DefaultTableModel tableModel) {
         JPanel filterPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(5, 5, 5, 5);  // Space between components
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Amount filter
-        gbc.gridx = 0;
+        // Set horizontal weight to make sure components stretch across the available space
+        gbc.weightx = 0.125;
+
+        // Row 0: Amount filter
         gbc.gridy = 0;
+        gbc.gridx = 0;
         filterPanel.add(new JLabel("Amount (Min)"), gbc);
         JTextField minAmountField = new JTextField();
         gbc.gridx = 1;
@@ -334,77 +355,76 @@ public class RidesHistory extends JPanel {
         gbc.gridx = 3;
         filterPanel.add(maxAmountField, gbc);
 
-        // Currency filter
         gbc.gridx = 4;
         filterPanel.add(new JLabel("Currency"), gbc);
         JComboBox<String> currencyField = new JComboBox<>(getCurrencyCodesArray());
         gbc.gridx = 5;
         filterPanel.add(currencyField, gbc);
 
-        // Distance filter
-        gbc.gridy = 1;
-        gbc.gridx = 0;
+        gbc.gridx = 6;
         filterPanel.add(new JLabel("Distance (Min)"), gbc);
         JTextField minDistanceField = new JTextField();
-        gbc.gridx = 1;
+        gbc.gridx = 7;
         filterPanel.add(minDistanceField, gbc);
 
-        gbc.gridx = 2;
+        // Row 1: Distance filter and Category filter
+        gbc.gridy = 1;
+        gbc.gridx = 0;
         filterPanel.add(new JLabel("Distance (Max)"), gbc);
         JTextField maxDistanceField = new JTextField();
-        gbc.gridx = 3;
+        gbc.gridx = 1;
         filterPanel.add(maxDistanceField, gbc);
 
-
-        // Category filter
-        gbc.gridy = 2;
-        gbc.gridx = 0;
+        gbc.gridx = 2;
         filterPanel.add(new JLabel("Category"), gbc);
         JComboBox<String> categoryField = createCategoryComboBox();
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         filterPanel.add(categoryField, gbc);
 
-        // Personal ride filter
-        gbc.gridx = 2;
+        gbc.gridx = 4;
         filterPanel.add(new JLabel("Personal Ride"), gbc);
         JComboBox<TripType> tripTypeJComboBox = new JComboBox<>(TripType.values());
-        gbc.gridx = 3;
+        gbc.gridx = 5;
         filterPanel.add(tripTypeJComboBox, gbc);
 
-        // People filter
-        gbc.gridy = 3;
-        gbc.gridx = 0;
+        gbc.gridx = 6;
         filterPanel.add(new JLabel("People (Min)"), gbc);
         JTextField minPeopleField = new JTextField();
-        gbc.gridx = 1;
+        gbc.gridx = 7;
         filterPanel.add(minPeopleField, gbc);
 
-        gbc.gridx = 2;
+        // Row 2: People filter and Date filter
+        gbc.gridy = 2;
+        gbc.gridx = 0;
         filterPanel.add(new JLabel("People (Max)"), gbc);
         JTextField maxPeopleField = new JTextField();
-        gbc.gridx = 3;
+        gbc.gridx = 1;
         filterPanel.add(maxPeopleField, gbc);
 
-        // Date filter
-        gbc.gridy = 4;
-        gbc.gridx = 0;
+        gbc.gridx = 2;
         filterPanel.add(new JLabel("Start Date"), gbc);
         JDateChooser startDateChooser = new JDateChooser();
         startDateChooser.setLocale(Locale.ENGLISH);
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         filterPanel.add(startDateChooser, gbc);
 
-        gbc.gridx = 2;
+        gbc.gridx = 4;
         filterPanel.add(new JLabel("End Date"), gbc);
         JDateChooser endDateChooser = new JDateChooser();
         endDateChooser.setLocale(Locale.ENGLISH);
-        gbc.gridx = 3;
+        gbc.gridx = 5;
         filterPanel.add(endDateChooser, gbc);
 
-        // Filter button
-        gbc.gridy = 6;
-        gbc.gridx = 1;
-        gbc.gridwidth = 2;
+        gbc.gridx = 6;
+        filterPanel.add(new JLabel("Some Other Filter"), gbc);
+        JTextField otherFilterField = new JTextField();
+        gbc.gridx = 7;
+        filterPanel.add(otherFilterField, gbc);
+
+        // Row 3: Filter button
+        gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridwidth = 8;  // Button spans the entire width of the panel (8 columns)
         JButton filterButton = new JButton("Filter");
         filterButton.addActionListener(e -> applyFilters(
                 table, tableModel, minAmountField, maxAmountField, currencyField,
