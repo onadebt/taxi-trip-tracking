@@ -5,10 +5,19 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.providers.DIProvider;
+import cz.muni.fi.pv168.project.service.CategoryService;
+import cz.muni.fi.pv168.project.service.CurrencyService;
+import cz.muni.fi.pv168.project.service.RideService;
+import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
+import cz.muni.fi.pv168.project.service.port.ExportService;
+import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
 import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
@@ -32,19 +41,25 @@ import java.util.stream.Collectors;
 
 public class RidesHistory extends JPanel {
 
-    public List<Ride> rideHistory;
-    private final DIProvider diProvider;
+    private final List<Ride> rideHistory;
+    private final IRideService rideService;
+    private final ICurrencyService currencyService;
+    private final ICategoryService categoryService;
+    private final ImportService importService;
+    private final ExportService exportService;
 
     private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
             .withLocale(Locale.forLanguageTag("cs-CZ"))
             .withZone(ZoneId.systemDefault());
 
-
-    private RidesHistory(DIProvider diProvider) {
+    private RidesHistory(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
         super(new BorderLayout());
-        this.diProvider = diProvider;
-        this.rideHistory = diProvider.getRideService().getAll();
-
+        this.rideService = rideService;
+        this.currencyService = currencyService;
+        this.categoryService = categoryService;
+        this.rideHistory = rideService.getAll();
+        this.importService = importService;
+        this.exportService = exportService;
 
         JLabel label = new JLabel("History of taxi rides:");
         this.add(label, BorderLayout.NORTH);
@@ -60,15 +75,15 @@ public class RidesHistory extends JPanel {
         this.add(filterPanel, BorderLayout.SOUTH);
     }
 
-    public static JPanel createRidesHistoryPanel(DIProvider diProvider) {
-        return new RidesHistory(diProvider);
+    public static JPanel createRidesHistoryPanel(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+        return new RidesHistory(rideService, currencyService, categoryService, importService, exportService);
     }
 
     private JToolBar createToolBar(JTable table, DefaultTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(this, diProvider.getRideService(), diProvider.getCurrencyService(), diProvider.getCategoryService()));
+        addButton.addActionListener(new NewRideAction(this, rideService, currencyService, categoryService));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
@@ -96,9 +111,9 @@ public class RidesHistory extends JPanel {
         toolBar.add(deleteRowsButton);
 
         JButton importButton = new JButton("Import");
-        importButton.addActionListener(new JsonImportAction(this, diProvider.getJsonImportService()));
+        importButton.addActionListener(new JsonImportAction(this, importService));
         JButton exportButton = new JButton("Export");
-        exportButton.addActionListener(new JsonExportAction(this, diProvider.getJsonExportService(), diProvider.getRideService()));
+        exportButton.addActionListener(new JsonExportAction(this, exportService, rideService));
         toolBar.add(importButton);
         toolBar.add(exportButton);
 
@@ -477,22 +492,16 @@ public class RidesHistory extends JPanel {
     }
 
     private JComboBox<String> createCategoryComboBox() {
-        CategoryListModel categoryListModel = new CategoryListModel(diProvider.getCategoryService());
-        List<String> categoriesNames = new ArrayList<>();
-
-        for (int i = 0; i < categoryListModel.categories.size(); i++) {
-            categoriesNames.add(categoryListModel.categories.get(i).getName());
-        }
+        List<String> categoriesNames = categoryService.getAll().stream()
+                .map(Category::getName)
+                .collect(Collectors.toList());
         categoriesNames.add("No Category");
-        String[] categoriesNamesArray = categoriesNames.toArray(new String[0]);
-
-        return new JComboBox<>(categoriesNamesArray);
+        return new JComboBox<>(categoriesNames.toArray(new String[0]));
     }
 
     private String[] getCurrencyCodesArray() {
-        List<String> currencyCodes = diProvider.getCurrencyService().getAll().stream()
+        return currencyService.getAll().stream()
                 .map(Currency::getCode)
-                .toList();
-        return currencyCodes.toArray(new String[0]);
+                .toArray(String[]::new);
     }
 }
