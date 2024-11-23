@@ -6,9 +6,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface ICurrencyRepository {
-    void create(Currency currency);
+    Currency create(Currency currency);
     void update(Currency currency);
     void deleteById(Long currencyId);
     @Nullable Currency getById(Long currencyId);
     List<Currency> getAll();
+    void deleteAll();
 }
