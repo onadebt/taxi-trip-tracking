@@ -2,6 +2,8 @@ package cz.muni.fi.pv168.project.ui.dialog;
 
 /*Copied from Lecture 03*/
 
+import cz.muni.fi.pv168.project.model.Currency;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.JComponent;
@@ -22,6 +24,9 @@ abstract class EntityDialog<E> {
         panel.setLayout(new MigLayout("wrap 2"));
     }
 
+    public EntityDialog(Validator<Currency> entityValidator) {
+    }
+
     void add(String labelText, JComponent component) {
         var label = new JLabel(labelText);
         panel.add(label);
@@ -33,6 +38,8 @@ abstract class EntityDialog<E> {
     public Optional<E> show(JComponent parentComponent, String title) {
         int result = JOptionPane.showOptionDialog(parentComponent, panel, title,
                 OK_CANCEL_OPTION, PLAIN_MESSAGE, null, null, null);
+
+        // TODO implement validatior
         if (result == OK_OPTION) {
             return Optional.of(getEntity());
         } else {
