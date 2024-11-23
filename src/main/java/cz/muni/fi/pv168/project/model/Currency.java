@@ -2,26 +2,32 @@ package cz.muni.fi.pv168.project.model;
 
 import org.jetbrains.annotations.Nullable;
 
-public class Currency {
-    private @Nullable Long id;
+public class Currency extends Entity {
+    //    private @Nullable Long id;
     private String name;
     private String code;
     private Double exchangeRate;
 
     public Currency(@Nullable Long id, String name, String code, Double exchangeRate) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
-        this.exchangeRate = exchangeRate;
+//        this.id = id;
+        super(id);
+        setName(name);
+        setCode(code);
+        setExchangeRate(exchangeRate);
     }
 
 
-    public @Nullable Long getId() {
-        return id;
-    }
+//    public @Nullable Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(@Nullable Long id) {
+//        this.id = id;
+//    }
 
-    public void setId(@Nullable Long id) {
-        this.id = id;
+
+    public Currency() {
+        super(null);
     }
 
     public String getName() {
@@ -51,7 +57,7 @@ public class Currency {
     @Override
     public String toString() {
         return "Currency{" +
-                "id='" + id + '\'' +
+//                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", currencyCode='" + code + '\'' +
                 ", exchangeRate='" + exchangeRate + '\'' +
