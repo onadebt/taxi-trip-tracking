@@ -6,6 +6,7 @@ import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.RideService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -13,11 +14,11 @@ import java.util.List;
 
 public class RideTableModel extends AbstractTableModel {
     private List<Ride> rides;
-    private final RideService rideService;
+    private final IRideService rideService;
 
     private final List<Column<Ride, ?>> columns = List.of(
             Column.editable("Amount currency", Double.class, Ride::getAmountCurrency, Ride::setAmountCurrency),
-            Column.editable("Currency Type", Currency.class, Ride::getCurrency, Ride::setCurrency),
+            Column.editable("Currency Type", String.class, Ride::getCurrencyCode, Ride::setCurrencyCode),
             Column.editable("Distance", Double.class, Ride::getDistance, Ride::setDistance),
             Column.editable("Distance Unit", DistanceUnit.class, Ride::getDistanceUnit, Ride::setDistanceUnit),
             Column.editable("Category", Category.class, Ride::getCategory, Ride::setCategory),
@@ -25,8 +26,7 @@ public class RideTableModel extends AbstractTableModel {
             Column.editable("Passengers", Integer.class, Ride::getNumberOfPassengers, Ride::setNumberOfPassengers)
     );
 
-
-    public RideTableModel(RideService rideService) {
+    public RideTableModel(IRideService rideService) {
         this.rideService = rideService;
         this.rides = new ArrayList<>(rideService.getAll());
     }
@@ -64,8 +64,6 @@ public class RideTableModel extends AbstractTableModel {
         return rides.indexOf(ride);
     }
 
-
-
     @Override
     public int getRowCount() {
         return rides.size();
@@ -73,12 +71,18 @@ public class RideTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return rides.size();
+        return columns.size();
+    }
+
+    @Override
+    public String getColumnName(int columnIndex) {
+        return columns.get(columnIndex).getName();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return null;
+        Ride ride = rides.get(rowIndex);
+        return columns.get(columnIndex).getValue(ride);
     }
 
     @Override
@@ -90,8 +94,7 @@ public class RideTableModel extends AbstractTableModel {
         }
     }
 
-    public Ride getEntity(int rowIndex){
+    public Ride getEntity(int rowIndex) {
         return rides.get(rowIndex);
     }
-
 }

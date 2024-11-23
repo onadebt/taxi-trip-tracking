@@ -2,7 +2,6 @@ package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,18 +28,6 @@ public class Settings extends JPanel {
         JComboBox<DistanceUnit> distanceUnitComboBox = new JComboBox<>(DistanceUnit.values());
         distanceUnitComboBox.setPreferredSize(new Dimension(100, 20));
 
-        JButton applyButton = getjButton(rideService, distanceUnitComboBox);
-
-        this.add(currencyLabel);
-        this.add(currencyComboBox);
-        this.add(Box.createRigidArea(new Dimension(10, 0)));
-        this.add(distanceUnitLabel);
-        this.add(distanceUnitComboBox);
-        this.add(applyButton);
-        this.setPreferredSize(new Dimension(300, 150));
-    }
-
-    private @NotNull JButton getjButton(IRideService rideService, JComboBox<DistanceUnit> distanceUnitComboBox) {
         JButton applyButton = new JButton("Apply");
         applyButton.setPreferredSize(new Dimension(80, 25));
         applyButton.addActionListener(e -> {
@@ -60,7 +47,14 @@ public class Settings extends JPanel {
                         JOptionPane.WARNING_MESSAGE);
             }
         });
-        return applyButton;
+
+        this.add(currencyLabel);
+        this.add(currencyComboBox);
+        this.add(Box.createRigidArea(new Dimension(10, 0)));
+        this.add(distanceUnitLabel);
+        this.add(distanceUnitComboBox);
+        this.add(applyButton);
+        this.setPreferredSize(new Dimension(300, 150));
     }
 
     public static JPanel createSettingsPanel(IRideService rideService) {

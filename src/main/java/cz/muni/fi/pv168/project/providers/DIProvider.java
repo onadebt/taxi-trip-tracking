@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.providers;
 
+import cz.muni.fi.pv168.project.database.DatabaseManager;
 import cz.muni.fi.pv168.project.repository.*;
 import cz.muni.fi.pv168.project.service.*;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
@@ -12,6 +13,7 @@ import cz.muni.fi.pv168.project.service.port.JsonExportService;
 import cz.muni.fi.pv168.project.service.port.JsonImportService;
 
 public class DIProvider {
+    private final DatabaseManager databaseManager;
     private IRideRepository rideRepository;
     private ICurrencyRepository currencyRepository;
     private ICategoryRepository categoryRepository;
@@ -35,8 +37,10 @@ public class DIProvider {
         this.categoryService = new CategoryService(categoryRepository);
         this.settingsService = new SettingsService(settingsRepository);
         this.rideService = new RideService(categoryService, currencyService, rideRepository);
-       this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
-       this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
+        this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
+        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
+        this.databaseManager = DatabaseManager.createProductionInstance();
+        this.databaseManager.initSchema();
     }
 
     public IRideRepository getRideRepository() {
