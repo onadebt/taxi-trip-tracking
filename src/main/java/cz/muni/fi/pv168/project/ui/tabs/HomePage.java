@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
+import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
@@ -12,13 +14,13 @@ import java.util.List;
 
 public class HomePage extends JPanel {
     private final IRideService rideService;
-    private final ICurrencyService currencyService;
+    private final CrudService<Currency> currencyCrudService;
     private final ICategoryService categoryService;
 
-    public HomePage(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService) {
+    public HomePage(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService) {
         super(new BorderLayout());
         this.rideService = rideService;
-        this.currencyService = currencyService;
+        this.currencyCrudService = currencyCrudService;
         this.categoryService = categoryService;
 
         JPanel filterPanel = createFilterPanel();
@@ -33,7 +35,7 @@ public class HomePage extends JPanel {
         this.add(snapshotPanel, BorderLayout.SOUTH);
 
         JButton addButton = new JButton("Add Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyService, categoryService));
+        addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -57,8 +59,8 @@ public class HomePage extends JPanel {
         this.add(centerPanel, BorderLayout.CENTER);
     }
 
-    public static JPanel createHomePagePanel(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService) {
-        return new HomePage(rideService, currencyService, categoryService);
+    public static JPanel createHomePagePanel(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService) {
+        return new HomePage(rideService, currencyCrudService, categoryService);
     }
 
     private JPanel createFilterPanel() {

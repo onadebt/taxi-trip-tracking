@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.exception.ValidationException;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
@@ -20,12 +21,12 @@ public class NewRideAction extends AbstractAction {
 
     private final IRideService rideService;
 
-    public NewRideAction(JComponent parentComponent, IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService) {
+    public NewRideAction(JComponent parentComponent, IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService) {
         super("Add ride");
         this.parent = parentComponent;
         this.rideService = rideService;
         this.categoryListModel = new CategoryListModel(categoryService);
-        this.currencyListModel = new CurrencyListModel(currencyService);
+        this.currencyListModel = new CurrencyListModel(currencyCrudService);
     }
     @Override
     public void actionPerformed(ActionEvent e) {

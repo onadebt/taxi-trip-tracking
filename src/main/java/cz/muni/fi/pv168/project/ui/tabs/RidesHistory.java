@@ -12,6 +12,7 @@ import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.CategoryService;
 import cz.muni.fi.pv168.project.service.CurrencyService;
 import cz.muni.fi.pv168.project.service.RideService;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
@@ -42,7 +43,8 @@ public class RidesHistory extends JPanel {
 
     private final List<Ride> rideHistory;
     private final IRideService rideService;
-    private final ICurrencyService currencyService;
+//    private final ICurrencyService currencyService;
+    private final CrudService<Currency> currencyCrudService;
     private final ICategoryService categoryService;
     private final ImportService importService;
     private final ExportService exportService;
@@ -51,10 +53,11 @@ public class RidesHistory extends JPanel {
             .withLocale(Locale.forLanguageTag("cs-CZ"))
             .withZone(ZoneId.systemDefault());
 
-    private RidesHistory(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+    private RidesHistory(IRideService rideService, /*ICurrencyService currencyService,*/ CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
         super(new BorderLayout());
         this.rideService = rideService;
-        this.currencyService = currencyService;
+//        this.currencyService = currencyService;
+        this.currencyCrudService = currencyCrudService;
         this.categoryService = categoryService;
         this.rideHistory = rideService.getAll();
         this.importService = importService;
@@ -74,15 +77,15 @@ public class RidesHistory extends JPanel {
         this.add(filterPanel, BorderLayout.SOUTH);
     }
 
-    public static JPanel createRidesHistoryPanel(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
-        return new RidesHistory(rideService, currencyService, categoryService, importService, exportService);
+    public static JPanel createRidesHistoryPanel(IRideService rideService, /*ICurrencyService currencyService,*/ CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+        return new RidesHistory(rideService, /*currencyService,*/ currencyCrudService, categoryService, importService, exportService);
     }
 
     private JToolBar createToolBar(JTable table, DefaultTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyService, categoryService));
+        addButton.addActionListener(new NewRideAction(this, rideService, /*currencyService,*/ currencyCrudService, categoryService));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
@@ -499,7 +502,11 @@ public class RidesHistory extends JPanel {
     }
 
     private String[] getCurrencyCodesArray() {
-        return currencyService.getAll().stream()
+//        return currencyService.getAll().stream()
+//                .map(Currency::getCode)
+//                .toArray(String[]::new);
+
+        return currencyCrudService.findAll().stream()
                 .map(Currency::getCode)
                 .toArray(String[]::new);
     }
