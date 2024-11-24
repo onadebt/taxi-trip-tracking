@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 /**
  * DAO for {@link cz.muni.fi.pv168.project.model.CurrencyDbModel} entity.
  */
-public final class CurrencyDao implements DataAccessObject<CurrencyDbModel> {
+public final class CurrencyDao implements CurrencyDataAccessObject {
 
     private final Supplier<ConnectionHandler> connections;
 
@@ -108,7 +108,7 @@ public final class CurrencyDao implements DataAccessObject<CurrencyDbModel> {
         }
     }
 
-    public Optional<CurrencyDbModel> findByTag(String tag) {
+    public Optional<CurrencyDbModel> findByCode(String tag) {
         var sql = """
                 SELECT id,
                        name,

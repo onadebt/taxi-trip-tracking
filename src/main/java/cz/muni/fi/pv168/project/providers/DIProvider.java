@@ -1,6 +1,10 @@
 package cz.muni.fi.pv168.project.providers;
 
 import cz.muni.fi.pv168.project.database.DatabaseManager;
+import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
+import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
+import cz.muni.fi.pv168.project.model.Currency;
+import cz.muni.fi.pv168.project.model.CurrencyDbModel;
 import cz.muni.fi.pv168.project.repository.*;
 import cz.muni.fi.pv168.project.service.*;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
@@ -14,6 +18,10 @@ import cz.muni.fi.pv168.project.service.port.JsonImportService;
 
 public class DIProvider {
     //private final DatabaseManager databaseManager;
+
+    private CurrencyDataAccessObject currencyDao;
+    private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
+
     private IRideRepository rideRepository;
     private ICurrencyRepository currencyRepository;
     private ICategoryRepository categoryRepository;
@@ -29,7 +37,7 @@ public class DIProvider {
     public DIProvider() {
 
         this.categoryRepository = new CategoryRepository();
-        this.currencyRepository = new CurrencyRepository();
+        this.currencyRepository = new CurrencyRepository(currencyDao, currencyMapper);
         this.settingsRepository = new SettingsRepository();
         this.rideRepository = new RideRepository(currencyRepository, categoryRepository);
 
