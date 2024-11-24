@@ -1,24 +1,36 @@
---
--- Department table definition
---
-DELETE TABLE IF EXISTS  "Department"
+CREATE TABLE IF NOT EXISTS "Category"
 (
-    `id`        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    `number`    VARCHAR(10) NOT NULL UNIQUE,
-    `name`      VARCHAR(50) NOT NULL,
-    `createdAt` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
+    "categoryID"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "name"              VARCHAR(255) NOT NULL UNIQUE,
+    "icon"              VARCHAR(1000) NOT NULL,
+    "createdAt"         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
---
--- Employee table definition
---
-DELETE TABLE IF EXISTS "Employee"
+CREATE TABLE IF NOT EXISTS "Currency"
 (
-    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    `number`       VARCHAR(10)  NOT NULL UNIQUE,
-    `firstName`    VARCHAR(150) NOT NULL,
-    `lastName`     VARCHAR(150) NOT NULL,
-    `birthDate`    DATE         NOT NULL,
-    `departmentId` BIGINT REFERENCES "Department"(`id`),
-    `createdAt`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
+    "currencyID"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "name"              VARCHAR(255) NOT NULL UNIQUE,
+    "tag"               VARCHAR(10) NOT NULL UNIQUE,
+    "rate"              FLOAT NOT NULL,
+    "createdAt"         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Settings"
+(
+    "settingsID"        INTEGER NOT NULL UNIQUE,
+    "name"              VARCHAR(255) NOT NULL,
+    "value"             VARCHAR(255) NOT NULL,
+    "createdAt"         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Ride"
+(
+    "rideID"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "categoryID"    BIGINT REFERENCES "Category"("categoryID"),
+    "currencyID"    BIGINT NOT NULL REFERENCES "Currency"("currencyID"),
+    "amount"        FLOAT NOT NULL,
+    "distance"      FLOAT NOT NULL,
+    "passengers"    INTEGER NOT NULL,
+    "tripType"      INTEGER NOT NULL,
+    "createdAt"     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
