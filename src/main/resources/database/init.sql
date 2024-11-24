@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS "Currency"
 
 CREATE TABLE IF NOT EXISTS "Settings"
 (
-    "id"        INTEGER NOT NULL UNIQUE,
+    "id"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "name"              VARCHAR(255) NOT NULL,
     "value"             VARCHAR(255) NOT NULL,
     "createdAt"         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
