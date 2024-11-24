@@ -43,7 +43,6 @@ public class RidesHistory extends JPanel {
 
     private final List<Ride> rideHistory;
     private final IRideService rideService;
-//    private final ICurrencyService currencyService;
     private final CrudService<Currency> currencyCrudService;
     private final ICategoryService categoryService;
     private final ImportService importService;
@@ -53,10 +52,9 @@ public class RidesHistory extends JPanel {
             .withLocale(Locale.forLanguageTag("cs-CZ"))
             .withZone(ZoneId.systemDefault());
 
-    private RidesHistory(IRideService rideService, /*ICurrencyService currencyService,*/ CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+    private RidesHistory(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
         super(new BorderLayout());
         this.rideService = rideService;
-//        this.currencyService = currencyService;
         this.currencyCrudService = currencyCrudService;
         this.categoryService = categoryService;
         this.rideHistory = rideService.getAll();
@@ -82,8 +80,8 @@ public class RidesHistory extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    public static JPanel createRidesHistoryPanel(IRideService rideService, /*ICurrencyService currencyService,*/ CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
-        return new RidesHistory(rideService, /*currencyService,*/ currencyCrudService, categoryService, importService, exportService);
+    public static JPanel createRidesHistoryPanel(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+        return new RidesHistory(rideService, currencyCrudService, categoryService, importService, exportService);
     }
 
     private JToolBar createToolBar(JTable table, RideTableModel tableModel) {
@@ -92,9 +90,8 @@ public class RidesHistory extends JPanel {
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, /*currencyService,*/ currencyCrudService, categoryService));
+        addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
         addButton.setMargin(new Insets(5, 10, 5, 10));
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyService, categoryService));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");

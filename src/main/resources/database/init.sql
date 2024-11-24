@@ -1,7 +1,7 @@
 --
 -- Department table definition
 --
-CREATE TABLE IF NOT EXISTS "Department"
+DELETE TABLE IF EXISTS  "Department"
 (
     `id`        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     `number`    VARCHAR(10) NOT NULL UNIQUE,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "Department"
 --
 -- Employee table definition
 --
-CREATE TABLE IF NOT EXISTS "Employee"
+DELETE TABLE IF EXISTS "Employee"
 (
     `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     `number`       VARCHAR(10)  NOT NULL UNIQUE,
