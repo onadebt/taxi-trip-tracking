@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "Category"
 (
-    "categoryID"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "id"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "name"              VARCHAR(255) NOT NULL UNIQUE,
     "icon"              VARCHAR(1000) NOT NULL,
     "createdAt"         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "Category"
 
 CREATE TABLE IF NOT EXISTS "Currency"
 (
-    "currencyID"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "id"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "name"              VARCHAR(255) NOT NULL UNIQUE,
     "tag"               VARCHAR(10) NOT NULL UNIQUE,
     "rate"              FLOAT NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS "Currency"
 
 CREATE TABLE IF NOT EXISTS "Settings"
 (
-    "settingsID"        INTEGER NOT NULL UNIQUE,
+    "id"        INTEGER NOT NULL UNIQUE,
     "name"              VARCHAR(255) NOT NULL,
     "value"             VARCHAR(255) NOT NULL,
     "createdAt"         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS "Settings"
 
 CREATE TABLE IF NOT EXISTS "Ride"
 (
-    "rideID"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "categoryID"    BIGINT REFERENCES "Category"("categoryID"),
-    "currencyID"    BIGINT NOT NULL REFERENCES "Currency"("currencyID"),
+    "id"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "categoryId"    BIGINT REFERENCES "Category"("id"),
+    "currencyId"    BIGINT NOT NULL REFERENCES "Currency"("id"),
     "amount"        FLOAT NOT NULL,
     "distance"      FLOAT NOT NULL,
     "passengers"    INTEGER NOT NULL,
