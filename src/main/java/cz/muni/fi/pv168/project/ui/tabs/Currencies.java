@@ -9,7 +9,6 @@ import cz.muni.fi.pv168.project.ui.action.EditCurrencyAction;
 import cz.muni.fi.pv168.project.ui.action.NewCurrencyAction;
 import cz.muni.fi.pv168.project.ui.dialog.NewCurrencyDialog;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
-import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
 import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
 import cz.muni.fi.pv168.project.ui.model.EntityTableModel;
 import cz.muni.fi.pv168.project.ui.renderers.CurrencyRenderer;

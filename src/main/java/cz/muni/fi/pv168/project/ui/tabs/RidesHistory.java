@@ -21,7 +21,6 @@ import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
 import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 
 import java.awt.*;
 import java.awt.event.*;

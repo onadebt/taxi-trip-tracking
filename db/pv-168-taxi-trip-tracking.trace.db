@@ -54,3 +54,30 @@ CREATE TABLE IF NOT EXISTS "Employee"
 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
 	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2024-11-24 18:26:11.201647+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "--\000a-- Department table definition\000a--\000aDELETE [*]TABLE IF EXISTS  ""Department""\000a(\000a    `id`        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\000a    `number`    VARCHAR(10) NOT NULL UNIQUE,\000a    `name`      VARCHAR(50) NOT NULL,\000a    `createdAt` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP\000a    );\000a\000a--\000a-- Employee table definition\000a--\000aDELETE TABLE IF EXISTS ""Employee""\000a(\000a    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\000a    `number`       VARCHAR(10)  NOT NULL UNIQUE,\000a    `firstName`    VARCHAR(150) NOT NULL,\000a    `lastName`     VARCHAR(150) NOT NULL,\000a    `birthDate`    DATE         NOT NULL,\000a    `departmentId` BIGINT REFERENCES ""Department""(`id`),\000a    `createdAt`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP\000a    );\000a"; expected "identifier"; SQL statement:
+--
+-- Department table definition
+--
+DELETE TABLE IF EXISTS  "Department"
+(
+    `id`        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    `number`    VARCHAR(10) NOT NULL UNIQUE,
+    `name`      VARCHAR(50) NOT NULL,
+    `createdAt` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+--
+-- Employee table definition
+--
+DELETE TABLE IF EXISTS "Employee"
+(
+    `id`           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    `number`       VARCHAR(10)  NOT NULL UNIQUE,
+    `firstName`    VARCHAR(150) NOT NULL,
+    `lastName`     VARCHAR(150) NOT NULL,
+    `birthDate`    DATE         NOT NULL,
+    `departmentId` BIGINT REFERENCES "Department"(`id`),
+    `createdAt`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+ [42001-224]
