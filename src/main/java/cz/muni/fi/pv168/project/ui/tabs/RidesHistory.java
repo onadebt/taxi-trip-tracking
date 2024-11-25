@@ -149,7 +149,6 @@ public class RidesHistory extends JPanel {
 
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-
         TableColumn currencyColumn = table.getColumnModel().getColumn(0);
         JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
         currencyColumn.setCellEditor(new DefaultCellEditor(currencyComboBox));
@@ -298,29 +297,6 @@ public class RidesHistory extends JPanel {
             JOptionPane.showMessageDialog(table, "No rows selected for deletion.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
-
-    // for test
-//    public static List<Ride> getSampleRideHistory() {
-//        List<Ride> rides = new ArrayList<>();
-//        Category premium = new Category("Premium", Icons.getByName("convertible-car.png"));
-//        Category comfort = new Category("Sport", Icons.getByName("sport-car.png"));
-//        Category standard = new Category("Standard", Icons.getByName("normal-car.png"));
-//
-//        Currency usd = new Currency("US Dollar", CurrencyCode.USD, 22D);
-//        Currency eur = new Currency("Euro", CurrencyCode.EUR, 25D);
-//        Currency gbp = new Currency("British Pound", CurrencyCode.GBP, 29D);
-//        Currency jpy = new Currency("Japanese Yen", CurrencyCode.JPY, 0.2D);
-//        Currency czk = new Currency("Czech Crown", CurrencyCode.CZK, 1D);
-//
-//        rides.add(new Ride(null,100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-//        rides.add(new Ride(null, 100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-//        rides.add(new Ride(null, 50D, usd, 5D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
-//        rides.add(new Ride(null, 75D, eur, 7.5D, DistanceUnit.Kilometer, standard, TripType.Paid, 3, Instant.now()));
-//        rides.add(new Ride(null, 120D, gbp, 12D, DistanceUnit.Kilometer, premium, TripType.Paid, 4, Instant.now()));
-//        rides.add(new Ride(null, 30D, jpy, 3D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
-//
-//        return rides;
-//    }
 
     private JPanel createFilterPanel(JTable table, RideTableModel tableModel) {
         JPanel filterPanel = new JPanel(new GridBagLayout());
@@ -509,10 +485,6 @@ public class RidesHistory extends JPanel {
     }
 
     private String[] getCurrencyCodesArray() {
-//        return currencyService.getAll().stream()
-//                .map(Currency::getCode)
-//                .toArray(String[]::new);
-
         return currencyCrudService.findAll().stream()
                 .map(Currency::getCode)
                 .toArray(String[]::new);

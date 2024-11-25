@@ -17,9 +17,4 @@ public class CategoryTestData {
                 new Category(4L, "Sport", Icons.getByName("sport-car.png"))
         ).toList();
     }
-
-    public static Map<Long, Category> getMockCategoryMap() {
-        return getMockCategories().stream()
-                .collect(Collectors.toMap(Category::getId, category -> category));
-    }
 }
