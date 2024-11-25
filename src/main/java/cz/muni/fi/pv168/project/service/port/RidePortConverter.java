@@ -11,6 +11,7 @@ public class RidePortConverter {
                 currency,
                 port.getDistance(),
                 category,
+                category.getIcon(),
                 port.getTripType(),
                 port.getPassengers(),
                 port.getCreatedDate(),

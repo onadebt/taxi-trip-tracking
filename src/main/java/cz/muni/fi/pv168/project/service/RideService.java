@@ -118,9 +118,9 @@ public class RideService implements IRideService {
 
         public static List<Ride> get() {
             return Arrays.asList(
-                    new Ride(1L, 30.0, euro, 100D, categoryA, TripType.Paid, 1, Instant.now(), UUID.randomUUID()),
-                    new Ride(2L, 50.0, dollar, 200D, categoryB, TripType.Personal, 2, Instant.now(), UUID.randomUUID()),
-                    new Ride(3L, 70.0, czk, 300D, categoryC, TripType.Paid, 3, Instant.now(), UUID.randomUUID())
+                    new Ride(1L, 30.0, euro, 100D, categoryA, Icons.getByName("truck-car.png"), TripType.Paid, 1, Instant.now(), UUID.randomUUID()),
+                    new Ride(2L, 50.0, dollar, 200D, categoryB, Icons.getByName("truck-car.png"), TripType.Personal, 2, Instant.now(), UUID.randomUUID()),
+                    new Ride(3L, 70.0, czk, 300D, categoryC, Icons.getByName("truck-car.png"), TripType.Paid, 3, Instant.now(), UUID.randomUUID())
             );
         }
     }

@@ -33,6 +33,7 @@ import java.util.List;
 
 import com.toedter.calendar.JDateChooser;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
+import cz.muni.fi.pv168.project.ui.renderers.ImageRenderer;
 
 import java.util.Date;
 import java.util.Locale;
@@ -140,6 +141,11 @@ public class RidesHistory extends JPanel {
     private JTable createRidesTable() {
         RideTableModel rideTableModel = new RideTableModel(this.rideService);
         JTable table = new JTable(rideTableModel);
+
+        // show icons as image, not as link (also 48x48 is temporary)
+        table.getColumnModel().getColumn(5).setCellRenderer(new ImageRenderer(48, 48));
+        // change the row height here, so the icons fit it
+        table.setRowHeight(32);
 
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
@@ -253,27 +259,28 @@ public class RidesHistory extends JPanel {
     }
 
     private void editCategory(JTable table, RideTableModel tableModel) {
+        // TODO: edit not only category, but category icon too
         for (int row : table.getSelectedRows()) {
-            Object currentCategory = tableModel.getValueAt(row, 3);
-            JComboBox<String> categoryComboBox = new JComboBox<>(new String[]{"Premium", "Comfort", "Standard"});
+            Object currentCategory = tableModel.getValueAt(row, 4);
+            JComboBox<Icon> categoryComboBox = new JComboBox<>(categoryService.getAll().stream().map(Category::getIcon).toArray(Icon[]::new));
             categoryComboBox.setSelectedItem(currentCategory);
             int option = JOptionPane.showConfirmDialog(table, categoryComboBox, "Choose new category", JOptionPane.OK_CANCEL_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {
-                tableModel.setValueAt(categoryComboBox.getSelectedItem(), row, 3);
+                tableModel.setValueAt(categoryComboBox.getSelectedItem(), row, 4);
             }
         }
     }
 
     private void editTripType(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
-            Object currentTripType = tableModel.getValueAt(row, 4);
+            Object currentTripType = tableModel.getValueAt(row, 6);
             JComboBox<String> tripTypeComboBox = new JComboBox<>(new String[]{TripType.Paid.name(), TripType.Personal.name()});
             tripTypeComboBox.setSelectedItem(currentTripType);
             int option = JOptionPane.showConfirmDialog(table, tripTypeComboBox, "Trip Type", JOptionPane.OK_CANCEL_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {
-                tableModel.setValueAt(tripTypeComboBox.getSelectedItem(), row, 4);
+                tableModel.setValueAt(tripTypeComboBox.getSelectedItem(), row, 6);
             }
         }
     }
