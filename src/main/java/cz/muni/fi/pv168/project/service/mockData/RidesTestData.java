@@ -24,7 +24,9 @@ public class RidesTestData {
         return Stream.of(
                 new Ride(1L, 30.0, euro, 100D, categories.get(0), categories.get(0).getIcon(), TripType.Paid, 1, Instant.now(), UUID.randomUUID()),
                 new Ride(2L, 50.0, dollar, 200D, categories.get(1), categories.get(1).getIcon(), TripType.Personal, 2, Instant.now(), UUID.randomUUID()),
-                new Ride(3L, 70.0, czk, 300D, categories.get(2), categories.get(2).getIcon(), TripType.Paid, 3, Instant.now(), UUID.randomUUID())
+                new Ride(3L, 70.0, czk, 300D, categories.get(1), categories.get(1).getIcon(), TripType.Paid, 3, Instant.now(), UUID.randomUUID()),
+                new Ride(4L, 120.0, czk, 10D, categories.get(0), categories.get(0).getIcon(), TripType.Paid, 3, Instant.now(), UUID.randomUUID()),
+                new Ride(5L, 110.0, czk, 8D, categories.get(3), categories.get(3).getIcon(), TripType.Paid, 3, Instant.now(), UUID.randomUUID())
         ).toList();
     }
 }

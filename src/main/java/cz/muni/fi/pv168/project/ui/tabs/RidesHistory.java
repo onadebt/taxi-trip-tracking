@@ -304,6 +304,8 @@ public class RidesHistory extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);  // Space between components
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        filterPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
+
         // Set horizontal weight to make sure components stretch across the available space
         gbc.weightx = 0.125;
 
@@ -390,8 +392,13 @@ public class RidesHistory extends JPanel {
         // Row 3: Filter button
         gbc.gridy = 3;
         gbc.gridx = 0;
-        gbc.gridwidth = 8;  // Button spans the entire width of the panel (8 columns)
+        gbc.gridwidth = 8;
+        gbc.fill = GridBagConstraints.NONE;  // Prevent button from stretching
+        gbc.anchor = GridBagConstraints.CENTER; // Center align the button
+        gbc.insets = new Insets(10, 5, 10, 5); // Top and bottom padding = 10px
+
         JButton filterButton = new JButton("Filter");
+        filterButton.setPreferredSize(new Dimension(150, filterButton.getPreferredSize().height));
         filterButton.addActionListener(e -> applyFilters(
                 table, tableModel, minAmountField, maxAmountField, currencyField,
                 minDistanceField, maxDistanceField, categoryField, tripTypeJComboBox,
