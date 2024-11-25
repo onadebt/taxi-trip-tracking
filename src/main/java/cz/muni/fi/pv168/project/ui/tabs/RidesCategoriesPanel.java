@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
+import cz.muni.fi.pv168.project.ui.renderers.ImageRenderer;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -48,6 +49,10 @@ public class RidesCategoriesPanel extends JPanel {
         searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
         searchPanel.add(searchField, BorderLayout.CENTER);
         this.add(searchPanel, BorderLayout.NORTH);
+
+        categoryTable.getColumnModel().getColumn(2).setCellRenderer(new ImageRenderer(48, 48));
+        // change the row height here:
+        categoryTable.setRowHeight(32);
 
         categoryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane tableScrollPane = new JScrollPane(categoryTable);
