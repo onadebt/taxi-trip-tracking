@@ -10,7 +10,6 @@ import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.CategoryService;
-import cz.muni.fi.pv168.project.service.CurrencyService;
 import cz.muni.fi.pv168.project.service.RideService;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
@@ -21,7 +20,6 @@ import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
 import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -34,6 +32,7 @@ import java.util.List;
 
 import com.toedter.calendar.JDateChooser;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
+import cz.muni.fi.pv168.project.ui.renderers.ImageRenderer;
 
 import java.util.Date;
 import java.util.Locale;
@@ -43,7 +42,6 @@ public class RidesHistory extends JPanel {
 
     private final List<Ride> rideHistory;
     private final IRideService rideService;
-//    private final ICurrencyService currencyService;
     private final CrudService<Currency> currencyCrudService;
     private final ICategoryService categoryService;
     private final ImportService importService;
@@ -53,10 +51,9 @@ public class RidesHistory extends JPanel {
             .withLocale(Locale.forLanguageTag("cs-CZ"))
             .withZone(ZoneId.systemDefault());
 
-    private RidesHistory(IRideService rideService, /*ICurrencyService currencyService,*/ CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+    private RidesHistory(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
         super(new BorderLayout());
         this.rideService = rideService;
-//        this.currencyService = currencyService;
         this.currencyCrudService = currencyCrudService;
         this.categoryService = categoryService;
         this.rideHistory = rideService.getAll();
@@ -82,8 +79,8 @@ public class RidesHistory extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    public static JPanel createRidesHistoryPanel(IRideService rideService, /*ICurrencyService currencyService,*/ CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
-        return new RidesHistory(rideService, /*currencyService,*/ currencyCrudService, categoryService, importService, exportService);
+    public static JPanel createRidesHistoryPanel(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+        return new RidesHistory(rideService, currencyCrudService, categoryService, importService, exportService);
     }
 
     private JToolBar createToolBar(JTable table, RideTableModel tableModel) {
@@ -92,9 +89,8 @@ public class RidesHistory extends JPanel {
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, /*currencyService,*/ currencyCrudService, categoryService));
-        addButton.setMargin(new Insets(5, 10, 5, 10));
         addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
+        addButton.setMargin(new Insets(5, 10, 5, 10));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
@@ -145,8 +141,12 @@ public class RidesHistory extends JPanel {
         RideTableModel rideTableModel = new RideTableModel(this.rideService);
         JTable table = new JTable(rideTableModel);
 
-        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        // show icons as image, not as link (also 48x48 is temporary)
+        table.getColumnModel().getColumn(5).setCellRenderer(new ImageRenderer(48, 48));
+        // change the row height here, so the icons fit it
+        table.setRowHeight(32);
 
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         TableColumn currencyColumn = table.getColumnModel().getColumn(0);
         JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
@@ -257,27 +257,28 @@ public class RidesHistory extends JPanel {
     }
 
     private void editCategory(JTable table, RideTableModel tableModel) {
+        // TODO: edit not only category, but category icon too
         for (int row : table.getSelectedRows()) {
-            Object currentCategory = tableModel.getValueAt(row, 3);
-            JComboBox<String> categoryComboBox = new JComboBox<>(new String[]{"Premium", "Comfort", "Standard"});
+            Object currentCategory = tableModel.getValueAt(row, 4);
+            JComboBox<Icon> categoryComboBox = new JComboBox<>(categoryService.getAll().stream().map(Category::getIcon).toArray(Icon[]::new));
             categoryComboBox.setSelectedItem(currentCategory);
             int option = JOptionPane.showConfirmDialog(table, categoryComboBox, "Choose new category", JOptionPane.OK_CANCEL_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {
-                tableModel.setValueAt(categoryComboBox.getSelectedItem(), row, 3);
+                tableModel.setValueAt(categoryComboBox.getSelectedItem(), row, 4);
             }
         }
     }
 
     private void editTripType(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
-            Object currentTripType = tableModel.getValueAt(row, 4);
+            Object currentTripType = tableModel.getValueAt(row, 6);
             JComboBox<String> tripTypeComboBox = new JComboBox<>(new String[]{TripType.Paid.name(), TripType.Personal.name()});
             tripTypeComboBox.setSelectedItem(currentTripType);
             int option = JOptionPane.showConfirmDialog(table, tripTypeComboBox, "Trip Type", JOptionPane.OK_CANCEL_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {
-                tableModel.setValueAt(tripTypeComboBox.getSelectedItem(), row, 4);
+                tableModel.setValueAt(tripTypeComboBox.getSelectedItem(), row, 6);
             }
         }
     }
@@ -296,34 +297,13 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    // for test
-//    public static List<Ride> getSampleRideHistory() {
-//        List<Ride> rides = new ArrayList<>();
-//        Category premium = new Category("Premium", Icons.getByName("convertible-car.png"));
-//        Category comfort = new Category("Sport", Icons.getByName("sport-car.png"));
-//        Category standard = new Category("Standard", Icons.getByName("normal-car.png"));
-//
-//        Currency usd = new Currency("US Dollar", CurrencyCode.USD, 22D);
-//        Currency eur = new Currency("Euro", CurrencyCode.EUR, 25D);
-//        Currency gbp = new Currency("British Pound", CurrencyCode.GBP, 29D);
-//        Currency jpy = new Currency("Japanese Yen", CurrencyCode.JPY, 0.2D);
-//        Currency czk = new Currency("Czech Crown", CurrencyCode.CZK, 1D);
-//
-//        rides.add(new Ride(null,100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-//        rides.add(new Ride(null, 100D, czk, 10D, DistanceUnit.Kilometer, premium, TripType.Paid, 2, Instant.now()));
-//        rides.add(new Ride(null, 50D, usd, 5D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
-//        rides.add(new Ride(null, 75D, eur, 7.5D, DistanceUnit.Kilometer, standard, TripType.Paid, 3, Instant.now()));
-//        rides.add(new Ride(null, 120D, gbp, 12D, DistanceUnit.Kilometer, premium, TripType.Paid, 4, Instant.now()));
-//        rides.add(new Ride(null, 30D, jpy, 3D, DistanceUnit.Kilometer, comfort, TripType.Personal, 1, Instant.now()));
-//
-//        return rides;
-//    }
-
     private JPanel createFilterPanel(JTable table, RideTableModel tableModel) {
         JPanel filterPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);  // Space between components
         gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        filterPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
 
         // Set horizontal weight to make sure components stretch across the available space
         gbc.weightx = 0.125;
@@ -411,8 +391,13 @@ public class RidesHistory extends JPanel {
         // Row 3: Filter button
         gbc.gridy = 3;
         gbc.gridx = 0;
-        gbc.gridwidth = 8;  // Button spans the entire width of the panel (8 columns)
+        gbc.gridwidth = 8;
+        gbc.fill = GridBagConstraints.NONE;  // Prevent button from stretching
+        gbc.anchor = GridBagConstraints.CENTER; // Center align the button
+        gbc.insets = new Insets(10, 5, 10, 5); // Top and bottom padding = 10px
+
         JButton filterButton = new JButton("Filter");
+        filterButton.setPreferredSize(new Dimension(150, filterButton.getPreferredSize().height));
         filterButton.addActionListener(e -> applyFilters(
                 table, tableModel, minAmountField, maxAmountField, currencyField,
                 minDistanceField, maxDistanceField, categoryField, tripTypeJComboBox,
@@ -506,10 +491,6 @@ public class RidesHistory extends JPanel {
     }
 
     private String[] getCurrencyCodesArray() {
-//        return currencyService.getAll().stream()
-//                .map(Currency::getCode)
-//                .toArray(String[]::new);
-
         return currencyCrudService.findAll().stream()
                 .map(Currency::getCode)
                 .toArray(String[]::new);

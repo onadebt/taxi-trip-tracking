@@ -1,6 +1,9 @@
 package cz.muni.fi.pv168.project.service.crud;
 
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.service.validation.ValidationResult;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 

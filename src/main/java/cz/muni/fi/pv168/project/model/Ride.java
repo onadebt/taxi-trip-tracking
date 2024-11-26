@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -14,18 +15,20 @@ public class Ride {
     private Double distance;
     private DistanceUnit distanceUnit;
     private @Nullable Category category;
+    private @Nullable Icon categoryIcon;
     private TripType tripType;
     private Instant createdAt;
     private Integer numberOfPassengers;
     private UUID uuid;
 
     /* New ride */
-    public Ride(@Nullable Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, TripType tripType, Integer numberOfPassengers) {
+    public Ride(@Nullable Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers) {
         this.id = id;
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;
         this.category = category;
+        this.categoryIcon = categoryIcon;
         this.tripType = tripType;
         this.numberOfPassengers = numberOfPassengers;
         this.createdAt = Instant.now();
@@ -34,12 +37,13 @@ public class Ride {
 
 
     /*Ride general*/
-    public Ride(Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, TripType tripType, Integer numberOfPassengers, Instant createdAt, UUID uuid) {
+    public Ride(Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers, Instant createdAt, UUID uuid) {
         this.id = id;
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;
         this.category = category;
+        this.categoryIcon = categoryIcon;
         this.tripType = tripType;
         this.numberOfPassengers = numberOfPassengers;
         this.createdAt = createdAt;
@@ -103,6 +107,10 @@ public class Ride {
     public void setCategory(@Nullable Category category) {
         this.category = category;
     }
+
+    public @Nullable Icon getCategoryIcon() { return this.categoryIcon; }
+
+    public void setCategoryIcon(@Nullable Icon categoryIcon) { this.categoryIcon = categoryIcon; }
 
     public TripType getTripType() {
         return tripType;

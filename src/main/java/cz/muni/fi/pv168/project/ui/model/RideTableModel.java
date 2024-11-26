@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.RideService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class RideTableModel extends AbstractTableModel {
             Column.editable("Distance", Double.class, Ride::getDistance, Ride::setDistance),
             Column.editable("Distance Unit", DistanceUnit.class, Ride::getDistanceUnit, Ride::setDistanceUnit),
             Column.editable("Category", Category.class, Ride::getCategory, Ride::setCategory),
+            Column.editable("Category Icon", Icon.class, Ride::getCategoryIcon, Ride::setCategoryIcon),
             Column.editable("Trip Type", TripType.class, Ride::getTripType, Ride::setTripType),
             Column.editable("Passengers", Integer.class, Ride::getNumberOfPassengers, Ride::setNumberOfPassengers)
     );

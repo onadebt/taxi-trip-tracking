@@ -38,7 +38,7 @@ public class SettingsService implements ISettingsService {
         }
 
         public static CurrencyDbModel getDefaultCurrency() {
-            return new CurrencyDbModel(1, "Euro", "EUR", 1.0);
+            return new CurrencyDbModel(1L, "Euro", "EUR", 1.0);
         }
     }
 }

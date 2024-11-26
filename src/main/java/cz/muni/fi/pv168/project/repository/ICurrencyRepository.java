@@ -10,6 +10,7 @@ public interface ICurrencyRepository {
     void update(Currency currency);
     void deleteById(Long currencyId);
     @Nullable Currency getById(Long currencyId);
+    @Nullable Currency getByCode(String currencyCode);
     List<Currency> getAll();
     void deleteAll();
 }

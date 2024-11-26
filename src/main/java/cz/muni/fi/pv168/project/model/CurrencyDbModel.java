@@ -1,23 +1,23 @@
 package cz.muni.fi.pv168.project.model;
 
 public class CurrencyDbModel {
-    private int currencyId;
+    private Long currencyId;
     private String name;
     private String tag;
     private double rate;
 
-    public CurrencyDbModel(int currencyId, String name, String tag, double rate) {
+    public CurrencyDbModel(Long currencyId, String name, String tag, double rate) {
         this.currencyId = currencyId;
         this.tag = tag;
         this.name = name;
         this.rate = rate;
     }
 
-    public int getCurrencyId() {
+    public Long getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(int currencyId) {
+    public void setCurrencyId(Long currencyId) {
         this.currencyId = currencyId;
     }
 

@@ -1,26 +1,23 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
-import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
+import cz.muni.fi.pv168.project.ui.renderers.ImageRenderer;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class RidesCategoriesPanel extends JPanel {
 
-    private final CategoryListModel categoryListModel;
+    private final CategoryTableModel categoryTableModel;
+    private final JTable categoryTable;
 
-    private RidesCategoriesPanel(CategoryListModel categoryListModel) {
+    private RidesCategoriesPanel(CategoryTableModel categoryTableModel) {
         super(new BorderLayout());
-
-        this.categoryListModel = categoryListModel;
+        this.categoryTableModel = categoryTableModel;
+        this.categoryTable = new JTable(categoryTableModel);
         initComponents();
     }
 
@@ -53,12 +50,14 @@ public class RidesCategoriesPanel extends JPanel {
         searchPanel.add(searchField, BorderLayout.CENTER);
         this.add(searchPanel, BorderLayout.NORTH);
 
-        JList<Category> categoryList = new JList<>(categoryListModel);
-        categoryList.setCellRenderer(new CategoryRenderer());
+        categoryTable.getColumnModel().getColumn(2).setCellRenderer(new ImageRenderer(48, 48));
+        // change the row height here:
+        categoryTable.setRowHeight(32);
 
-        JScrollPane listScrollPane = new JScrollPane(categoryList);
-        listScrollPane.setBorder(BorderFactory.createTitledBorder("Categories"));
-        this.add(listScrollPane, BorderLayout.CENTER);
+        categoryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane tableScrollPane = new JScrollPane(categoryTable);
+        tableScrollPane.setBorder(BorderFactory.createTitledBorder("Categories"));
+        this.add(tableScrollPane, BorderLayout.CENTER);
 
         JToolBar buttonsPanel = new JToolBar();
         buttonsPanel.setFloatable(false);
@@ -70,60 +69,26 @@ public class RidesCategoriesPanel extends JPanel {
 
         JButton editButton = new JButton("Edit Category");
         editButton.setEnabled(false);
-        editButton.addActionListener(e -> editCategory(categoryList.getSelectedValue()));
+        editButton.addActionListener(e -> editCategory(getSelectedCategory()));
         buttonsPanel.add(editButton);
 
         JButton deleteButton = new JButton("Delete Category");
         deleteButton.setEnabled(false);
-        deleteButton.addActionListener(e -> deleteCategory(categoryList.getSelectedValuesList()));
+        deleteButton.addActionListener(e -> deleteCategory(getSelectedCategory()));
         buttonsPanel.add(deleteButton);
 
-        categoryList.addListSelectionListener(e -> {
-            int selectedCount = categoryList.getSelectedIndices().length;
-            editButton.setEnabled(selectedCount == 1);
-            deleteButton.setEnabled(selectedCount > 0);
+        // Enable/Disable buttons based on selection
+        categoryTable.getSelectionModel().addListSelectionListener(e -> {
+            boolean selected = categoryTable.getSelectedRow() >= 0;
+            editButton.setEnabled(selected);
+            deleteButton.setEnabled(selected);
         });
 
-        categoryList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    int[] selectedIndices = categoryList.getSelectedIndices();
-                    Category selectedCategory = categoryList.getSelectedValue();
-                    List<Category> xd = categoryList.getSelectedValuesList();
-                    showContextMenu(e.getComponent(), e.getX(), e.getY(), selectedCategory, selectedIndices.length, xd);
-                }
-            }
-        });
         this.add(buttonsPanel, BorderLayout.NORTH);
     }
 
-    private final String[] iconNames = {"NormalRide.png", "Express.png", "Luxuary.png", "sport-car.png", "convertible-car.png","limousine-car.png",
-            "normal-car.png", "small-car.png", "truck-car.png"};
-    
-    public static JPanel createRidesCategoriesPanel(CategoryListModel categoryListModel) {
-        return new RidesCategoriesPanel(categoryListModel);
-    }
-
-    private void showContextMenu(Component component, int x, int y, Category selectedCategory,  int selectedCount, List<Category> xd) {
-        JPopupMenu contextMenu = new JPopupMenu();
-
-        JMenuItem addItem = new JMenuItem("Add Category");
-        addItem.addActionListener(e -> addCategory());
-        contextMenu.add(addItem);
-
-        JMenuItem editItem = new JMenuItem("Edit Category");
-        editItem.setEnabled(selectedCount == 1);
-        editItem.addActionListener(e -> editCategory(selectedCategory));
-        contextMenu.add(editItem);
-
-        JMenuItem deleteItem = new JMenuItem("Delete Category");
-        deleteItem.setEnabled(selectedCount > 0);
-        deleteItem.addActionListener(e -> deleteCategory(xd));
-        contextMenu.add(deleteItem);
-
-        contextMenu.show(component, x, y);
-
+    public static JPanel createRidesCategoriesPanel(CategoryTableModel categoryTableModel) {
+        return new RidesCategoriesPanel(categoryTableModel);
     }
 
     private void addCategory() {
@@ -132,7 +97,7 @@ public class RidesCategoriesPanel extends JPanel {
             Icon icon = chooseIcon();
             if (icon != null) {
                 Category newCategory = new Category(name, icon);
-                categoryListModel.addCategory(newCategory);
+                categoryTableModel.addRow(newCategory);
             }
         }
     }
@@ -149,26 +114,35 @@ public class RidesCategoriesPanel extends JPanel {
                 selectedCategory.setIcon(newIcon);
             }
 
-            int index = categoryListModel.indexOf(selectedCategory);
-            if (index >= 0) {
-                categoryListModel.updateCategory(selectedCategory);
+            categoryTableModel.updateRow(selectedCategory); // Update the category in the table model
+        }
+    }
+
+    private void deleteCategory(Category selectedCategory) {
+        if (selectedCategory != null) {
+            int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this category?",
+                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                categoryTableModel.removeRow(categoryTable.getSelectedRow()); // Remove the category from the table model
             }
         }
     }
 
-    private void deleteCategory(List<Category> categoryList) {
-        if (!categoryList.isEmpty()) {
-            int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected categories?",
-                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                for (Category category : categoryList) {
-                    categoryListModel.removeCategory(category);
-                }
-            }
+    private Category getSelectedCategory() {
+        int selectedRow = categoryTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            return categoryTableModel.getRow(selectedRow);
         }
+        return null;
+    }
+
+    private void filterCategories(String searchText) {
+        // TODO: filtering categories
     }
 
     private Icon chooseIcon() {
+        String[] iconNames = {"NormalRide.png", "Express.png", "Luxury.png", "sport-car.png", "convertible-car.png",
+                "limousine-car.png", "normal-car.png", "small-car.png", "truck-car.png"};
         ImageIcon[] icons = new ImageIcon[iconNames.length];
         for (int i = 0; i < iconNames.length; i++) {
             java.net.URL iconURL = getClass().getClassLoader().getResource("icons/" + iconNames[i]);
@@ -184,12 +158,5 @@ public class RidesCategoriesPanel extends JPanel {
             return (ImageIcon) iconComboBox.getSelectedItem();
         }
         return null;
-    }
-
-    private void filterCategories(String searchText) {
-        List<Category> filteredCategories = categoryListModel.getAllCategories().stream()
-                .filter(category -> category.getName().toLowerCase().contains(searchText.toLowerCase()))
-                .collect(Collectors.toList());
-        categoryListModel.setCategories(filteredCategories);
     }
 }

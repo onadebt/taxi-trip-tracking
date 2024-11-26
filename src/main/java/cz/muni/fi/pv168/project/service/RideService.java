@@ -12,6 +12,7 @@ import cz.muni.fi.pv168.project.repository.IRideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
+import cz.muni.fi.pv168.project.service.mockData.RidesTestData;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,7 +85,7 @@ public class RideService implements IRideService {
 
     @Override
     public List<Ride> getAll() {
-        return TestRides.get();
+        return RidesTestData.getMockRides();
     }
 
     @Override
@@ -103,25 +104,6 @@ public class RideService implements IRideService {
         }
         if (!error.isEmpty()) {
             throw new ValidationException(error);
-        }
-    }
-
-
-    private class TestRides {
-        static Currency euro = new Currency(1L, "Euro", "EUR", 1D);
-        static Currency dollar = new Currency(2L, "Dollar", "USD", 1.07);
-        static Currency czk = new Currency(3L, "Czech crown", "CZK", 25.21);
-
-        static Category categoryA = new Category(1L, "CategoryA", Icons.getByName("truck-car.png"));
-        static Category categoryB = new Category(2L, "CategoryB", Icons.getByName("truck-car.png"));
-        static Category categoryC = new Category(3L, "CategoryC", Icons.getByName("truck-car.png"));
-
-        public static List<Ride> get() {
-            return Arrays.asList(
-                    new Ride(1L, 30.0, euro, 100D, categoryA, TripType.Paid, 1, Instant.now(), UUID.randomUUID()),
-                    new Ride(2L, 50.0, dollar, 200D, categoryB, TripType.Personal, 2, Instant.now(), UUID.randomUUID()),
-                    new Ride(3L, 70.0, czk, 300D, categoryC, TripType.Paid, 3, Instant.now(), UUID.randomUUID())
-            );
         }
     }
 }

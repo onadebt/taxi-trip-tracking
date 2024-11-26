@@ -28,6 +28,7 @@ public class RideDbConverter {
                 currency,
                 rideDb.getDistance(),
                 category,
+                category.getIcon(),
                 rideDb.getTripType(),
                 rideDb.getPassengers(),
                 rideDb.getCreatedDate(),

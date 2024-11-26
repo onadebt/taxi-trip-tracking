@@ -7,7 +7,7 @@ import cz.muni.fi.pv168.project.service.crud.CurrencyCrudService;
 import cz.muni.fi.pv168.project.service.interfaces.*;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
+import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
 import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
 import cz.muni.fi.pv168.project.ui.tabs.*;
 
@@ -33,7 +33,7 @@ public class MainWindow {
 
         CurrencyCrudService currencyCrudService = new CurrencyCrudService((CurrencyRepository) diProvider.getCurrencyRepository(), validatorProvider.getCurrencyValidator());
         CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyCrudService);
-        CategoryListModel categoryListModel = new CategoryListModel(categoryService);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(categoryService);
 
         frame = new JFrame("Taxi trip tracking");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,7 +50,7 @@ public class MainWindow {
         JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(rideService, /*currencyService,*/ currencyCrudService, categoryService, importService, exportService);
         tabbedPane.addTab("Rides History", ridesHistory);
 
-        JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryListModel);
+        JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryTableModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
 //        JPanel currencies = Currencies.createCurrenciesPanel(currencyService);
