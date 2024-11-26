@@ -94,7 +94,7 @@ public class RidesHistory extends JPanel {
         JButton addButton = new JButton("Add New Ride");
         addButton.addActionListener(new NewRideAction(this, rideService, /*currencyService,*/ currencyCrudService, categoryService));
         addButton.setMargin(new Insets(5, 10, 5, 10));
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyService, categoryService));
+        addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
