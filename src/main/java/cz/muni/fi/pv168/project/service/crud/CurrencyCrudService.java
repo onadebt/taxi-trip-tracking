@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.repository.CurrencyRepository;
 import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 import cz.muni.fi.pv168.project.service.validation.Validator;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -46,6 +47,14 @@ public class CurrencyCrudService implements CrudService<Currency> {
         return validationResult;
     }
 
+    public @Nullable Currency getById(Long currencyId) {
+        return currencyRepository.getById(currencyId);
+    }
+
+    public @Nullable Currency getByTag(String tag) {
+        return currencyRepository.getByCode(tag);
+    }
+
     @Override
     public void deleteById(Long id) {
         currencyRepository.deleteById(id);
@@ -55,4 +64,6 @@ public class CurrencyCrudService implements CrudService<Currency> {
     public void deleteAll() {
         currencyRepository.deleteAll();
     }
+
+
 }

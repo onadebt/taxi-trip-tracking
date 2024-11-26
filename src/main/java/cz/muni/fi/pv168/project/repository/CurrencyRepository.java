@@ -50,11 +50,13 @@ public class CurrencyRepository implements ICurrencyRepository {
 
     @Override
     public List<Currency> getAll() {
-        return List.of(
+        return currencyDao.findAll().stream().map(currencyMapper::mapToBusiness)
+                .toList();
+        /*return List.of(
                 new Currency(1L, "Czech koruna", "CZK", 1.0),
                 new Currency(2L, "Euro", "EUR", 25.0),
                 new Currency(3L, "US Dollar", "USD", 20.0)
-        );
+        );*/
     }
 
     @Override

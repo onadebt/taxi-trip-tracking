@@ -1,7 +1,9 @@
 package cz.muni.fi.pv168.project.providers;
 
 import cz.muni.fi.pv168.project.database.DatabaseManager;
+import cz.muni.fi.pv168.project.database.dao.CurrencyDao;
 import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
+import cz.muni.fi.pv168.project.database.mapper.CurrencyMapper;
 import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.CurrencyDbModel;
@@ -15,9 +17,11 @@ import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.service.port.JsonExportService;
 import cz.muni.fi.pv168.project.service.port.JsonImportService;
+import cz.muni.fi.pv168.project.service.validation.CurrencyValidator;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 
 public class DIProvider {
-    //private final DatabaseManager databaseManager;
+    private final DatabaseManager databaseManager;
 
     private CurrencyDataAccessObject currencyDao;
     private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
@@ -34,21 +38,27 @@ public class DIProvider {
     private ExportService jsonExportService;
     private ImportService jsonImportService;
 
+    private Validator<Currency> currencyValidator;
+
     public DIProvider() {
 
+        this.databaseManager = DatabaseManager.createProductionInstance();
+        this.databaseManager.initSchema();
         this.categoryRepository = new CategoryRepository();
+        this.currencyDao = new CurrencyDao(databaseManager::getConnectionHandler);
+        this.currencyMapper = new CurrencyMapper();
         this.currencyRepository = new CurrencyRepository(currencyDao, currencyMapper);
         this.settingsRepository = new SettingsRepository();
         this.rideRepository = new RideRepository(currencyRepository, categoryRepository);
 
-        this.currencyService = new CurrencyService(currencyRepository);
+        this.currencyValidator = new CurrencyValidator();
+
         this.categoryService = new CategoryService(categoryRepository);
         this.settingsService = new SettingsService(settingsRepository);
         this.rideService = new RideService(categoryService, currencyService, rideRepository);
         this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
         this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
-        //this.databaseManager = DatabaseManager.createProductionInstance();
-        //this.databaseManager.initSchema();
+
     }
 
     public IRideRepository getRideRepository() {

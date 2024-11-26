@@ -6,7 +6,7 @@ public final class CreateDatabase {
     public static void main(String[] args) {
         var dbManager = DatabaseManager.createProductionInstance();
         System.out.println("Database connection string: " + dbManager.getDatabaseConnectionString());
-        dbManager.initSchema();
-        System.out.println("Database created...");
+        //dbManager.initSchema();
+        //System.out.println("Database created...");
     }
 }
