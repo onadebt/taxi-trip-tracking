@@ -38,6 +38,7 @@ public class NewRideAction extends AbstractAction {
         this.categoryListModel = new CategoryListModel(categoryService);
         this.currencyListModel = new CurrencyListModel(currencyCrudService);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         var dialog = new NewRideDialog(currencyListModel, categoryListModel);
