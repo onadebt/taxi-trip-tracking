@@ -35,7 +35,7 @@ public class HomePage extends JPanel {
         this.add(snapshotPanel, BorderLayout.SOUTH);
 
         JButton addButton = new JButton("Add Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
+//        addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());

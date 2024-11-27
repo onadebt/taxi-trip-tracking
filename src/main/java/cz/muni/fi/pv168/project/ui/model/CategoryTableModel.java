@@ -1,16 +1,16 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryTableModel extends AbstractTableModel {
+public class CategoryTableModel extends AbstractTableModel implements EntityTableModel<Category> {
     private List<Category> categories;
-    private final ICategoryService categoryService;
+    private final CrudService<Category> categoryCrudService;
 
     private final List<Column<Category, ?>> columns = List.of(
             Column.editable("ID", Long.class, Category::getId, Category::setId),
@@ -18,32 +18,32 @@ public class CategoryTableModel extends AbstractTableModel {
             Column.editable("Icon", Icon.class, Category::getIcon, Category::setIcon)
     );
 
-    public CategoryTableModel(ICategoryService categoryService) {
-        this.categoryService = categoryService;
-        this.categories = new ArrayList<>(categoryService.getAll());
+    public CategoryTableModel(CrudService<Category> categoryCrudService) {
+        this.categoryCrudService = categoryCrudService;
+        this.categories = new ArrayList<>(categoryCrudService.findAll());
     }
 
     public void refresh() {
-        this.categories = new ArrayList<>(categoryService.getAll());
+        this.categories = new ArrayList<>(categoryCrudService.findAll());
         fireTableDataChanged();
     }
 
     public void addRow(Category category) {
         int newRowIndex = getRowCount();
-        categoryService.create(category);
+        categoryCrudService.create(category);
         categories.add(category);
         fireTableRowsInserted(newRowIndex, newRowIndex);
     }
 
     public void removeRow(int rowIndex) {
         var categoryToBeDeleted = getEntity(rowIndex);
-        categoryService.deleteById(categoryToBeDeleted.getId());
+        categoryCrudService.deleteById(categoryToBeDeleted.getId());
         categories.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
     public void updateRow(Category category) {
-        categoryService.update(category);
+        categoryCrudService.update(category);
         int rowIndex = categories.indexOf(category);
         fireTableRowsUpdated(rowIndex, rowIndex);
     }

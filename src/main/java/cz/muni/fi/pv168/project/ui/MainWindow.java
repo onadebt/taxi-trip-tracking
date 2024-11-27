@@ -1,14 +1,16 @@
 package cz.muni.fi.pv168.project.ui;
 
+import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.providers.ValidatorProvider;
+import cz.muni.fi.pv168.project.repository.CategoryRepository;
 import cz.muni.fi.pv168.project.repository.CurrencyRepository;
+import cz.muni.fi.pv168.project.service.crud.CategoryCrudService;
 import cz.muni.fi.pv168.project.service.crud.CurrencyCrudService;
 import cz.muni.fi.pv168.project.service.interfaces.*;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
-import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
-import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
+import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.tabs.*;
 
 import javax.swing.*;
@@ -32,8 +34,13 @@ public class MainWindow {
         ExportService exportService = diProvider.getJsonExportService();
 
         CurrencyCrudService currencyCrudService = new CurrencyCrudService((CurrencyRepository) diProvider.getCurrencyRepository(), validatorProvider.getCurrencyValidator());
+        CategoryCrudService categoryCrudService = new CategoryCrudService((CategoryRepository) diProvider.getCategoryRepository(), validatorProvider.getCategoryValidator());
         CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyCrudService);
-        CategoryTableModel categoryTableModel = new CategoryTableModel(categoryService);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
+        var categoryListModel = new EntityListModelAdapter<>(categoryTableModel);
+        var currencyListModel = new EntityListModelAdapter<>(currencyTableModel);
+
+
 
         frame = new JFrame("Taxi trip tracking");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,13 +54,12 @@ public class MainWindow {
         JPanel homePage = HomePage.createHomePagePanel(rideService, currencyCrudService, categoryService);
         tabbedPane.addTab("Home Page", homePage);
 
-        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(rideService, /*currencyService,*/ currencyCrudService, categoryService, importService, exportService);
+        JPanel ridesHistory = new RidesHistory(rideService, currencyListModel, categoryListModel, importService, exportService);
         tabbedPane.addTab("Rides History", ridesHistory);
 
         JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryTableModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
-//        JPanel currencies = Currencies.createCurrenciesPanel(currencyService);
         JPanel currencies = new Currencies(currencyTableModel, validatorProvider.getCurrencyValidator());
         tabbedPane.addTab("Currencies", currencies);
 
