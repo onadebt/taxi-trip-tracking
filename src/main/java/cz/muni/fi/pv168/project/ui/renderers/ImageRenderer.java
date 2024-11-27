@@ -16,12 +16,10 @@ public class ImageRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {
-        if (value instanceof Icon) {
-            Icon icon = (Icon) value;
+        if (value instanceof Icon icon) {
             JLabel label = new JLabel();
 
-            if (icon instanceof ImageIcon) {
-                ImageIcon imageIcon = (ImageIcon) icon;
+            if (icon instanceof ImageIcon imageIcon) {
                 Image image = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 label.setIcon(new ImageIcon(image));
             } else {
