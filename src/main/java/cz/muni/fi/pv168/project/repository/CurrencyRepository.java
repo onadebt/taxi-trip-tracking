@@ -8,8 +8,9 @@ import cz.muni.fi.pv168.project.model.CurrencyDbModel;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
-public class CurrencyRepository implements ICurrencyRepository {
+public class CurrencyRepository implements Repository<Currency> {
     private final CurrencyDataAccessObject currencyDao;
     private final EntityMapper<CurrencyDbModel, Currency> currencyMapper;
 
@@ -36,12 +37,17 @@ public class CurrencyRepository implements ICurrencyRepository {
     }
 
     @Override
+    public Optional<Currency> findById(Long id) {
+        return Optional.empty();
+    }
+
+
     public @Nullable Currency getById(Long currencyId) {
         return currencyDao
                 .findById(currencyId)
                 .map(currencyMapper::mapToBusiness).orElse(null);
     }
-    @Override
+
     public @Nullable Currency getByCode(String code) {
         return currencyDao
                 .findByCode(code)
@@ -49,7 +55,7 @@ public class CurrencyRepository implements ICurrencyRepository {
     }
 
     @Override
-    public List<Currency> getAll() {
+    public List<Currency> findAll() {
         return currencyDao.findAll().stream().map(currencyMapper::mapToBusiness)
                 .toList();
         /*return List.of(

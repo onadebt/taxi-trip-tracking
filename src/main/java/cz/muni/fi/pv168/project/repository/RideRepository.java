@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.project.repository;
 
+import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.RideDbModel;
 import cz.muni.fi.pv168.project.model.enums.DistanceConversionHelper;
@@ -8,40 +10,52 @@ import cz.muni.fi.pv168.project.ui.tabs.Settings;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
-public class RideRepository implements IRideRepository {
-    private ICurrencyRepository currencyRepository;
-    private ICategoryRepository categoryRepository;
+public class RideRepository implements Repository<Ride> {
+    private Repository<Currency> currencyRepository;
+    private Repository<Category> categoryRepository;
 
-    public RideRepository(ICurrencyRepository currencyRepository, ICategoryRepository categoryRepository) {
+    public RideRepository(Repository<Currency> currencyRepository, Repository<Category> categoryRepository) {
         this.currencyRepository = currencyRepository;
         this.categoryRepository = categoryRepository;
     }
 
-    @Override
-    public void create(RideDbModel ride) {
+
+
+    public void updateAll(List<Ride> rides) {
+
+    }
+
+    public void deleteByUUID(UUID uuid) {
 
     }
 
     @Override
-    public void update(RideDbModel ride) {
-
+    public List<Ride> findAll() {
+        return List.of();
     }
 
-    public void updateAll(List<RideDbModel> rides) {
+    @Override
+    public Ride create(Ride newEntity) {
+        return null;
+    }
+
+    @Override
+    public void update(Ride entity) {
 
     }
 
     @Override
-    public void deleteByUUID(UUID rideUUID) {
+    public void deleteById(Long id) {
 
     }
 
     @Override
-    public void deleteById(Long rideId) {
-
+    public Optional<Ride> findById(Long id) {
+        return Optional.empty();
     }
 
     @Override
@@ -49,21 +63,12 @@ public class RideRepository implements IRideRepository {
 
     }
 
-    @Override
-    public @Nullable Ride getById(Long rideId) {
-        return null;
-    }
 
-    @Override
-    public RideDbModel getByUUID(UUID rideUUID) {
+    public Ride findByUUID(UUID rideUUID) {
         return null;
     }
 
 
-    @Override
-    public List<RideDbModel> getAll() {
-        return null;
-    }
 
     public void recalculateDistances(DistanceUnit newUnit) {
         if (newUnit == Settings.getDefaultDistanceUnit()) {
@@ -75,8 +80,8 @@ public class RideRepository implements IRideRepository {
                 : DistanceConversionHelper.KILOMETERS_TO_MILES_FACTOR;
 
 
-        List<RideDbModel> rides = getAll();
-        for (RideDbModel ride : rides) {
+        List<Ride> rides = findAll();
+        for (Ride ride : rides) {
                 ride.setDistance(ride.getDistance() * conversionFactor);
         }
 

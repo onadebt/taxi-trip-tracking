@@ -5,8 +5,10 @@ import cz.muni.fi.pv168.project.database.dao.CurrencyDao;
 import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
 import cz.muni.fi.pv168.project.database.mapper.CurrencyMapper;
 import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
+import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.repository.*;
 import cz.muni.fi.pv168.project.service.*;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
@@ -26,9 +28,9 @@ public class DIProvider {
     private CurrencyDataAccessObject currencyDao;
     private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
 
-    private IRideRepository rideRepository;
-    private ICurrencyRepository currencyRepository;
-    private ICategoryRepository categoryRepository;
+    private RideRepository rideRepository;
+    private Repository<Currency> currencyRepository;
+    private Repository<Category> categoryRepository;
     private ISettingsRepository settingsRepository;
 
     private IRideService rideService;
@@ -37,8 +39,6 @@ public class DIProvider {
     private ISettingsService settingsService;
     private ExportService jsonExportService;
     private ImportService jsonImportService;
-
-    private Validator<Currency> currencyValidator;
 
     public DIProvider() {
 
@@ -51,8 +51,6 @@ public class DIProvider {
         this.settingsRepository = new SettingsRepository();
         this.rideRepository = new RideRepository(currencyRepository, categoryRepository);
 
-        this.currencyValidator = new CurrencyValidator();
-
         this.categoryService = new CategoryService(categoryRepository);
         this.settingsService = new SettingsService(settingsRepository);
         this.rideService = new RideService(categoryService, currencyService, rideRepository);
@@ -61,15 +59,15 @@ public class DIProvider {
 
     }
 
-    public IRideRepository getRideRepository() {
+    public RideRepository getRideRepository() {
         return rideRepository;
     }
 
-    public ICurrencyRepository getCurrencyRepository() {
+    public Repository<Currency> getCurrencyRepository() {
         return currencyRepository;
     }
 
-    public ICategoryRepository getCategoryRepository() {
+    public Repository<Category> getCategoryRepository() {
         return categoryRepository;
     }
 
