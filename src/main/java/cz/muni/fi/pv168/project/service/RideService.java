@@ -9,6 +9,8 @@ import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.repository.IRideRepository;
+import cz.muni.fi.pv168.project.repository.Repository;
+import cz.muni.fi.pv168.project.repository.RideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
@@ -24,9 +26,9 @@ import java.util.UUID;
 public class RideService implements IRideService {
     private final ICategoryService categoryService;
     private final ICurrencyService currencyService;
-    private final IRideRepository rideRepository;
+    private final RideRepository rideRepository;
 
-    public RideService(ICategoryService categoryService, ICurrencyService currencyService, IRideRepository rideRepository) {
+    public RideService(ICategoryService categoryService, ICurrencyService currencyService, RideRepository rideRepository) {
         this.rideRepository = rideRepository;
         this.categoryService = categoryService;
         this.currencyService = currencyService;
@@ -47,14 +49,14 @@ public class RideService implements IRideService {
     public void create(Ride ride) {
         validate(ride);
         RideDbModel rideDbModel = RideDbConverter.toDbModel(ride);
-        rideRepository.create(rideDbModel);
+        rideRepository.create(ride);
     }
 
     @Override
     public void update(Ride ride) {
         validate(ride);
         RideDbModel rideDbModel = RideDbConverter.toDbModel(ride);
-        rideRepository.update(rideDbModel);
+        rideRepository.update(ride);
     }
 
     @Override

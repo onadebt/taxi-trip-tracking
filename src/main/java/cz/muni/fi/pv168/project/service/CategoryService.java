@@ -1,7 +1,7 @@
 package cz.muni.fi.pv168.project.service;
 
-import cz.muni.fi.pv168.project.repository.ICategoryRepository;
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.repository.Repository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.mockData.CategoryTestData;
 import org.jetbrains.annotations.Nullable;
@@ -9,9 +9,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CategoryService implements ICategoryService {
-    private final ICategoryRepository categoryRepository;
+    private final Repository<Category> categoryRepository;
 
-    public CategoryService(ICategoryRepository categoryRepository) {
+    public CategoryService(Repository<Category> categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 

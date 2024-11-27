@@ -19,7 +19,7 @@ public class CurrencyCrudService implements CrudService<Currency> {
 
     @Override
     public List<Currency> findAll() {
-        return currencyRepository.getAll();
+        return currencyRepository.findAll();
     }
 
     @Override
