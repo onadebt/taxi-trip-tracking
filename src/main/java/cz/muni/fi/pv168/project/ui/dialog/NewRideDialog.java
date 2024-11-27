@@ -5,7 +5,7 @@ import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
+import cz.muni.fi.pv168.project.ui.renderers.CategoryNameIconRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.CurrencyRenderer;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +26,7 @@ public class NewRideDialog extends EntityDialog<Ride> {
     private final Ride ride = new Ride();
 
     private boolean validationOk = true;
+    private JComboBox<Currency> currencyBox;
 
     public NewRideDialog(ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
         this.currencyModel = new ComboBoxModelAdapter<>(currencyListModel);
@@ -69,11 +70,11 @@ public class NewRideDialog extends EntityDialog<Ride> {
     }
 
     private void createFields(){
-        var currencyBox = new JComboBox<>(currencyModel);
+        currencyBox = new JComboBox<>(currencyModel);
         currencyBox.setRenderer(new CurrencyRenderer());
 
         var categoryBox = new JComboBox<>(categoryModel);
-        categoryBox.setRenderer(new CategoryRenderer());
+        categoryBox.setRenderer(new CategoryNameIconRenderer());
 
         var tripTypeBox = new JComboBox<>(tripTypeModel);
         tripTypeBox.addItemListener(new TripTypeItemListener());
@@ -96,7 +97,9 @@ public class NewRideDialog extends EntityDialog<Ride> {
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 TripType item = (TripType) e.getItem();
-                amountField.setEnabled(item != TripType.Personal);
+                amountField.setEnabled(item == TripType.Paid);
+                currencyModel.setSelectedItem(null);
+                currencyBox.setEnabled(item == TripType.Paid);
             }
         }
     }

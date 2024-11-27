@@ -18,25 +18,20 @@ import java.awt.event.ActionEvent;
 
 public class NewRideAction extends AbstractAction {
     private final JComponent parent;
-    // TODO: use categoryTableModel and currencyTableModel instead of (categoryListModel and currencyListModel)
-    private final CategoryTableModel categoryTableModel;
-    private final CurrencyTableModel currencyTableModel;
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
 
     private final IRideService rideService;
 
-    public NewRideAction(JComponent parentComponent, IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService) {
+    public NewRideAction(JComponent parentComponent, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
         super("Add ride");
         this.parent = parentComponent;
         this.rideService = rideService;
 
-        this.categoryTableModel = new CategoryTableModel(categoryService);
-        this.currencyTableModel = new CurrencyTableModel(currencyCrudService);
-        // TODO: use categoryTableModel and currencyTableModel instead of (categoryListModel and currencyListModel)
 
-        this.categoryListModel = new CategoryListModel(categoryService);
-        this.currencyListModel = new CurrencyListModel(currencyCrudService);
+
+        this.categoryListModel = categoryListModel;
+        this.currencyListModel = currencyListModel;
     }
 
     @Override
