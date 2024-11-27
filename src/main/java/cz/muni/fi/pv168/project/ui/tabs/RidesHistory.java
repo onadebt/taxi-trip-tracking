@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
@@ -9,17 +8,11 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.TripType;
-import cz.muni.fi.pv168.project.service.CategoryService;
-import cz.muni.fi.pv168.project.service.RideService;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
-import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
-import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
 import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
-import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -31,19 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.toedter.calendar.JDateChooser;
+import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
-import cz.muni.fi.pv168.project.ui.renderers.ImageRenderer;
+import cz.muni.fi.pv168.project.ui.renderers.*;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class RidesHistory extends JPanel {
 
     private final List<Ride> rideHistory;
     private final IRideService rideService;
-    private final CrudService<Currency> currencyCrudService;
-    private final ICategoryService categoryService;
+//    private final CrudService<Currency> currencyCrudService;
+//    private final CrudService<Category> categoryCrudService;
+    private final ListModel<Currency> currencyListModel;
+    private final ListModel<Category> categoryListModel;
     private final ImportService importService;
     private final ExportService exportService;
 
@@ -51,11 +47,13 @@ public class RidesHistory extends JPanel {
             .withLocale(Locale.forLanguageTag("cs-CZ"))
             .withZone(ZoneId.systemDefault());
 
-    private RidesHistory(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
+    public RidesHistory(IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, /*CrudService<Currency> currencyCrudService, CrudService<Category> categoryCrudService,*/ ImportService importService, ExportService exportService) {
         super(new BorderLayout());
         this.rideService = rideService;
-        this.currencyCrudService = currencyCrudService;
-        this.categoryService = categoryService;
+//        this.currencyCrudService = currencyCrudService;
+//        this.categoryCrudService = categoryCrudService;
+        this.currencyListModel = currencyListModel;
+        this.categoryListModel = categoryListModel;
         this.rideHistory = rideService.getAll();
         this.importService = importService;
         this.exportService = exportService;
@@ -79,9 +77,9 @@ public class RidesHistory extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    public static JPanel createRidesHistoryPanel(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService, ImportService importService, ExportService exportService) {
-        return new RidesHistory(rideService, currencyCrudService, categoryService, importService, exportService);
-    }
+//    public static JPanel createRidesHistoryPanel(IRideService rideService, CrudService<Currency> currencyCrudService, CrudService<Category> categoryCrudService, ImportService importService, ExportService exportService) {
+//        return new RidesHistory(rideService, currencyCrudService, categoryCrudService, importService, exportService);
+//    }
 
     private JToolBar createToolBar(JTable table, RideTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
@@ -89,7 +87,7 @@ public class RidesHistory extends JPanel {
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
+        addButton.addActionListener(new NewRideAction(this, rideService, currencyListModel, categoryListModel));
         addButton.setMargin(new Insets(5, 10, 5, 10));
         toolBar.add(addButton);
 
@@ -113,10 +111,15 @@ public class RidesHistory extends JPanel {
         editCategoryButton.addActionListener(e -> editCategory(table, tableModel));
         toolBar.add(editCategoryButton);
 
-        JButton editPersonalRideButton = new JButton("Edit Trip Type");
-        editPersonalRideButton.setMargin(new Insets(5, 10, 5, 10));
-        editPersonalRideButton.addActionListener(e -> editTripType(table, tableModel));
-        toolBar.add(editPersonalRideButton);
+        JButton editTripType = new JButton("Edit Trip Type");
+        editTripType.setMargin(new Insets(5, 10, 5, 10));
+        editTripType.addActionListener(e -> editTripType(table, tableModel));
+        toolBar.add(editTripType);
+
+        JButton editNumberOfPassengers = new JButton("Edit Number of Passengers");
+        editNumberOfPassengers.setMargin(new Insets(5, 10, 5, 10));
+        editNumberOfPassengers.addActionListener(e -> editNumberOfPassengers(table, tableModel));
+        toolBar.add(editNumberOfPassengers);
 
         JButton deleteRowsButton = new JButton("Delete Selected Rows");
         deleteRowsButton.setMargin(new Insets(5, 10, 5, 10));
@@ -140,26 +143,11 @@ public class RidesHistory extends JPanel {
     private JTable createRidesTable() {
         RideTableModel rideTableModel = new RideTableModel(this.rideService);
         JTable table = new JTable(rideTableModel);
-
-        // show icons as image, not as link (also 48x48 is temporary)
-        table.getColumnModel().getColumn(5).setCellRenderer(new ImageRenderer(48, 48));
-        // change the row height here, so the icons fit it
+        TableColumn categoryColumn = table.getColumnModel().getColumn(3);
+        categoryColumn.setCellRenderer(new CategoryNameIconRenderer());
         table.setRowHeight(32);
 
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        TableColumn currencyColumn = table.getColumnModel().getColumn(0);
-        JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
-        currencyColumn.setCellEditor(new DefaultCellEditor(currencyComboBox));
-        /*
-        TableColumn categoryColumn = table.getColumnModel().getColumn(3);
-        JComboBox<String> categoryComboBox = createCategoryComboBox();
-        categoryColumn.setCellEditor(new DefaultCellEditor(categoryComboBox));
-
-        TableColumn tripTypeColumn = table.getColumnModel().getColumn(4);
-        JComboBox<TripType> tripTypeComboBox = new JComboBox<>(TripType.values());
-        tripTypeColumn.setCellEditor(new DefaultCellEditor(tripTypeComboBox));
-        */
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -200,9 +188,13 @@ public class RidesHistory extends JPanel {
         editCategoryItem.addActionListener(event -> editCategory(table, tableModel));
         popupMenu.add(editCategoryItem);
 
-        JMenuItem editPersonalRideItem = new JMenuItem("Edit Personal Ride");
-        editPersonalRideItem.addActionListener(event -> editTripType(table, tableModel));
-        popupMenu.add(editPersonalRideItem);
+        JMenuItem editTripType = new JMenuItem("Edit Trip type");
+        editTripType.addActionListener(event -> editTripType(table, tableModel));
+        popupMenu.add(editTripType);
+
+        JMenuItem editNumberOfPassengersItem = new JMenuItem("Edit Number of Passengers");
+        editNumberOfPassengersItem.addActionListener(event -> editNumberOfPassengers(table, tableModel));
+        popupMenu.add(editNumberOfPassengersItem);
 
         popupMenu.addSeparator();
 
@@ -231,7 +223,7 @@ public class RidesHistory extends JPanel {
     private void editCurrency(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentCurrency = tableModel.getValueAt(row, 1);
-            JComboBox<String> currencyComboBox = new JComboBox<>(getCurrencyCodesArray());
+            JComboBox<Currency> currencyComboBox = createCurrencyComboBox();
             currencyComboBox.setSelectedItem(currentCurrency);
             int option = JOptionPane.showConfirmDialog(table, currencyComboBox, "Choose new currency", JOptionPane.OK_CANCEL_OPTION);
 
@@ -257,28 +249,44 @@ public class RidesHistory extends JPanel {
     }
 
     private void editCategory(JTable table, RideTableModel tableModel) {
-        // TODO: edit not only category, but category icon too
         for (int row : table.getSelectedRows()) {
-            Object currentCategory = tableModel.getValueAt(row, 4);
-            JComboBox<Icon> categoryComboBox = new JComboBox<>(categoryService.getAll().stream().map(Category::getIcon).toArray(Icon[]::new));
-            categoryComboBox.setSelectedItem(currentCategory);
-            int option = JOptionPane.showConfirmDialog(table, categoryComboBox, "Choose new category", JOptionPane.OK_CANCEL_OPTION);
+            Object currentCategoryName = tableModel.getValueAt(row, 3);
 
+            JComboBox<Category> categoryBox = createCategoryComboBox(new CategoryNameIconRenderer());
+            categoryBox.setSelectedItem(currentCategoryName);
+
+            int option = JOptionPane.showConfirmDialog(table, categoryBox, "Choose new category", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
-                tableModel.setValueAt(categoryComboBox.getSelectedItem(), row, 4);
+                tableModel.setValueAt(categoryBox.getSelectedItem(), row, 3);
             }
         }
     }
 
     private void editTripType(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
-            Object currentTripType = tableModel.getValueAt(row, 6);
+            Object currentTripType = tableModel.getValueAt(row, 4);
             JComboBox<String> tripTypeComboBox = new JComboBox<>(new String[]{TripType.Paid.name(), TripType.Personal.name()});
             tripTypeComboBox.setSelectedItem(currentTripType);
             int option = JOptionPane.showConfirmDialog(table, tripTypeComboBox, "Trip Type", JOptionPane.OK_CANCEL_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {
-                tableModel.setValueAt(tripTypeComboBox.getSelectedItem(), row, 6);
+                tableModel.setValueAt(tripTypeComboBox.getSelectedItem(), row, 4);
+            }
+        }
+    }
+
+    private void editNumberOfPassengers(JTable table, RideTableModel tableModel) {
+        for (int row : table.getSelectedRows()) {
+            Object currentNumberOfPassengers = tableModel.getValueAt(row, 5);
+            String newNumberOfPassengersStr = JOptionPane.showInputDialog(table, "Enter new number of passengers:", currentNumberOfPassengers);
+
+            if (newNumberOfPassengersStr != null) {
+                try {
+                    int newNumberOfPassengers = Integer.parseInt(newNumberOfPassengersStr);
+                    tableModel.setValueAt(newNumberOfPassengers, row, 5);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(table, "Invalid number of passengers entered.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
@@ -297,7 +305,10 @@ public class RidesHistory extends JPanel {
         }
     }
 
+
+
     private JPanel createFilterPanel(JTable table, RideTableModel tableModel) {
+        // TODO: automatic update of ComboBoxes on DB change
         JPanel filterPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);  // Space between components
@@ -324,7 +335,7 @@ public class RidesHistory extends JPanel {
 
         gbc.gridx = 4;
         filterPanel.add(new JLabel("Currency"), gbc);
-        JComboBox<String> currencyField = new JComboBox<>(getCurrencyCodesArray());
+        JComboBox<Currency> currencyField = createCurrencyComboBox();
         gbc.gridx = 5;
         filterPanel.add(currencyField, gbc);
 
@@ -344,7 +355,8 @@ public class RidesHistory extends JPanel {
 
         gbc.gridx = 2;
         filterPanel.add(new JLabel("Category"), gbc);
-        JComboBox<String> categoryField = createCategoryComboBox();
+        JComboBox<Category> categoryField = createCategoryComboBox(new CategoryNameRenderer());
+//        categoryField.setRenderer(new CategoryRenderer());
         gbc.gridx = 3;
         filterPanel.add(categoryField, gbc);
 
@@ -409,8 +421,8 @@ public class RidesHistory extends JPanel {
 
     private void applyFilters(JTable table, RideTableModel tableModel,
                               JTextField minAmountField, JTextField maxAmountField,
-                              JComboBox<String> currencyField, JTextField minDistanceField,
-                              JTextField maxDistanceField, JComboBox<String> categoryField,
+                              JComboBox<Currency> currencyField, JTextField minDistanceField,
+                              JTextField maxDistanceField, JComboBox<Category> categoryField,
                               JComboBox<TripType> tripTypeField, JTextField minPeopleField,
                               JTextField maxPeopleField, JDateChooser startDateChooser, JDateChooser endDateChooser) {
 
@@ -482,17 +494,19 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    private JComboBox<String> createCategoryComboBox() {
-        List<String> categoriesNames = categoryService.getAll().stream()
-                .map(Category::getName)
-                .collect(Collectors.toList());
-        categoriesNames.add("No Category");
-        return new JComboBox<>(categoriesNames.toArray(new String[0]));
+    private JComboBox<Category> createCategoryComboBox(AbstractRenderer<Category> categoryRenderer) {
+        ComboBoxModel<Category> categoryComboBoxModel = new ComboBoxModelAdapter<>(categoryListModel);
+        var categoryComboBox = new JComboBox<>(categoryComboBoxModel);
+        categoryComboBox.setRenderer(categoryRenderer);
+
+        return categoryComboBox;
     }
 
-    private String[] getCurrencyCodesArray() {
-        return currencyCrudService.findAll().stream()
-                .map(Currency::getCode)
-                .toArray(String[]::new);
+    private JComboBox<Currency> createCurrencyComboBox() {
+        ComboBoxModel<Currency> currencyComboBoxModel = new ComboBoxModelAdapter<>(currencyListModel);
+        var currencyComboBox = new JComboBox<>(currencyComboBoxModel);
+        currencyComboBox.setRenderer(new CurrencyRenderer());
+
+        return currencyComboBox;
     }
 }
