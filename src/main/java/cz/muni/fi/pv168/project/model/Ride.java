@@ -8,8 +8,8 @@ import javax.swing.*;
 import java.time.Instant;
 import java.util.UUID;
 
-public class Ride {
-    private @Nullable Long id;
+public class Ride extends Entity {
+//    private @Nullable Long id;
     private Double amountCurrency;
     private Currency currency;
     private Double distance;
@@ -23,7 +23,7 @@ public class Ride {
 
     /* New ride */
     public Ride(@Nullable Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers) {
-        this.id = id;
+        super(id);
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;
@@ -38,7 +38,7 @@ public class Ride {
 
     /*Ride general*/
     public Ride(Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers, Instant createdAt, UUID uuid) {
-        this.id = id;
+        super(id);
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;
@@ -50,7 +50,9 @@ public class Ride {
         this.uuid = uuid;
     }
 
-    public Ride() {}
+    public Ride() {
+        super(null);
+    }
 
     public DistanceUnit getDistanceUnit() {
         return distanceUnit;
@@ -60,13 +62,13 @@ public class Ride {
         this.distanceUnit = distanceUnit;
     }
 
-    public @Nullable Long getId() {
-        return id;
-    }
-
-    public void setId(@Nullable Long id) {
-        this.id = id;
-    }
+//    public @Nullable Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(@Nullable Long id) {
+//        this.id = id;
+//    }
 
     public Double getAmountCurrency() {
         return amountCurrency;

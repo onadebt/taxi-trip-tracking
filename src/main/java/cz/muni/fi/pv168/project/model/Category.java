@@ -2,18 +2,19 @@ package cz.muni.fi.pv168.project.model;
 
 import javax.swing.*;
 
-public class Category {
-    private Long id = 0L;
+public class Category extends Entity {
+//    private Long id = 0L;
     private String name;
     private Icon icon;
 
     public Category(Long id, String name, Icon icon) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.icon = icon;
     }
 
     public Category(String name, Icon icon) {
+        super(0L);
         this.name = name;
         this.icon = icon;
     }
@@ -35,13 +36,13 @@ public class Category {
         this.icon = icon;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     @Override
     public String toString() {
