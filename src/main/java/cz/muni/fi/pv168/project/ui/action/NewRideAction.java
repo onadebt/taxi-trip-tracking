@@ -1,17 +1,10 @@
 package cz.muni.fi.pv168.project.ui.action;
 
 import cz.muni.fi.pv168.project.model.exception.ValidationException;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
-import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
-import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.ui.dialog.NewRideDialog;
 import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.ui.model.CategoryListModel;
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
-import cz.muni.fi.pv168.project.ui.model.CurrencyListModel;
-import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
