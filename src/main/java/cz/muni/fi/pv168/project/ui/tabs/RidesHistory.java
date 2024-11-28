@@ -34,6 +34,7 @@ import java.util.Locale;
 
 public class RidesHistory extends JPanel {
 
+    private final JTable rideHistoryTable;
     private final List<Ride> rideHistory;
     private final IRideService rideService;
 //    private final CrudService<Currency> currencyCrudService;
@@ -57,11 +58,11 @@ public class RidesHistory extends JPanel {
         this.rideHistory = rideService.getAll();
         this.importService = importService;
         this.exportService = exportService;
+        this.rideHistoryTable = createRidesTable();
 
         JLabel label = new JLabel("History of taxi rides:");
         this.add(label, BorderLayout.NORTH);
 
-        JTable rideHistoryTable = createRidesTable();
         JScrollPane scrollPane = new JScrollPane(rideHistoryTable);
 
         JToolBar toolBar = createToolBar(rideHistoryTable, (RideTableModel) rideHistoryTable.getModel());
@@ -93,30 +94,37 @@ public class RidesHistory extends JPanel {
 
         JButton editAmountButton = new JButton("Edit Amount");
         editAmountButton.addActionListener(e -> editAmount(table, tableModel));
+        editAmountButton.setEnabled(false);
         toolBar.add(editAmountButton);
 
         JButton editCurrencyButton = new JButton("Edit Currency");
         editCurrencyButton.addActionListener(e -> editCurrency(table, tableModel));
+        editCurrencyButton.setEnabled(false);
         toolBar.add(editCurrencyButton);
 
         JButton editDistanceButton = new JButton("Edit Distance");
         editDistanceButton.addActionListener(e -> editDistance(table, tableModel));
+        editDistanceButton.setEnabled(false);
         toolBar.add(editDistanceButton);
 
         JButton editCategoryButton = new JButton("Edit Category");
         editCategoryButton.addActionListener(e -> editCategory(table, tableModel));
+        editCategoryButton.setEnabled(false);
         toolBar.add(editCategoryButton);
 
         JButton editTripType = new JButton("Edit Trip Type");
         editTripType.addActionListener(e -> editTripType(table, tableModel));
+        editTripType.setEnabled(false);
         toolBar.add(editTripType);
 
         JButton editNumberOfPassengers = new JButton("Edit Passengers");
         editNumberOfPassengers.addActionListener(e -> editNumberOfPassengers(table, tableModel));
+        editNumberOfPassengers.setEnabled(false);
         toolBar.add(editNumberOfPassengers);
 
         JButton deleteRowsButton = new JButton("Delete");
         deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
+        deleteRowsButton.setEnabled(false);
         toolBar.add(deleteRowsButton);
 
         JButton importButton = new JButton("Import");
@@ -126,6 +134,23 @@ public class RidesHistory extends JPanel {
         JButton exportButton = new JButton("Export");
         exportButton.addActionListener(new JsonExportAction(this, exportService, rideService));
         toolBar.add(exportButton);
+
+        // Enable/Disable buttons based on selection (edits only on exactly 1 row selected)
+        rideHistoryTable.getSelectionModel().addListSelectionListener(e -> {
+            boolean selected = rideHistoryTable.getSelectedRowCount() == 1;
+            editAmountButton.setEnabled(selected);
+            editCurrencyButton.setEnabled(selected);
+            editDistanceButton.setEnabled(selected);
+            editCategoryButton.setEnabled(selected);
+            editTripType.setEnabled(selected);
+            editNumberOfPassengers.setEnabled(selected);
+        });
+
+        // Enable/Disable buttons based on selection
+        rideHistoryTable.getSelectionModel().addListSelectionListener(e -> {
+            boolean selected = rideHistoryTable.getSelectedRow() >= 0;
+            deleteRowsButton.setEnabled(selected);
+        });
 
         return toolBar;
     }
