@@ -71,19 +71,35 @@ public class Currencies extends JPanel {
 
     private JToolBar createToolBar(CurrencyTableModel tableModel, CurrencyValidator currencyValidator) {
         JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new JButton("Add Currency");
         addButton.addActionListener(addAction);
         toolBar.add(addButton);
 
-
-        JButton editButton = new JButton("Edit");
+        JButton editButton = new JButton("Edit Currency");
+        editButton.setEnabled(false);
         editButton.addActionListener(editAction);
         toolBar.add(editButton);
 
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new JButton("Delete Currency");
+        deleteButton.setEnabled(false);
         deleteButton.addActionListener(deleteAction);
         toolBar.add(deleteButton);
+
+        // change the row height here:
+        table.setRowHeight(32);
+
+        // select only 1 currency at a time
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Enable/Disable buttons based on selection
+        table.getSelectionModel().addListSelectionListener(e -> {
+            boolean selected = table.getSelectedRow() >= 0;
+            editButton.setEnabled(selected);
+            deleteButton.setEnabled(selected);
+        });
 
         return toolBar;
     }

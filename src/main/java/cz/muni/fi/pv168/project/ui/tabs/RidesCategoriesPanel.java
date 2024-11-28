@@ -56,7 +56,6 @@ public class RidesCategoriesPanel extends JPanel {
 
         categoryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane tableScrollPane = new JScrollPane(categoryTable);
-        tableScrollPane.setBorder(BorderFactory.createTitledBorder("Categories"));
         this.add(tableScrollPane, BorderLayout.CENTER);
 
         JToolBar buttonsPanel = new JToolBar();
