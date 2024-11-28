@@ -84,55 +84,46 @@ public class RidesHistory extends JPanel {
     private JToolBar createToolBar(JTable table, RideTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
 
-        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        toolBar.setFloatable(false);
+        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         JButton addButton = new JButton("Add New Ride");
         addButton.addActionListener(new NewRideAction(this, rideService, currencyListModel, categoryListModel));
-        addButton.setMargin(new Insets(5, 10, 5, 10));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
-        editAmountButton.setMargin(new Insets(5, 10, 5, 10));
         editAmountButton.addActionListener(e -> editAmount(table, tableModel));
         toolBar.add(editAmountButton);
 
         JButton editCurrencyButton = new JButton("Edit Currency");
-        editCurrencyButton.setMargin(new Insets(5, 10, 5, 10));
         editCurrencyButton.addActionListener(e -> editCurrency(table, tableModel));
         toolBar.add(editCurrencyButton);
 
         JButton editDistanceButton = new JButton("Edit Distance");
-        editDistanceButton.setMargin(new Insets(5, 10, 5, 10));
         editDistanceButton.addActionListener(e -> editDistance(table, tableModel));
         toolBar.add(editDistanceButton);
 
         JButton editCategoryButton = new JButton("Edit Category");
-        editCategoryButton.setMargin(new Insets(5, 10, 5, 10));
         editCategoryButton.addActionListener(e -> editCategory(table, tableModel));
         toolBar.add(editCategoryButton);
 
         JButton editTripType = new JButton("Edit Trip Type");
-        editTripType.setMargin(new Insets(5, 10, 5, 10));
         editTripType.addActionListener(e -> editTripType(table, tableModel));
         toolBar.add(editTripType);
 
-        JButton editNumberOfPassengers = new JButton("Edit Number of Passengers");
-        editNumberOfPassengers.setMargin(new Insets(5, 10, 5, 10));
+        JButton editNumberOfPassengers = new JButton("Edit Passengers");
         editNumberOfPassengers.addActionListener(e -> editNumberOfPassengers(table, tableModel));
         toolBar.add(editNumberOfPassengers);
 
-        JButton deleteRowsButton = new JButton("Delete Selected Rows");
-        deleteRowsButton.setMargin(new Insets(5, 10, 5, 10));
+        JButton deleteRowsButton = new JButton("Delete");
         deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
         toolBar.add(deleteRowsButton);
 
         JButton importButton = new JButton("Import");
-        importButton.setMargin(new Insets(5, 10, 5, 10));
         importButton.addActionListener(new JsonImportAction(this, importService));
         toolBar.add(importButton);
 
         JButton exportButton = new JButton("Export");
-        exportButton.setMargin(new Insets(5, 10, 5, 10));
         exportButton.addActionListener(new JsonExportAction(this, exportService, rideService));
         toolBar.add(exportButton);
 
@@ -294,7 +285,7 @@ public class RidesHistory extends JPanel {
     private void deleteSelectedRows(JTable table, RideTableModel tableModel) {
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length > 0) {
-            int confirm = JOptionPane.showConfirmDialog(table, "Are you sure you want to delete the selected rows?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(table, "Are you sure you want to delete all the selected rows?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 for (int i = selectedRows.length - 1; i >= 0; i--) {
                     tableModel.removeRow(selectedRows[i]);
