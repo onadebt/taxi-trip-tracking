@@ -67,6 +67,11 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
+    @Override
+    public String getColumnName(int columnIndex) {
+        return columns.get(columnIndex).getName();
+    }
+
     public void refresh() {
         this.currencies = new ArrayList<>(currencyCrudService.findAll());
         fireTableDataChanged();
