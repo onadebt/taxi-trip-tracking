@@ -1,6 +1,8 @@
 package cz.muni.fi.pv168.project.providers;
 
 import cz.muni.fi.pv168.project.database.DatabaseManager;
+import cz.muni.fi.pv168.project.database.dao.CategoryDao;
+import cz.muni.fi.pv168.project.database.dao.CategoryDataAccessObject;
 import cz.muni.fi.pv168.project.database.dao.CurrencyDao;
 import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
 import cz.muni.fi.pv168.project.database.mapper.CurrencyMapper;
@@ -25,7 +27,9 @@ import cz.muni.fi.pv168.project.service.validation.Validator;
 public class DIProvider {
     private final DatabaseManager databaseManager;
 
+    private CategoryDataAccessObject categoryDao;
     private CurrencyDataAccessObject currencyDao;
+
     private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
 
     private RideRepository rideRepository;
@@ -44,10 +48,14 @@ public class DIProvider {
 
         this.databaseManager = DatabaseManager.createProductionInstance();
         this.databaseManager.initSchema();
+
+        this.categoryDao = new CategoryDao(databaseManager::getConnectionHandler);
         this.categoryRepository = new CategoryRepository();
+
         this.currencyDao = new CurrencyDao(databaseManager::getConnectionHandler);
         this.currencyMapper = new CurrencyMapper();
         this.currencyRepository = new CurrencyRepository(currencyDao, currencyMapper);
+
         this.settingsRepository = new SettingsRepository();
         this.rideRepository = new RideRepository(currencyRepository, categoryRepository);
 

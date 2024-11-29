@@ -206,4 +206,3 @@ public final class CategoryDao implements CategoryDataAccessObject {
         );
     }
 }
-

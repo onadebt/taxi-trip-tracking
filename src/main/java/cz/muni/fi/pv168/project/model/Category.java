@@ -1,9 +1,9 @@
 package cz.muni.fi.pv168.project.model;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class Category extends Entity {
-//    private Long id = 0L;
     private String name;
     private Icon icon;
 
@@ -18,7 +18,6 @@ public class Category extends Entity {
         this.name = name;
         this.icon = icon;
     }
-
 
     public String getName() {
         return name;
@@ -36,14 +35,6 @@ public class Category extends Entity {
         this.icon = icon;
     }
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-
     @Override
     public String toString() {
         return name;
@@ -57,7 +48,7 @@ public class Category extends Entity {
         Category category = (Category) o;
 
         if (!name.equals(category.name)) return false;
-        return icon != null ? icon.equals(category.icon) : category.icon == null;
+        return Objects.equals(icon, category.icon);
     }
 
     @Override
@@ -65,5 +56,9 @@ public class Category extends Entity {
         int result = name.hashCode();
         result = 31 * result + (icon != null ? icon.hashCode() : 0);
         return result;
+    }
+
+    public String getIconAsString() {
+        return icon != null ? icon.getClass().getSimpleName() : "No icon";
     }
 }
