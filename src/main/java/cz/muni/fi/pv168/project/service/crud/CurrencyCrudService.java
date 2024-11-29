@@ -48,11 +48,22 @@ public class CurrencyCrudService implements CrudService<Currency> {
     @Override
     public ValidationResult update(Currency entity) {
         var validationResult = currencyValidator.validate(entity);
-        if (validationResult.isValid()) {
-            currencyRepository.update(entity);
-
-//            Logger.info("Updated employee: {}", entity);
+        if (!validationResult.isValid()) {
+            return validationResult;
         }
+        // Check for duplicate name and code (excluding the current entity)
+        var existingByName = currencyRepository.getByName(entity.getName());
+        if (existingByName != null && !existingByName.getId().equals(entity.getId())) {
+            return ValidationResult.failed("Another currency with the same name already exists.");
+        }
+
+        var existingByTag = currencyRepository.getByCode(entity.getCode());
+        if (existingByTag != null && !existingByTag.getId().equals(entity.getId())) {
+            return ValidationResult.failed("Another currency with the same code already exists.");
+        }
+
+        //all validation passed
+        currencyRepository.update(entity);
 
         return validationResult;
     }

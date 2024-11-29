@@ -65,10 +65,14 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
     }
 
     public void updateRow(Currency currency) {
-        currencyCrudService.update(currency)
-                .intoException();
-        int rowIndex = currencies.indexOf(currency);
-        fireTableRowsUpdated(rowIndex, rowIndex);
+        try {
+            currencyCrudService.update(currency)
+                    .intoException();
+            int rowIndex = currencies.indexOf(currency);
+            fireTableRowsUpdated(rowIndex, rowIndex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override
