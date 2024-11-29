@@ -5,12 +5,10 @@ import cz.muni.fi.pv168.project.database.dao.CategoryDao;
 import cz.muni.fi.pv168.project.database.dao.CategoryDataAccessObject;
 import cz.muni.fi.pv168.project.database.dao.CurrencyDao;
 import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
+import cz.muni.fi.pv168.project.database.mapper.CategoryMapper;
 import cz.muni.fi.pv168.project.database.mapper.CurrencyMapper;
 import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import cz.muni.fi.pv168.project.model.Ride;
+import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.repository.*;
 import cz.muni.fi.pv168.project.service.*;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
@@ -30,6 +28,7 @@ public class DIProvider {
     private CategoryDataAccessObject categoryDao;
     private CurrencyDataAccessObject currencyDao;
 
+    private EntityMapper<CategoryDbModel, Category> categoryMapper;
     private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
 
     private RideRepository rideRepository;
@@ -50,6 +49,7 @@ public class DIProvider {
         this.databaseManager.initSchema();
 
         this.categoryDao = new CategoryDao(databaseManager::getConnectionHandler);
+        this.categoryMapper = new CategoryMapper();
         this.categoryRepository = new CategoryRepository();
 
         this.currencyDao = new CurrencyDao(databaseManager::getConnectionHandler);
