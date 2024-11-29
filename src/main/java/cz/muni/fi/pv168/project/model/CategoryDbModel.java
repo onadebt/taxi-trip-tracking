@@ -12,11 +12,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class CategoryDbModel {
-    private int categoryId;
+    private Long categoryId;
     private String categoryName;
     private String iconPath;
 
-    public CategoryDbModel(int categoryId, String categoryName, String iconPath) {
+    public CategoryDbModel(Long categoryId, String categoryName, String iconPath) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.iconPath = iconPath;
@@ -26,11 +26,15 @@ public class CategoryDbModel {
         return Icons.getByName(iconPath);
     }
 
-    public int getCategoryId() {
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 
