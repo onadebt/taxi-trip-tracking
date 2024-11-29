@@ -96,9 +96,20 @@ public class Currencies extends JPanel {
 
         // Enable/Disable buttons based on selection
         table.getSelectionModel().addListSelectionListener(e -> {
-            boolean selected = table.getSelectedRow() >= 0;
-            editButton.setEnabled(selected);
-            deleteButton.setEnabled(selected);
+            int selectedRow = table.getSelectedRow();
+            boolean isSelected = selectedRow >= 0;
+
+            if (isSelected) {
+                Object value = table.getValueAt(selectedRow, 0);
+                boolean isEuro = "Euro".equals(value);
+
+                // Enable buttons only if the row is selected and not "Euro"
+                editButton.setEnabled(!isEuro);
+                deleteButton.setEnabled(!isEuro);
+            } else {
+                editButton.setEnabled(false);
+                deleteButton.setEnabled(false);
+            }
         });
 
         return toolBar;

@@ -47,10 +47,14 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
     }
 
     public void deleteRow(int rowIndex) {
-        var currencyToBeDeleted = getEntity(rowIndex);
-        currencyCrudService.deleteById(currencyToBeDeleted.getId());
-        currencies.remove(rowIndex);
-        fireTableRowsDeleted(rowIndex, rowIndex);
+        try {
+            var currencyToBeDeleted = getEntity(rowIndex);
+            currencyCrudService.deleteById(currencyToBeDeleted.getId());
+            currencies.remove(rowIndex);
+            fireTableRowsDeleted(rowIndex, rowIndex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void addRow(Currency currency) {

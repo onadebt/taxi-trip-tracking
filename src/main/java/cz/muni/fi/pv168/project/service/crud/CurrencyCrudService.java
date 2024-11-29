@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.service.validation.Validator;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CurrencyCrudService implements CrudService<Currency> {
     private final CurrencyRepository currencyRepository;
@@ -78,13 +79,18 @@ public class CurrencyCrudService implements CrudService<Currency> {
 
     @Override
     public void deleteById(Long id) {
-        currencyRepository.deleteById(id);
+        // Check if currency to be deleted is not default currency Euro (EUR)
+        Currency currencyToDelete = this.getById(id);
+        assert currencyToDelete != null;
+        if (Objects.equals(currencyToDelete.getCode(), "EUR") && Objects.equals(currencyToDelete.getName(), "Euro")) {
+            throw new RuntimeException("Euro (EUR) is default currency and cannot be deleted.");
+        } else {
+            currencyRepository.deleteById(id);
+        }
     }
 
     @Override
     public void deleteAll() {
         currencyRepository.deleteAll();
     }
-
-
 }
