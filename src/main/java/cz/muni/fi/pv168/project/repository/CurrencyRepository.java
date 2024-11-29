@@ -54,6 +54,12 @@ public class CurrencyRepository implements Repository<Currency> {
                 .map(currencyMapper::mapToBusiness).orElse(null);
     }
 
+    public @Nullable Currency getByName(String name) {
+        return currencyDao
+                .findByName(name)
+                .map(currencyMapper::mapToBusiness).orElse(null);
+    }
+
     @Override
     public List<Currency> findAll() {
         return currencyDao.findAll().stream().map(currencyMapper::mapToBusiness)

@@ -24,13 +24,23 @@ public class CurrencyCrudService implements CrudService<Currency> {
 
     @Override
     public ValidationResult create(Currency newEntity) {
+        // Check if a currency name and currency code is in right format
         var validationResult = currencyValidator.validate(newEntity);
-        if (validationResult.isValid()) {
-            Currency savedEntity = currencyRepository.create(newEntity);
-            newEntity.setId(savedEntity.getId());
-
-//            Logger.info("Created new employee: {}", newEntity);
+        if (!validationResult.isValid()) {
+            return validationResult;
         }
+
+        // Check if a currency with the same name or code already exists
+        if (currencyRepository.getByName(newEntity.getName()) != null) {
+            return ValidationResult.failed("Currency with this name already exists.");
+        }
+        if (currencyRepository.getByCode(newEntity.getCode()) != null) {
+            return ValidationResult.failed("Currency with this code already exists.");
+        }
+
+        // All validation passed
+        Currency savedEntity = currencyRepository.create(newEntity);
+        newEntity.setId(savedEntity.getId());
 
         return validationResult;
     }

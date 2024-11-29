@@ -134,6 +134,32 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
         }
     }
 
+    public Optional<CurrencyDbModel> findByName(String name) {
+        var sql = """
+                SELECT id,
+                       name,
+                       tag,
+                       rate
+                FROM Currency
+                WHERE name = ?
+                """;
+        try (
+                var connection = connections.get();
+                var statement = connection.use().prepareStatement(sql)
+        ) {
+            statement.setString(1, name);
+            var resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(currencyFromResultSet(resultSet));
+            } else {
+                // department not found
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new DataStorageException("Failed to load currency by name: " + name, ex);
+        }
+    }
+
     @Override
     public CurrencyDbModel update(CurrencyDbModel entity) {
         var sql = """

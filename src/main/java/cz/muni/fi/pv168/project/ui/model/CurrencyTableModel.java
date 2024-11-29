@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.model;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,11 +54,14 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
     }
 
     public void addRow(Currency currency) {
-        currencyCrudService.create(currency)
-                .intoException();
-        int newRowIndex = currencies.size();
-        currencies.add(currency);
-        fireTableRowsInserted(newRowIndex, newRowIndex);
+        try {
+            currencyCrudService.create(currency).intoException();
+            int newRowIndex = currencies.size();
+            currencies.add(currency);
+            fireTableRowsInserted(newRowIndex, newRowIndex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void updateRow(Currency currency) {
