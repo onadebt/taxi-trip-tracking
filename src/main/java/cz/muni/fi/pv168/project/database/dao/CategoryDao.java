@@ -77,7 +77,7 @@ public final class CategoryDao implements CategoryDataAccessObject {
             }
             return categories;
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to load all currencies", ex);
+            throw new DataStorageException("Failed to load all categories", ex);
         }
     }
 
@@ -106,7 +106,6 @@ public final class CategoryDao implements CategoryDataAccessObject {
             throw new DataStorageException("Failed to load category by id: " + id, ex);
         }
     }
-
 
     public Optional<CategoryDbModel> findByName(String name) {
         var sql = """
@@ -138,8 +137,7 @@ public final class CategoryDao implements CategoryDataAccessObject {
         var sql = """
                 UPDATE Category
                 SET name = ?,
-                    tag = ?,
-                    rate = ?
+                    icon = ?
                 WHERE id = ?
                 """;
         try (
@@ -151,22 +149,22 @@ public final class CategoryDao implements CategoryDataAccessObject {
             statement.setLong(3, entity.getCategoryId());
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
-                throw new DataStorageException("Currency not found, id: " + entity.getCategoryId());
+                throw new DataStorageException("Category not found, id: " + entity.getCategoryId());
             }
             if (rowsUpdated > 1) {
-                throw new DataStorageException("More then 1 currency (rows=%d) has been updated: %s"
+                throw new DataStorageException("More then 1 category (rows=%d) has been updated: %s"
                         .formatted(rowsUpdated, entity));
             }
             return entity;
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to update currency: " + entity, ex);
+            throw new DataStorageException("Failed to update category: " + entity, ex);
         }
     }
 
     @Override
     public void deleteById(Long id) {
         var sql = """
-                DELETE FROM Currency
+                DELETE FROM Category
                 WHERE id = ?
                 """;
         try (
@@ -176,27 +174,27 @@ public final class CategoryDao implements CategoryDataAccessObject {
             statement.setLong(1, id);
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
-                throw new DataStorageException("Currency not found, id: " + id);
+                throw new DataStorageException("Category not found, id: " + id);
             }
             if (rowsUpdated > 1) {
-                throw new DataStorageException("More then 1 currency (rows=%d) has been deleted: %s"
+                throw new DataStorageException("More then 1 category (rows=%d) has been deleted: %s"
                         .formatted(rowsUpdated, id));
             }
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to delete currency, id: " + id, ex);
+            throw new DataStorageException("Failed to delete category, id: " + id, ex);
         }
     }
 
     @Override
     public void deleteAll() {
-        var sql = "DELETE FROM Currency";
+        var sql = "DELETE FROM Category";
         try (
                 var connection = connections.get();
                 var statement = connection.use().prepareStatement(sql)
         ) {
             statement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to delete all currencies", ex);
+            throw new DataStorageException("Failed to delete all categories", ex);
         }
     }
 
@@ -205,7 +203,6 @@ public final class CategoryDao implements CategoryDataAccessObject {
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getString("icon")
-
         );
     }
 }

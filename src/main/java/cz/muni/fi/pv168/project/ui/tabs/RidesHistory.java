@@ -208,7 +208,7 @@ public class RidesHistory extends JPanel {
         editTripType.addActionListener(event -> editTripType(table, tableModel));
         popupMenu.add(editTripType);
 
-        JMenuItem editNumberOfPassengersItem = new JMenuItem("Edit Number of Passengers");
+        JMenuItem editNumberOfPassengersItem = new JMenuItem("Edit Passengers");
         editNumberOfPassengersItem.addActionListener(event -> editNumberOfPassengers(table, tableModel));
         popupMenu.add(editNumberOfPassengersItem);
 
