@@ -13,14 +13,14 @@ public class Category extends Entity {
         super(0L);
         this.name = name;
         this.iconPath = iconPath;
-        this.icon = Icons.createIcon(iconPath);
+        this.icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath)));
     }
 
     public Category(Long id, String name, String iconPath) {
         super(id);
         this.name = name;
         this.iconPath = iconPath;
-        this.icon = Icons.createIcon(iconPath);
+        this.icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath)));
     }
 
     public String getName() {
@@ -41,7 +41,7 @@ public class Category extends Entity {
 
     public void setIconPath(String iconPath) {
         this.iconPath = iconPath;
-        this.icon = Icons.createIcon(iconPath);
+        this.icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath)));
     }
 
     @Override
