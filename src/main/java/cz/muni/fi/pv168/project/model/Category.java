@@ -2,36 +2,25 @@ package cz.muni.fi.pv168.project.model;
 
 import javax.swing.*;
 import java.util.Objects;
+import cz.muni.fi.pv168.project.ui.resources.Icons;
 
 public class Category extends Entity {
     private String name;
     private Icon icon;
-    private String iconAsString;
+    private String iconPath;
 
-    public Category(Long id, String name, Icon icon) {
-        super(id);
-        this.name = name;
-        this.icon = icon;
-    }
-
-    public Category(String name, Icon icon) {
+    public Category(String name, String iconPath) {
         super(0L);
         this.name = name;
-        this.icon = icon;
+        this.iconPath = iconPath;
+        this.icon = Icons.createIcon(iconPath);
     }
 
-    public Category(String name, String iconAsString) {
-        super(0L);
-        this.name = name;
-        this.icon = new ImageIcon(iconAsString);
-        this.iconAsString = iconAsString;
-    }
-
-    public Category(Long id, String name, String IconAsString) {
+    public Category(Long id, String name, String iconPath) {
         super(id);
         this.name = name;
-        this.iconAsString = IconAsString;
-        this.icon = new ImageIcon(iconAsString);
+        this.iconPath = iconPath;
+        this.icon = Icons.createIcon(iconPath);
     }
 
     public String getName() {
@@ -50,7 +39,7 @@ public class Category extends Entity {
         this.icon = icon;
     }
 
-    public void setIconAsString(String iconAsString) { this.iconAsString = iconAsString; }
+    public void setIconPath(String iconPath) { this.iconPath = iconPath; }
 
     @Override
     public String toString() {
@@ -75,7 +64,7 @@ public class Category extends Entity {
         return result;
     }
 
-    public String getIconAsString() {
-        return iconAsString;
+    public String getIconPath() {
+        return iconPath;
     }
 }

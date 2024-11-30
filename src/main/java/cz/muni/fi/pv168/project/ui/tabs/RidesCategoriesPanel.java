@@ -93,9 +93,9 @@ public class RidesCategoriesPanel extends JPanel {
     private void addCategory() {
         String name = JOptionPane.showInputDialog("Enter category name:");
         if (name != null && !name.trim().isEmpty()) {
-            String icon = chooseIcon();
-            if (icon != null) {
-                Category newCategory = new Category(name, icon);
+            String iconPath = chooseIcon();
+            if (iconPath != null) {
+                Category newCategory = new Category(name, iconPath);
                 categoryTableModel.addRow(newCategory);
             }
         }
@@ -110,7 +110,7 @@ public class RidesCategoriesPanel extends JPanel {
 
             String newIcon = chooseIcon();
             if (newIcon != null) {
-                selectedCategory.setIconAsString(newIcon);
+                selectedCategory.setIconPath(newIcon);
             }
 
             categoryTableModel.updateRow(selectedCategory); // Update the category in the table model
@@ -158,7 +158,7 @@ public class RidesCategoriesPanel extends JPanel {
         if (result == JOptionPane.OK_OPTION) {
             int selectedIndex = iconComboBox.getSelectedIndex();
             if (selectedIndex >= 0 && selectedIndex < iconNames.length) {
-                return "icons/" + iconNames[selectedIndex];
+                return "/icons/" + iconNames[selectedIndex];
             }
         }
 

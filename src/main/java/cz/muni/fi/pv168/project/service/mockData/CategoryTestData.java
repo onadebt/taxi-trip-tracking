@@ -11,10 +11,10 @@ import java.util.stream.Stream;
 public class CategoryTestData {
     public static List<Category> getMockCategories() {
         return Stream.of(
-                new Category(1L, "Standard", Icons.getByName("small-car.png")),
-                new Category(2L, "Comfort", Icons.getByName("normal-car.png")),
-                new Category(3L, "Truck", Icons.getByName("truck-car.png")),
-                new Category(4L, "Sport", Icons.getByName("sport-car.png"))
+                new Category(1L, "Standard", "/icons/small-car.png"),
+                new Category(2L, "Comfort", "/icons/normal-car.png"),
+                new Category(3L, "Truck", "/icons/truck-car.png"),
+                new Category(4L, "Sport", "/icons/sport-car.png")
         ).toList();
     }
 }

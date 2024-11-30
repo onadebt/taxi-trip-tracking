@@ -31,7 +31,7 @@ public final class CategoryMapper implements EntityMapper<CategoryDbModel, Categ
         return new CategoryDbModel(
                 dbId,
                 entity.getName(),
-                entity.getIconAsString()
+                entity.getIconPath()
         );
     }
 }
