@@ -93,7 +93,7 @@ public class RidesCategoriesPanel extends JPanel {
     private void addCategory() {
         String name = JOptionPane.showInputDialog("Enter category name:");
         if (name != null && !name.trim().isEmpty()) {
-            Icon icon = chooseIcon();
+            String icon = chooseIcon();
             if (icon != null) {
                 Category newCategory = new Category(name, icon);
                 categoryTableModel.addRow(newCategory);
@@ -108,9 +108,9 @@ public class RidesCategoriesPanel extends JPanel {
                 selectedCategory.setName(newName);
             }
 
-            Icon newIcon = chooseIcon();
+            String newIcon = chooseIcon();
             if (newIcon != null) {
-                selectedCategory.setIcon(newIcon);
+                selectedCategory.setIconAsString(newIcon);
             }
 
             categoryTableModel.updateRow(selectedCategory); // Update the category in the table model
@@ -139,10 +139,12 @@ public class RidesCategoriesPanel extends JPanel {
         // TODO: filtering categories
     }
 
-    private Icon chooseIcon() {
-        String[] iconNames = {"NormalRide.png", "Express.png", "Luxury.png", "sport-car.png", "convertible-car.png",
-                "limousine-car.png", "normal-car.png", "small-car.png", "truck-car.png"};
+    private String chooseIcon() {
+        String[] iconNames = {"NormalRide.png", "Express.png", "Luxury.png", "sport-car.png",
+                "convertible-car.png", "limousine-car.png", "normal-car.png",
+                "small-car.png", "truck-car.png"};
         ImageIcon[] icons = new ImageIcon[iconNames.length];
+
         for (int i = 0; i < iconNames.length; i++) {
             java.net.URL iconURL = getClass().getClassLoader().getResource("icons/" + iconNames[i]);
             if (iconURL != null) {
@@ -152,10 +154,14 @@ public class RidesCategoriesPanel extends JPanel {
 
         JComboBox<ImageIcon> iconComboBox = new JComboBox<>(icons);
         int result = JOptionPane.showConfirmDialog(null, iconComboBox, "Select an icon", JOptionPane.OK_CANCEL_OPTION);
-
+        
         if (result == JOptionPane.OK_OPTION) {
-            return (ImageIcon) iconComboBox.getSelectedItem();
+            int selectedIndex = iconComboBox.getSelectedIndex();
+            if (selectedIndex >= 0 && selectedIndex < iconNames.length) {
+                return "icons/" + iconNames[selectedIndex];
+            }
         }
+
         return null;
     }
 }

@@ -6,6 +6,7 @@ import java.util.Objects;
 public class Category extends Entity {
     private String name;
     private Icon icon;
+    private String iconAsString;
 
     public Category(Long id, String name, Icon icon) {
         super(id);
@@ -19,10 +20,18 @@ public class Category extends Entity {
         this.icon = icon;
     }
 
-    public Category(String name, String iconPath) {
+    public Category(String name, String iconAsString) {
         super(0L);
         this.name = name;
-        this.icon = new ImageIcon(iconPath);
+        this.icon = new ImageIcon(iconAsString);
+        this.iconAsString = iconAsString;
+    }
+
+    public Category(Long id, String name, String IconAsString) {
+        super(id);
+        this.name = name;
+        this.iconAsString = IconAsString;
+        this.icon = new ImageIcon(iconAsString);
     }
 
     public String getName() {
@@ -40,6 +49,8 @@ public class Category extends Entity {
     public void setIcon(Icon icon) {
         this.icon = icon;
     }
+
+    public void setIconAsString(String iconAsString) { this.iconAsString = iconAsString; }
 
     @Override
     public String toString() {
@@ -65,6 +76,6 @@ public class Category extends Entity {
     }
 
     public String getIconAsString() {
-        return icon != null ? icon.getClass().getSimpleName() : "No icon";
+        return iconAsString;
     }
 }
