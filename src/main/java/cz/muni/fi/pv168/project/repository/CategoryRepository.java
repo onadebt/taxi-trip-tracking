@@ -1,6 +1,13 @@
 package cz.muni.fi.pv168.project.repository;
 
+import cz.muni.fi.pv168.project.database.dao.CategoryDataAccessObject;
+import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
+import cz.muni.fi.pv168.project.database.dao.DataStorageException;
+import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.CategoryDbModel;
+import cz.muni.fi.pv168.project.model.Currency;
+import cz.muni.fi.pv168.project.model.CurrencyDbModel;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,28 +16,34 @@ import java.util.Optional;
 
 public class CategoryRepository implements Repository<Category> {
 
+    private final CategoryDataAccessObject categoryDao;
+    private final EntityMapper<CategoryDbModel, Category> categoryMapper;
+
+    public CategoryRepository(CategoryDataAccessObject categoryDao, EntityMapper<CategoryDbModel, Category> categoryMapper) {
+        this.categoryDao = categoryDao;
+        this.categoryMapper = categoryMapper;
+    }
+
     @Override
     public List<Category> findAll() {
-        return List.of(
-                new Category(1L, "Small", Icons.getByName("small-car.png")),
-                new Category(2L, "Normal", Icons.getByName("normal-car.png")),
-                new Category(3L, "Sport", Icons.getByName("sport-car.png"))
-        );
+        return categoryDao.findAll().stream().map(categoryMapper::mapToBusiness).toList();
     }
 
     @Override
-    public Category create(Category newEntity) {
-        return null;
+    public Category create(Category category) {
+        return categoryMapper.mapToBusiness(categoryDao.create(categoryMapper.mapNewEntityToDatabase(category)));
     }
 
     @Override
-    public void update(Category entity) {
-
+    public void update(Category category) {
+        var existing = categoryDao.findById(category.getId()).orElseThrow(() -> new DataStorageException("Category of ID " + category.getId() + " not found"));
+        var updated = categoryMapper.mapExistingEntityToDatabase(category, existing.getCategoryId());
+        categoryDao.update(updated);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        categoryDao.deleteById(id);
     }
 
     @Override
@@ -39,7 +52,5 @@ public class CategoryRepository implements Repository<Category> {
     }
 
     @Override
-    public void deleteAll() {
-
-    }
+    public void deleteAll() {}
 }

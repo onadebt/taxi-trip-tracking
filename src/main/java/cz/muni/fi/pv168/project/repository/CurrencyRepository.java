@@ -62,13 +62,7 @@ public class CurrencyRepository implements Repository<Currency> {
 
     @Override
     public List<Currency> findAll() {
-        return currencyDao.findAll().stream().map(currencyMapper::mapToBusiness)
-                .toList();
-        /*return List.of(
-                new Currency(1L, "Czech koruna", "CZK", 1.0),
-                new Currency(2L, "Euro", "EUR", 25.0),
-                new Currency(3L, "US Dollar", "USD", 20.0)
-        );*/
+        return currencyDao.findAll().stream().map(currencyMapper::mapToBusiness).toList();
     }
 
     @Override

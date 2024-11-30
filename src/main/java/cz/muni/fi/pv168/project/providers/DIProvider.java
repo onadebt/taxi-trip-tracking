@@ -50,7 +50,7 @@ public class DIProvider {
 
         this.categoryDao = new CategoryDao(databaseManager::getConnectionHandler);
         this.categoryMapper = new CategoryMapper();
-        this.categoryRepository = new CategoryRepository();
+        this.categoryRepository = new CategoryRepository(categoryDao, categoryMapper);
 
         this.currencyDao = new CurrencyDao(databaseManager::getConnectionHandler);
         this.currencyMapper = new CurrencyMapper();
