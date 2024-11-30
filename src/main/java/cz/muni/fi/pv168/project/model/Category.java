@@ -39,7 +39,10 @@ public class Category extends Entity {
         this.icon = icon;
     }
 
-    public void setIconPath(String iconPath) { this.iconPath = iconPath; }
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
+        this.icon = Icons.createIcon(iconPath);
+    }
 
     @Override
     public String toString() {
