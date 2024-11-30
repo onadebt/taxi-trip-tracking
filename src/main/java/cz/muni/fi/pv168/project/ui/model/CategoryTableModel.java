@@ -29,10 +29,14 @@ public class CategoryTableModel extends AbstractTableModel implements EntityTabl
     }
 
     public void addRow(Category category) {
-        int newRowIndex = getRowCount();
-        categoryCrudService.create(category);
-        categories.add(category);
-        fireTableRowsInserted(newRowIndex, newRowIndex);
+        try {
+            int newRowIndex = getRowCount();
+            categoryCrudService.create(category).intoException();
+            categories.add(category);
+            fireTableRowsInserted(newRowIndex, newRowIndex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void removeRow(int rowIndex) {
@@ -43,9 +47,13 @@ public class CategoryTableModel extends AbstractTableModel implements EntityTabl
     }
 
     public void updateRow(Category category) {
-        categoryCrudService.update(category);
-        int rowIndex = categories.indexOf(category);
-        fireTableRowsUpdated(rowIndex, rowIndex);
+        try {
+            int rowIndex = categories.indexOf(category);
+            categoryCrudService.update(category).intoException();
+            fireTableRowsUpdated(rowIndex, rowIndex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public Category getRow(int rowIndex) {
@@ -81,8 +89,8 @@ public class CategoryTableModel extends AbstractTableModel implements EntityTabl
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         if (value != null) {
             var category = getEntity(rowIndex);
-            columns.get(columnIndex).setValue(value, category);
             updateRow(category);
+            //columns.get(columnIndex).setValue(value, category);
         }
     }
 

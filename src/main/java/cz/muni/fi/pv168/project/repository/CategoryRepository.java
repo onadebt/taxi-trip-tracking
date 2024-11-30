@@ -53,4 +53,10 @@ public class CategoryRepository implements Repository<Category> {
 
     @Override
     public void deleteAll() {}
+
+    public @Nullable Category getByName(String name) {
+        return categoryDao
+                .findByName(name)
+                .map(categoryMapper::mapToBusiness).orElse(null);
+    }
 }

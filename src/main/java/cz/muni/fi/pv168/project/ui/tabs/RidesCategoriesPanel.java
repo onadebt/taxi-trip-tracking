@@ -103,17 +103,12 @@ public class RidesCategoriesPanel extends JPanel {
 
     private void editCategory(Category selectedCategory) {
         if (selectedCategory != null) {
+            Long newId = selectedCategory.getId();
             String newName = JOptionPane.showInputDialog("Edit category name:", selectedCategory.getName());
-            if (newName != null && !newName.trim().isEmpty()) {
-                selectedCategory.setName(newName);
-            }
+            String newIconPath = chooseIcon();
 
-            String newIcon = chooseIcon();
-            if (newIcon != null) {
-                selectedCategory.setIconPath(newIcon);
-            }
-
-            categoryTableModel.updateRow(selectedCategory); // Update the category in the table model
+            Category tempCategory = new Category(newId, newName, newIconPath);
+            categoryTableModel.updateRow(tempCategory);
         }
     }
 
