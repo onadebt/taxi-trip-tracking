@@ -19,6 +19,12 @@ public class Category extends Entity {
         this.icon = icon;
     }
 
+    public Category(String name, String iconPath) {
+        super(0L);
+        this.name = name;
+        this.icon = new ImageIcon(iconPath);
+    }
+
     public String getName() {
         return name;
     }
