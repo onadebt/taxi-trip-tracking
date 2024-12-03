@@ -197,30 +197,36 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
                 UPDATE Ride
                 SET currencyId = ?, amount = amount / (SELECT rate FROM Currency WHERE id = ?);
                 """;
-        var sql = """
+        var sqlDelete = """
                 DELETE FROM Currency
                 WHERE id = ?;
                 
                 """;
-        try (
-                var connection = connections.get();
-                var statement = connection.use().prepareStatement(sql);
-                var statementUpdate = connection.use().prepareStatement(sqlUpdate)
-        ) {
-            statement.setLong(1, id);
-            statementUpdate.setLong(1, 15);
-            statementUpdate.setLong(2, id);
-            statementUpdate.executeUpdate();
-            statement.executeUpdate();
-            /*if (rowsUpdated == 0) {
-                throw new DataStorageException("Currency not found, id: " + id);
+        try (var connection = connections.get().use()) {
+            connection.setAutoCommit(false);
+
+            try (
+                    var statementUpdate = connection.prepareStatement(sqlUpdate);
+                    var statementDelete = connection.prepareStatement(sqlDelete)
+            ) {
+                statementUpdate.setLong(1, 15);
+                statementUpdate.setLong(2, id);
+                statementUpdate.executeUpdate();
+
+                statementDelete.setLong(1, id);
+                int rowsDeleted = statementDelete.executeUpdate();
+
+                if (rowsDeleted == 0) {
+                    throw new DataStorageException("Currency not deleted, id: " + id);
+                }
+
+                connection.commit();
+            } catch (SQLException ex) {
+                connection.rollback();
+                throw new DataStorageException("Transaction failed for id: " + id, ex);
             }
-            if (rowsUpdated > 1) {
-                throw new DataStorageException("More then 1 currency (rows=%d) has been deleted: %s"
-                        .formatted(rowsUpdated, id));
-            }*/
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to delete currency, id: " + id + ex, ex);
+            throw new DataStorageException("Database connection error", ex);
         }
     }
 
