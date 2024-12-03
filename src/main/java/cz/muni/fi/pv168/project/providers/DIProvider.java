@@ -30,6 +30,7 @@ public class DIProvider {
 
     private EntityMapper<CategoryDbModel, Category> categoryMapper;
     private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
+    private EntityMapper<RideDbModel, Ride> rideMapper;
 
     private RideRepository rideRepository;
     private Repository<Currency> currencyRepository;
