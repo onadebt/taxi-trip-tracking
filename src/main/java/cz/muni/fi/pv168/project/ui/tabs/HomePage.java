@@ -1,7 +1,9 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
+import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
+import cz.muni.fi.pv168.project.service.crud.CategoryCrudService;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
@@ -14,14 +16,14 @@ import java.util.List;
 
 public class HomePage extends JPanel {
     private final IRideService rideService;
-    private final CrudService<Currency> currencyCrudService;
-    private final ICategoryService categoryService;
+    private final ListModel<Currency> currencyListModel;
+    private final ListModel<Category> categoryListModel;
 
-    public HomePage(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService) {
+    public HomePage(IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
         super(new BorderLayout());
         this.rideService = rideService;
-        this.currencyCrudService = currencyCrudService;
-        this.categoryService = categoryService;
+        this.currencyListModel = currencyListModel;
+        this.categoryListModel = categoryListModel;
 
         JPanel filterPanel = createFilterPanel();
         this.add(filterPanel, BorderLayout.NORTH);
@@ -35,7 +37,7 @@ public class HomePage extends JPanel {
         this.add(snapshotPanel, BorderLayout.SOUTH);
 
         JButton addButton = new JButton("Add Ride");
-//        addButton.addActionListener(new NewRideAction(this, rideService, currencyCrudService, categoryService));
+        addButton.addActionListener(new NewRideAction(this, rideService, currencyListModel, categoryListModel));
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -57,10 +59,6 @@ public class HomePage extends JPanel {
         centerPanel.add(snapshotPanel, gbc);
 
         this.add(centerPanel, BorderLayout.CENTER);
-    }
-
-    public static JPanel createHomePagePanel(IRideService rideService, CrudService<Currency> currencyCrudService, ICategoryService categoryService) {
-        return new HomePage(rideService, currencyCrudService, categoryService);
     }
 
     private JPanel createFilterPanel() {
