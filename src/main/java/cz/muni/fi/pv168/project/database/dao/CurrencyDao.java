@@ -193,25 +193,34 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
 
     @Override
     public void deleteById(Long id) {
+        var sqlUpdate = """
+                UPDATE Ride
+                SET currencyId = ?, amount = amount / (SELECT rate FROM Currency WHERE id = ?);
+                """;
         var sql = """
                 DELETE FROM Currency
-                WHERE id = ?
+                WHERE id = ?;
+                
                 """;
         try (
                 var connection = connections.get();
-                var statement = connection.use().prepareStatement(sql)
+                var statement = connection.use().prepareStatement(sql);
+                var statementUpdate = connection.use().prepareStatement(sqlUpdate)
         ) {
             statement.setLong(1, id);
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated == 0) {
+            statementUpdate.setLong(1, 15);
+            statementUpdate.setLong(2, id);
+            statementUpdate.executeUpdate();
+            statement.executeUpdate();
+            /*if (rowsUpdated == 0) {
                 throw new DataStorageException("Currency not found, id: " + id);
             }
             if (rowsUpdated > 1) {
                 throw new DataStorageException("More then 1 currency (rows=%d) has been deleted: %s"
                         .formatted(rowsUpdated, id));
-            }
+            }*/
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to delete currency, id: " + id, ex);
+            throw new DataStorageException("Failed to delete currency, id: " + id + ex, ex);
         }
     }
 
