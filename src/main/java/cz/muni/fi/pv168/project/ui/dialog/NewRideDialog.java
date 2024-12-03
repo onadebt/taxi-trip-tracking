@@ -56,10 +56,11 @@ public class NewRideDialog extends EntityDialog<Ride> {
         }
 
         if (currencyModel.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this.panel, "All fields except category has to be filled", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this.panel, "All available fields except category has to be filled", "Error", JOptionPane.ERROR_MESSAGE);
             validationOk = false;
             return ride;
         }
+
         ride.setAmountCurrency(amountField.isEnabled() ? amount : 0);
         ride.setDistance(distance);
         ride.setNumberOfPassengers(passengers);
@@ -99,7 +100,10 @@ public class NewRideDialog extends EntityDialog<Ride> {
                 TripType item = (TripType) e.getItem();
                 amountField.setEnabled(item == TripType.Paid);
                 currencyModel.setSelectedItem(null);
-                currencyBox.setEnabled(item == TripType.Paid);
+
+                if (!amountField.isEnabled()) {
+                    amountField.setText("0.0");
+                }
             }
         }
     }
