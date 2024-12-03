@@ -13,6 +13,7 @@ public class RidesCategoriesPanel extends JPanel {
 
     private final CategoryTableModel categoryTableModel;
     private final JTable categoryTable;
+    private final ImageRenderer imageRenderer = new ImageRenderer(48, 48);
 
     private RidesCategoriesPanel(CategoryTableModel categoryTableModel) {
         super(new BorderLayout());
@@ -50,7 +51,7 @@ public class RidesCategoriesPanel extends JPanel {
         searchPanel.add(searchField, BorderLayout.CENTER);
         this.add(searchPanel, BorderLayout.NORTH);
 
-        categoryTable.getColumnModel().getColumn(2).setCellRenderer(new ImageRenderer(48, 48));
+        categoryTable.getColumnModel().getColumn(2).setCellRenderer(imageRenderer);
         // change the row height here:
         categoryTable.setRowHeight(32);
 
@@ -109,6 +110,7 @@ public class RidesCategoriesPanel extends JPanel {
 
             Category tempCategory = new Category(newId, newName, newIconPath);
             categoryTableModel.updateRow(tempCategory);
+            categoryTable.getColumnModel().getColumn(2).setCellRenderer(imageRenderer);
         }
     }
 

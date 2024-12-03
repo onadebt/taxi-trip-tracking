@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.ui.tabs.Settings;
 
 import javax.swing.table.AbstractTableModel;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class RideTableModel extends AbstractTableModel implements EntityTableMod
             Column.editable(distanceColumnName, Double.class, Ride::getDistance, Ride::setDistance),
             Column.editable("Category", Category.class, Ride::getCategory, Ride::setCategory),
             Column.editable("Trip Type", TripType.class, Ride::getTripType, Ride::setTripType),
-            Column.editable("Passengers", Integer.class, Ride::getNumberOfPassengers, Ride::setNumberOfPassengers)
+            Column.editable("Passengers", Integer.class, Ride::getNumberOfPassengers, Ride::setNumberOfPassengers),
+            Column.editable("Started at", Instant.class, Ride::getCreatedAt, Ride::setCreatedAt)
     );
 
     public RideTableModel(IRideService rideService) {

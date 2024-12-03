@@ -17,10 +17,13 @@ import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 import com.toedter.calendar.JDateChooser;
@@ -28,9 +31,6 @@ import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 import cz.muni.fi.pv168.project.ui.renderers.*;
-
-import java.util.Date;
-import java.util.Locale;
 
 public class RidesHistory extends JPanel {
 
@@ -44,9 +44,6 @@ public class RidesHistory extends JPanel {
     private final ImportService importService;
     private final ExportService exportService;
 
-    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-            .withLocale(Locale.forLanguageTag("cs-CZ"))
-            .withZone(ZoneId.systemDefault());
 
     public RidesHistory(IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, /*CrudService<Currency> currencyCrudService, CrudService<Category> categoryCrudService,*/ ImportService importService, ExportService exportService) {
         super(new BorderLayout());
@@ -122,6 +119,11 @@ public class RidesHistory extends JPanel {
         editNumberOfPassengers.setEnabled(false);
         toolBar.add(editNumberOfPassengers);
 
+        JButton editDateButton = new JButton("Edit Date");
+        editDateButton.addActionListener(e -> editDate(table, tableModel));
+        editDateButton.setEnabled(false);
+        toolBar.add(editDateButton);
+
         JButton deleteRowsButton = new JButton("Delete");
         deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
         deleteRowsButton.setEnabled(false);
@@ -160,7 +162,10 @@ public class RidesHistory extends JPanel {
         RideTableModel rideTableModel = new RideTableModel(this.rideService);
         JTable table = new JTable(rideTableModel);
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
+        TableColumn dateColumn = table.getColumnModel().getColumn(6);
+
         categoryColumn.setCellRenderer(new CategoryNameIconRenderer());
+        dateColumn.setCellRenderer(new DateRenderer());
         table.setRowHeight(32);
 
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -212,6 +217,10 @@ public class RidesHistory extends JPanel {
         editNumberOfPassengersItem.addActionListener(event -> editNumberOfPassengers(table, tableModel));
         popupMenu.add(editNumberOfPassengersItem);
 
+        JMenuItem editDateItem = new JMenuItem("Edit Date");
+        editDateItem.addActionListener(event -> editDate(table, tableModel));
+        popupMenu.add(editDateItem);
+
         popupMenu.addSeparator();
 
         JMenuItem deleteRowsItem = new JMenuItem("Delete Selected Rows");
@@ -236,18 +245,6 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    private void editCurrency(JTable table, RideTableModel tableModel) {
-        for (int row : table.getSelectedRows()) {
-            Object currentCurrency = tableModel.getValueAt(row, 1);
-            JComboBox<Currency> currencyComboBox = createCurrencyComboBox();
-            currencyComboBox.setSelectedItem(currentCurrency);
-            int option = JOptionPane.showConfirmDialog(table, currencyComboBox, "Choose new currency", JOptionPane.OK_CANCEL_OPTION);
-
-            if (option == JOptionPane.OK_OPTION) {
-                tableModel.setValueAt(currencyComboBox.getSelectedItem(), row, 1);
-            }
-        }
-    }
 
 
     private void editDistance(JTable table, RideTableModel tableModel) {
@@ -278,15 +275,33 @@ public class RidesHistory extends JPanel {
         }
     }
 
+    private void editCurrency(JTable table, RideTableModel tableModel) {
+        for (int row : table.getSelectedRows()) {
+            Object currentCurrency = tableModel.getValueAt(row, 1);
+
+            JComboBox<Currency> currencyComboBox = createCurrencyComboBox();
+            currencyComboBox.setSelectedItem(currentCurrency);
+
+            int option = JOptionPane.showConfirmDialog(table, currencyComboBox, "Choose new currency", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                tableModel.setValueAt(currencyComboBox.getSelectedItem(), row, 1);
+            }
+        }
+    }
+
     private void editTripType(JTable table, RideTableModel tableModel) {
         for (int row : table.getSelectedRows()) {
             Object currentTripType = tableModel.getValueAt(row, 4);
-            JComboBox<String> tripTypeComboBox = new JComboBox<>(new String[]{TripType.Paid.name(), TripType.Personal.name()});
+            JComboBox<TripType> tripTypeComboBox = new JComboBox<>(TripType.values());
             tripTypeComboBox.setSelectedItem(currentTripType);
             int option = JOptionPane.showConfirmDialog(table, tripTypeComboBox, "Trip Type", JOptionPane.OK_CANCEL_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {
                 tableModel.setValueAt(tripTypeComboBox.getSelectedItem(), row, 4);
+
+                if (Objects.equals(tripTypeComboBox.getSelectedItem(), TripType.Personal)) {
+                    tableModel.setValueAt(0D, row, 0);
+                }
             }
         }
     }
@@ -306,6 +321,43 @@ public class RidesHistory extends JPanel {
             }
         }
     }
+
+//    private void editDate(JTable table, RideTableModel tableModel) {
+//        for (int row : table.getSelectedRows()) {
+//            Object currentCreatedAt = tableModel.getValueAt(row, 6);
+//            String newDateStr = JOptionPane.showInputDialog(table, "Enter new date:", currentCreatedAt);
+//
+//            try {
+//                Timestamp newDate = Timestamp.valueOf(newDateStr);
+//                tableModel.setValueAt(newDate, row, 6);
+//            } catch (IllegalArgumentException ex) {
+//                JOptionPane.showMessageDialog(table, "Invalid date entered.", "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        }
+//    }
+
+
+    private void editDate(JTable table, RideTableModel tableModel) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        dateFormat.setLenient(false);
+
+        for (int row : table.getSelectedRows()) {
+            Object currentCreatedAt = tableModel.getValueAt(row, 6);
+            Instant currentInstant = (Instant) currentCreatedAt;
+            Date currentDate = Date.from(currentInstant);
+            String currentCreatedAtStr = dateFormat.format(currentDate);
+            String newDateStr = JOptionPane.showInputDialog(table, "Enter new date:", currentCreatedAtStr);
+
+            try {
+                Date parsedDate = dateFormat.parse(newDateStr);
+                Timestamp newDate = new Timestamp(parsedDate.getTime());
+                tableModel.setValueAt(newDate.toInstant(), row, 6);
+            } catch (ParseException ex) {
+                JOptionPane.showMessageDialog(table, "Invalid date entered. Please use the format dd-MM-yyyy HH:mm:ss.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
 
     private void deleteSelectedRows(JTable table, RideTableModel tableModel) {
         int[] selectedRows = table.getSelectedRows();
