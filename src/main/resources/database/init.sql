@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS "Ride"
     "amount"        FLOAT NOT NULL,
     "distance"      FLOAT NOT NULL,
     "passengers"    INTEGER NOT NULL,
-    "tripType"      INTEGER NOT NULL,
-    "createdAt"     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "tripType"      VARCHAR(255) NOT NULL,
+    "createdAt"     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "uuid"          VARCHAR(36) NOT NULL
 );
