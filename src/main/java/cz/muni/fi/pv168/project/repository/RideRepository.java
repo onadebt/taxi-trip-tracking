@@ -1,5 +1,8 @@
 package cz.muni.fi.pv168.project.repository;
 
+import cz.muni.fi.pv168.project.database.dao.DataStorageException;
+import cz.muni.fi.pv168.project.database.dao.RideDao;
+import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
@@ -17,16 +20,23 @@ import java.util.UUID;
 public class RideRepository implements Repository<Ride> {
     private Repository<Currency> currencyRepository;
     private Repository<Category> categoryRepository;
+    private RideDao rideDao;
+    private EntityMapper<RideDbModel, Ride> rideMapper;
 
-    public RideRepository(Repository<Currency> currencyRepository, Repository<Category> categoryRepository) {
+    public RideRepository(Repository<Currency> currencyRepository, Repository<Category> categoryRepository
+    , RideDao rideDao, EntityMapper<RideDbModel, Ride> rideMapper) {
         this.currencyRepository = currencyRepository;
         this.categoryRepository = categoryRepository;
+        this.rideDao = rideDao;
+        this.rideMapper = rideMapper;
     }
 
 
 
     public void updateAll(List<Ride> rides) {
-
+        for (Ride ride : rides) {
+            update(ride);
+        }
     }
 
     public void deleteByUUID(UUID uuid) {
@@ -35,22 +45,24 @@ public class RideRepository implements Repository<Ride> {
 
     @Override
     public List<Ride> findAll() {
-        return List.of();
+        return rideDao.findAll().stream().map(rideMapper::mapToBusiness).toList();
     }
 
     @Override
     public Ride create(Ride newEntity) {
-        return null;
+        return rideMapper.mapToBusiness(rideDao.create(rideMapper.mapNewEntityToDatabase(newEntity)));
     }
 
     @Override
     public void update(Ride entity) {
-
+        var existing = rideDao.findById(entity.getId()).orElseThrow(() -> new DataStorageException("Ride of ID " + entity.getId() + " not found"));
+        var updated = rideMapper.mapExistingEntityToDatabase(entity, existing.getCategoryId());
+        rideDao.update(updated);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        rideDao.deleteById(id);
     }
 
     @Override

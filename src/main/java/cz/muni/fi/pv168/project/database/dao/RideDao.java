@@ -21,7 +21,7 @@ public class RideDao implements DataAccessObject<RideDbModel> {
 
     @Override
     public RideDbModel create(RideDbModel newRide) {
-        var sql = "INSERT INTO Ride (categoryId, currencyId, amount, distance, passengers, tripType, createdAt, uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        var sql = "INSERT INTO Ride (categoryId, currencyId, amount, distance, passengers, tripType, uuid) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
         try (
                 var connection = connections.get();
@@ -33,8 +33,8 @@ public class RideDao implements DataAccessObject<RideDbModel> {
             statement.setDouble(4, newRide.getDistance());
             statement.setInt(5, newRide.getPassengers());
             statement.setString(6, newRide.getTripType().toString());
-            statement.setObject(7, newRide.getCreatedDate());
-            statement.setString(8, newRide.getUuid().toString());
+            //statement.setObject(7, newRide.getCreatedDate());
+            statement.setString(7, newRide.getUuid().toString());
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
@@ -129,6 +129,7 @@ public class RideDao implements DataAccessObject<RideDbModel> {
             statement.setString(6, ride.getTripType().toString());
             statement.setObject(7, ride.getCreatedDate());
             statement.setString(8, ride.getUuid().toString());
+            statement.setObject(9, ride.getRideId() != null ? ride.getRideId() : null);
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
                 throw new DataStorageException("Ride not found, id: " + ride.getRideId());

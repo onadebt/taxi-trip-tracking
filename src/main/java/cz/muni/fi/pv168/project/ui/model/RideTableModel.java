@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.model;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.TripType;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.ui.tabs.Settings;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class RideTableModel extends AbstractTableModel implements EntityTableModel<Ride> {
     private List<Ride> rides;
     private final IRideService rideService;
+    private final CrudService<Ride> rideCrudService;
     private final String distanceColumnName = String.valueOf("Distance " + "("+ Settings.getDefaultDistanceUnit() + "s)");
 
 
@@ -27,32 +29,33 @@ public class RideTableModel extends AbstractTableModel implements EntityTableMod
             Column.editable("Started at", Instant.class, Ride::getCreatedAt, Ride::setCreatedAt)
     );
 
-    public RideTableModel(IRideService rideService) {
+    public RideTableModel(IRideService rideService, CrudService<Ride> rideCrudService) {
         this.rideService = rideService;
-        this.rides = new ArrayList<>(rideService.getAll());
+        this.rideCrudService = rideCrudService;
+        this.rides = new ArrayList<>(rideCrudService.findAll());
     }
 
     public void refresh() {
-        this.rides = new ArrayList<>(rideService.getAll());
+        this.rides = new ArrayList<>(rideCrudService.findAll());
         fireTableDataChanged();
     }
 
     public void addRow(Ride ride) {
         int newRowIndex = getRowCount();
-        rideService.create(ride);
+        rideCrudService.create(ride);
         rides.add(ride);
         fireTableRowsInserted(newRowIndex, newRowIndex);
     }
 
     public void removeRow(int rowIndex) {
         var rideToBeDeleted = getEntity(rowIndex);
-        rideService.deleteById(rideToBeDeleted.getId());
+        rideCrudService.deleteById(rideToBeDeleted.getId());
         rides.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
     public void updateRow(Ride ride) {
-        rideService.update(ride);
+        rideCrudService.update(ride);
         int rowIndex = rides.indexOf(ride);
         fireTableRowsUpdated(rowIndex, rowIndex);
     }

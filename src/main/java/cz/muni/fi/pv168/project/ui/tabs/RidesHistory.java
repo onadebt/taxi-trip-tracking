@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.TripType;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
@@ -37,6 +38,7 @@ public class RidesHistory extends JPanel {
     private final JTable rideHistoryTable;
     private final List<Ride> rideHistory;
     private final IRideService rideService;
+    private final CrudService<Ride> rideCrudService;
 //    private final CrudService<Currency> currencyCrudService;
 //    private final CrudService<Category> categoryCrudService;
     private final ListModel<Currency> currencyListModel;
@@ -45,14 +47,15 @@ public class RidesHistory extends JPanel {
     private final ExportService exportService;
 
 
-    public RidesHistory(IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, /*CrudService<Currency> currencyCrudService, CrudService<Category> categoryCrudService,*/ ImportService importService, ExportService exportService) {
+    public RidesHistory(IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, /*CrudService<Currency> currencyCrudService, CrudService<Category> categoryCrudService,*/ ImportService importService, ExportService exportService, CrudService<Ride> rideCrudService) {
         super(new BorderLayout());
         this.rideService = rideService;
+        this.rideCrudService = rideCrudService;
 //        this.currencyCrudService = currencyCrudService;
 //        this.categoryCrudService = categoryCrudService;
         this.currencyListModel = currencyListModel;
         this.categoryListModel = categoryListModel;
-        this.rideHistory = rideService.getAll();
+        this.rideHistory = rideCrudService.findAll();
         this.importService = importService;
         this.exportService = exportService;
         this.rideHistoryTable = createRidesTable();
@@ -159,7 +162,7 @@ public class RidesHistory extends JPanel {
 
 
     private JTable createRidesTable() {
-        RideTableModel rideTableModel = new RideTableModel(this.rideService);
+        RideTableModel rideTableModel = new RideTableModel(this.rideService, this.rideCrudService);
         JTable table = new JTable(rideTableModel);
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
         TableColumn dateColumn = table.getColumnModel().getColumn(6);
