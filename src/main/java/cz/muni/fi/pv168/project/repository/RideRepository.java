@@ -56,7 +56,7 @@ public class RideRepository implements Repository<Ride> {
     @Override
     public void update(Ride entity) {
         var existing = rideDao.findById(entity.getId()).orElseThrow(() -> new DataStorageException("Ride of ID " + entity.getId() + " not found"));
-        var updated = rideMapper.mapExistingEntityToDatabase(entity, existing.getCategoryId());
+        var updated = rideMapper.mapExistingEntityToDatabase(entity, existing.getRideId());
         rideDao.update(updated);
     }
 
