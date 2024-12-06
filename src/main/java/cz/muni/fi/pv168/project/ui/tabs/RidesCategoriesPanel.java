@@ -117,8 +117,10 @@ public class RidesCategoriesPanel extends JPanel {
 
     private void deleteCategory(Category selectedCategory) {
         if (selectedCategory != null) {
-            int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this category?",
-                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            int result = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to delete this category? Deleting it will remove the category from all places where it is used.",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION) {
                 categoryTableModel.removeRow(categoryTable.getSelectedRow()); // Remove the category from the table model
             }

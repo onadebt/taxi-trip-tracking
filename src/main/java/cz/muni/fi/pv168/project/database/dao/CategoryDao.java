@@ -163,22 +163,40 @@ public final class CategoryDao implements CategoryDataAccessObject {
 
     @Override
     public void deleteById(Long id) {
-        var sql = """
-                DELETE FROM Category
-                WHERE id = ?
-                """;
+        // First, set all usages of the category to null
+        var updateSql = """
+            UPDATE Ride
+            SET categoryId = NULL
+            WHERE categoryId = ?
+            """;
+
+        var deleteSql = """
+            DELETE FROM Category
+            WHERE id = ?
+            """;
+
         try (
                 var connection = connections.get();
-                var statement = connection.use().prepareStatement(sql)
+                var updateStatement = connection.use().prepareStatement(updateSql);
+                var deleteStatement = connection.use().prepareStatement(deleteSql)
         ) {
-            statement.setLong(1, id);
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated == 0) {
+            updateStatement.setLong(1, id);
+            int updatedRows = updateStatement.executeUpdate();
+
+            if (updatedRows == 0) {
+                throw new DataStorageException("No rows found with the given category id: " + id);
+            }
+
+            deleteStatement.setLong(1, id);
+            int rowsDeleted = deleteStatement.executeUpdate();
+
+            if (rowsDeleted == 0) {
                 throw new DataStorageException("Category not found, id: " + id);
             }
-            if (rowsUpdated > 1) {
-                throw new DataStorageException("More then 1 category (rows=%d) has been deleted: %s"
-                        .formatted(rowsUpdated, id));
+
+            if (rowsDeleted > 1) {
+                throw new DataStorageException("More than 1 category (rows=%d) has been deleted: %s"
+                        .formatted(rowsDeleted, id));
             }
         } catch (SQLException ex) {
             throw new DataStorageException("Failed to delete category, id: " + id, ex);

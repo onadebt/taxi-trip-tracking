@@ -1145,3 +1145,9 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/petrv/D
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 26 more
+2024-12-06 17:14:02.423143+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "RelatedTable" not found; SQL statement:
+UPDATE RelatedTable
+SET category_id = NULL
+WHERE category_id = ?
+ [42102-224]
