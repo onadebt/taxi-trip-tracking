@@ -89,7 +89,7 @@ public class RidesHistory extends JPanel {
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyListModel, categoryListModel));
+        addButton.addActionListener(new NewRideAction(this, tableModel, rideService, currencyListModel, categoryListModel));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");

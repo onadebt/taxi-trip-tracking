@@ -38,11 +38,13 @@ public class MainWindow {
         RideCrudService rideCrudService = new RideCrudService((RideRepository) diProvider.getRideRepository(), validatorProvider.getRideValidator());
         CurrencyCrudService currencyCrudService = new CurrencyCrudService((CurrencyRepository) diProvider.getCurrencyRepository(), validatorProvider.getCurrencyValidator());
         CategoryCrudService categoryCrudService = new CategoryCrudService((CategoryRepository) diProvider.getCategoryRepository(), validatorProvider.getCategoryValidator());
+
+        RideTableModel rideTableModel = new RideTableModel(rideService, rideCrudService);
         CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyCrudService);
         CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
+
         var categoryListModel = new EntityListModelAdapter<>(categoryTableModel);
         var currencyListModel = new EntityListModelAdapter<>(currencyTableModel);
-
 
 
         frame = new JFrame("Taxi trip tracking");
@@ -54,7 +56,7 @@ public class MainWindow {
         tabbedPane.setFont(new Font("Arial", Font.BOLD, 18));
 
         // Pass only necessary dependencies to each panel
-        JPanel homePage = new HomePage(rideService, currencyListModel, categoryListModel);
+        JPanel homePage = new HomePage(rideService, rideTableModel, currencyListModel, categoryListModel);
         tabbedPane.addTab("Home Page", homePage);
 
         JPanel ridesHistory = new RidesHistory(rideService, currencyListModel, categoryListModel, importService, exportService, rideCrudService);
