@@ -191,36 +191,42 @@ public class RidesHistory extends JPanel {
     private void showPopupMenu(MouseEvent e, JTable table, RideTableModel tableModel) {
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem editAmountItem = new JMenuItem("Edit Amount");
-        editAmountItem.addActionListener(event -> editAmount(table, tableModel));
-        popupMenu.add(editAmountItem);
+        int selectedRowCount = table.getSelectedRowCount();
 
-        JMenuItem editCurrencyItem = new JMenuItem("Edit Currency");
-        editCurrencyItem.addActionListener(event -> editCurrency(table, tableModel));
-        popupMenu.add(editCurrencyItem);
+        if (selectedRowCount == 1) {
+            // Add all edit options when only one row is selected
+            JMenuItem editAmountItem = new JMenuItem("Edit Amount");
+            editAmountItem.addActionListener(event -> editAmount(table, tableModel));
+            popupMenu.add(editAmountItem);
 
-        JMenuItem editDistanceItem = new JMenuItem("Edit Distance");
-        editDistanceItem.addActionListener(event -> editDistance(table, tableModel));
-        popupMenu.add(editDistanceItem);
+            JMenuItem editCurrencyItem = new JMenuItem("Edit Currency");
+            editCurrencyItem.addActionListener(event -> editCurrency(table, tableModel));
+            popupMenu.add(editCurrencyItem);
 
-        JMenuItem editCategoryItem = new JMenuItem("Edit Category");
-        editCategoryItem.addActionListener(event -> editCategory(table, tableModel));
-        popupMenu.add(editCategoryItem);
+            JMenuItem editDistanceItem = new JMenuItem("Edit Distance");
+            editDistanceItem.addActionListener(event -> editDistance(table, tableModel));
+            popupMenu.add(editDistanceItem);
 
-        JMenuItem editTripType = new JMenuItem("Edit Trip type");
-        editTripType.addActionListener(event -> editTripType(table, tableModel));
-        popupMenu.add(editTripType);
+            JMenuItem editCategoryItem = new JMenuItem("Edit Category");
+            editCategoryItem.addActionListener(event -> editCategory(table, tableModel));
+            popupMenu.add(editCategoryItem);
 
-        JMenuItem editNumberOfPassengersItem = new JMenuItem("Edit Passengers");
-        editNumberOfPassengersItem.addActionListener(event -> editNumberOfPassengers(table, tableModel));
-        popupMenu.add(editNumberOfPassengersItem);
+            JMenuItem editTripType = new JMenuItem("Edit Trip Type");
+            editTripType.addActionListener(event -> editTripType(table, tableModel));
+            popupMenu.add(editTripType);
 
-        JMenuItem editDateItem = new JMenuItem("Edit Date");
-        editDateItem.addActionListener(event -> editDate(table, tableModel));
-        popupMenu.add(editDateItem);
+            JMenuItem editNumberOfPassengersItem = new JMenuItem("Edit Passengers");
+            editNumberOfPassengersItem.addActionListener(event -> editNumberOfPassengers(table, tableModel));
+            popupMenu.add(editNumberOfPassengersItem);
 
-        popupMenu.addSeparator();
+            JMenuItem editDateItem = new JMenuItem("Edit Date");
+            editDateItem.addActionListener(event -> editDate(table, tableModel));
+            popupMenu.add(editDateItem);
 
+            popupMenu.addSeparator();
+        }
+
+        // Always add the delete option
         JMenuItem deleteRowsItem = new JMenuItem("Delete Selected Rows");
         deleteRowsItem.addActionListener(event -> deleteSelectedRows(table, tableModel));
         popupMenu.add(deleteRowsItem);
