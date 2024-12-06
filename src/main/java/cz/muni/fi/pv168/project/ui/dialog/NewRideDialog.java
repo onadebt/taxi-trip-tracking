@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
+import java.util.UUID;
 
 
 public class NewRideDialog extends EntityDialog<Ride> {
@@ -67,6 +67,7 @@ public class NewRideDialog extends EntityDialog<Ride> {
         ride.setCurrency((Currency) currencyModel.getSelectedItem());
         ride.setCategory((@Nullable Category) categoryModel.getSelectedItem());
         ride.setTripType((TripType) tripTypeModel.getSelectedItem());
+        ride.setUuid(UUID.randomUUID());
         return ride;
     }
 

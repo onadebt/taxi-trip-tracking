@@ -5,6 +5,7 @@ import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
+import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class HomePage extends JPanel {
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
 
-    public HomePage(IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
+    public HomePage(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
         super(new BorderLayout());
         this.rideService = rideService;
         this.currencyListModel = currencyListModel;
@@ -33,7 +34,7 @@ public class HomePage extends JPanel {
         this.add(snapshotPanel, BorderLayout.SOUTH);
 
         JButton addButton = new JButton("Add Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyListModel, categoryListModel));
+        addButton.addActionListener(new NewRideAction(this, rideTableModel, rideService, currencyListModel, categoryListModel));
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());

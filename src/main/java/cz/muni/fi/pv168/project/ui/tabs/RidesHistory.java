@@ -9,6 +9,7 @@ import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.RideFilterCriteria;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.RideFilterService;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
@@ -36,20 +37,24 @@ public class RidesHistory extends JPanel {
     private final JTable rideHistoryTable;
     private final List<Ride> rideHistory;
     private final IRideService rideService;
+    private final CrudService<Ride> rideCrudService;
     private final RideTableModel rideTableModel;
+
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
     private final ImportService importService;
     private final ExportService exportService;
 
 
-    public RidesHistory(IRideService rideService, RideTableModel rideTableModel, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ImportService importService, ExportService exportService) {
+    public RidesHistory(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ImportService importService, ExportService exportService, CrudService<Ride> rideCrudService) {
         super(new BorderLayout());
         this.rideService = rideService;
+        this.rideCrudService = rideCrudService;
         this.rideTableModel = rideTableModel;
+
         this.currencyListModel = currencyListModel;
         this.categoryListModel = categoryListModel;
-        this.rideHistory = rideService.findAll();
+        this.rideHistory = rideCrudService.findAll();
         this.importService = importService;
         this.exportService = exportService;
         this.rideHistoryTable = createRidesTable(rideTableModel);
@@ -79,7 +84,7 @@ public class RidesHistory extends JPanel {
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         JButton addButton = new JButton("Add New Ride");
-        addButton.addActionListener(new NewRideAction(this, rideService, currencyListModel, categoryListModel));
+        addButton.addActionListener(new NewRideAction(this, tableModel, rideService, currencyListModel, categoryListModel));
         toolBar.add(addButton);
 
         JButton editAmountButton = new JButton("Edit Amount");
@@ -185,35 +190,40 @@ public class RidesHistory extends JPanel {
     private void showPopupMenu(MouseEvent e, JTable table, RideTableModel tableModel) {
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem editAmountItem = new JMenuItem("Edit Amount");
-        editAmountItem.addActionListener(event -> editAmount(table, tableModel));
-        popupMenu.add(editAmountItem);
+        int selectedRowCount = table.getSelectedRowCount();
 
-        JMenuItem editCurrencyItem = new JMenuItem("Edit Currency");
-        editCurrencyItem.addActionListener(event -> editCurrency(table, tableModel));
-        popupMenu.add(editCurrencyItem);
+        if (selectedRowCount == 1) {
+            // Add all edit options when only one row is selected
+            JMenuItem editAmountItem = new JMenuItem("Edit Amount");
+            editAmountItem.addActionListener(event -> editAmount(table, tableModel));
+            popupMenu.add(editAmountItem);
 
-        JMenuItem editDistanceItem = new JMenuItem("Edit Distance");
-        editDistanceItem.addActionListener(event -> editDistance(table, tableModel));
-        popupMenu.add(editDistanceItem);
+            JMenuItem editCurrencyItem = new JMenuItem("Edit Currency");
+            editCurrencyItem.addActionListener(event -> editCurrency(table, tableModel));
+            popupMenu.add(editCurrencyItem);
 
-        JMenuItem editCategoryItem = new JMenuItem("Edit Category");
-        editCategoryItem.addActionListener(event -> editCategory(table, tableModel));
-        popupMenu.add(editCategoryItem);
+            JMenuItem editDistanceItem = new JMenuItem("Edit Distance");
+            editDistanceItem.addActionListener(event -> editDistance(table, tableModel));
+            popupMenu.add(editDistanceItem);
 
-        JMenuItem editTripType = new JMenuItem("Edit Trip type");
-        editTripType.addActionListener(event -> editTripType(table, tableModel));
-        popupMenu.add(editTripType);
+            JMenuItem editCategoryItem = new JMenuItem("Edit Category");
+            editCategoryItem.addActionListener(event -> editCategory(table, tableModel));
+            popupMenu.add(editCategoryItem);
 
-        JMenuItem editNumberOfPassengersItem = new JMenuItem("Edit Passengers");
-        editNumberOfPassengersItem.addActionListener(event -> editNumberOfPassengers(table, tableModel));
-        popupMenu.add(editNumberOfPassengersItem);
+            JMenuItem editTripType = new JMenuItem("Edit Trip Type");
+            editTripType.addActionListener(event -> editTripType(table, tableModel));
+            popupMenu.add(editTripType);
 
-        JMenuItem editDateItem = new JMenuItem("Edit Date");
-        editDateItem.addActionListener(event -> editDate(table, tableModel));
-        popupMenu.add(editDateItem);
+            JMenuItem editNumberOfPassengersItem = new JMenuItem("Edit Passengers");
+            editNumberOfPassengersItem.addActionListener(event -> editNumberOfPassengers(table, tableModel));
+            popupMenu.add(editNumberOfPassengersItem);
 
-        popupMenu.addSeparator();
+            JMenuItem editDateItem = new JMenuItem("Edit Date");
+            editDateItem.addActionListener(event -> editDate(table, tableModel));
+            popupMenu.add(editDateItem);
+
+            popupMenu.addSeparator();
+        }
 
         JMenuItem deleteRowsItem = new JMenuItem("Delete Selected Rows");
         deleteRowsItem.addActionListener(event -> deleteSelectedRows(table, tableModel));
@@ -473,8 +483,6 @@ public class RidesHistory extends JPanel {
 
         return filterPanel;
     }
-
-
 
     private void applyFilters(JTable table, RideTableModel tableModel,
                               JTextField minAmountField, JTextField maxAmountField,
