@@ -110,6 +110,7 @@ public class RidesCategoriesPanel extends JPanel {
 
             Category tempCategory = new Category(newId, newName, newIconPath);
             categoryTableModel.updateRow(tempCategory);
+            categoryTableModel.refresh();
             categoryTable.getColumnModel().getColumn(2).setCellRenderer(imageRenderer);
         }
     }
