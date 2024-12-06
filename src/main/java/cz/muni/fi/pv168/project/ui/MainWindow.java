@@ -77,7 +77,10 @@ public class MainWindow {
         // Add a listener to refresh pages when tabs change
         tabbedPane.addChangeListener(e -> {
             SwingUtilities.invokeLater(() -> {
-                // TODO: implement refresh logic for individual tabs
+                // Reloads all tables on tab change
+                rideTableModel.refresh();
+                currencyTableModel.refresh();
+                categoryTableModel.refresh();
             });
         });
 
