@@ -30,6 +30,8 @@ public class NewRideAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+
         var dialog = new NewRideDialog(currencyListModel, categoryListModel);
         var optionalRide = dialog.show(parent, "Add ride");
 
@@ -40,8 +42,10 @@ public class NewRideAction extends AbstractAction {
 
         optionalRide.ifPresent(ride -> {
             try {
+                System.out.println("Creating ride: " + ride);
                 rideService.create(ride);
                 rideTableModel.addRow(ride);
+                rideTableModel.refresh(); // this refresh fixed Adding new ride from HomePage (time was not visible)
             } catch (ValidationException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Invalid entry", JOptionPane.ERROR_MESSAGE);
             }

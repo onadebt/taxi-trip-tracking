@@ -20,7 +20,7 @@ public class HomePage extends JPanel {
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
 
-    public HomePage(IRideService rideService, RideTableModel rideTableModel, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
+    public HomePage(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
         super(new BorderLayout());
         this.rideService = rideService;
         this.currencyListModel = currencyListModel;

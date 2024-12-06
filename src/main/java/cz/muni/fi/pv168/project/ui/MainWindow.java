@@ -56,10 +56,10 @@ public class MainWindow {
         tabbedPane.setFont(new Font("Arial", Font.BOLD, 18));
 
         // Pass only necessary dependencies to each panel
-        JPanel homePage = new HomePage(rideService, rideTableModel, currencyListModel, categoryListModel);
+        JPanel homePage = new HomePage(rideTableModel, rideService, currencyListModel, categoryListModel);
         tabbedPane.addTab("Home Page", homePage);
 
-        JPanel ridesHistory = new RidesHistory(rideService, currencyListModel, categoryListModel, importService, exportService, rideCrudService);
+        JPanel ridesHistory = new RidesHistory(rideTableModel, rideService, currencyListModel, categoryListModel, importService, exportService, rideCrudService);
         tabbedPane.addTab("Rides History", ridesHistory);
 
         JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryTableModel);

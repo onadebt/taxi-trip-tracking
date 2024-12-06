@@ -39,20 +39,20 @@ public class RidesHistory extends JPanel {
     private final List<Ride> rideHistory;
     private final IRideService rideService;
     private final CrudService<Ride> rideCrudService;
-//    private final CrudService<Currency> currencyCrudService;
-//    private final CrudService<Category> categoryCrudService;
+    private final RideTableModel rideTableModel;
+
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
     private final ImportService importService;
     private final ExportService exportService;
 
 
-    public RidesHistory(IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, /*CrudService<Currency> currencyCrudService, CrudService<Category> categoryCrudService,*/ ImportService importService, ExportService exportService, CrudService<Ride> rideCrudService) {
+    public RidesHistory(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ImportService importService, ExportService exportService, CrudService<Ride> rideCrudService) {
         super(new BorderLayout());
         this.rideService = rideService;
         this.rideCrudService = rideCrudService;
-//        this.currencyCrudService = currencyCrudService;
-//        this.categoryCrudService = categoryCrudService;
+        this.rideTableModel = rideTableModel;
+
         this.currencyListModel = currencyListModel;
         this.categoryListModel = categoryListModel;
         this.rideHistory = rideCrudService.findAll();
@@ -77,10 +77,6 @@ public class RidesHistory extends JPanel {
         this.add(topPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
     }
-
-//    public static JPanel createRidesHistoryPanel(IRideService rideService, CrudService<Currency> currencyCrudService, CrudService<Category> categoryCrudService, ImportService importService, ExportService exportService) {
-//        return new RidesHistory(rideService, currencyCrudService, categoryCrudService, importService, exportService);
-//    }
 
     private JToolBar createToolBar(JTable table, RideTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
@@ -162,7 +158,6 @@ public class RidesHistory extends JPanel {
 
 
     private JTable createRidesTable() {
-        RideTableModel rideTableModel = new RideTableModel(this.rideService, this.rideCrudService);
         JTable table = new JTable(rideTableModel);
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
         TableColumn dateColumn = table.getColumnModel().getColumn(6);

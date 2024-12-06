@@ -47,9 +47,11 @@ public class RideService implements IRideService {
 
     @Override
     public void create(Ride ride) {
+        /*
         validate(ride);
         RideDbModel rideDbModel = RideDbConverter.toDbModel(ride);
         rideRepository.create(ride);
+        */
     }
 
     @Override
