@@ -33,7 +33,7 @@ public class JsonExportService implements ExportService {
 
     @Override
     public void exportData(String path) {
-        List<Ride> rides = rideService.getAll();
+        List<Ride> rides = rideService.findAll();
         var distUnit = settingsService.getDefaultDistance();
 
         List<RidePortModel> rideExports = new ArrayList<>();

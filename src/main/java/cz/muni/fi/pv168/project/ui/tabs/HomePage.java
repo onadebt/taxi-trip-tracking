@@ -3,10 +3,6 @@ package cz.muni.fi.pv168.project.ui.tabs;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.service.crud.CategoryCrudService;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
-import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
-import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 
@@ -28,7 +24,7 @@ public class HomePage extends JPanel {
         JPanel filterPanel = createFilterPanel();
         this.add(filterPanel, BorderLayout.NORTH);
 
-        List<Ride> rideHistory = rideService.getAll();
+        List<Ride> rideHistory = rideService.findAll();
 
         JPanel statsPanel = createStatsPanel(rideHistory);
         this.add(statsPanel, BorderLayout.CENTER);
@@ -95,7 +91,7 @@ public class HomePage extends JPanel {
         addStatLabel(statsPanel, "Total Rides:");
 
         addStatValue(statsPanel, String.format("%.2f km", totalDistance));
-        addStatValue(statsPanel, String.format("%.2f CZK", totalAmount));
+        addStatValue(statsPanel, String.format("%.2f EUR", totalAmount));
         addStatValue(statsPanel, String.format("%d", totalDrives));
 
         statsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Ride Statistics"));
@@ -151,14 +147,17 @@ public class HomePage extends JPanel {
     }
 
     private double calculateTotalAmount(List<Ride> rideHistory) {
-        double totalAmount = 0;
-
-        for (Ride ride : rideHistory) {
-            totalAmount += ride.getAmountCurrency() * ride.getCurrency().getExchangeRate();
-        }
-
-        return totalAmount;
+        return rideHistory.stream()
+                .mapToDouble(ride -> ride.getAmountCurrency() * ride.getCurrency().getExchangeRate())
+                .sum();
     }
+
+    private double calculateTotalMoneyEarned() {
+        return rideService.findAll().stream()
+                .mapToDouble(Ride::getAmountCurrency)
+                .sum();
+    }
+
 
     private double calculateTotalDistance(List<Ride> rideHistory) {
         double totalDistance = 0;
@@ -167,4 +166,8 @@ public class HomePage extends JPanel {
         }
         return totalDistance;
     }
+
+//    public void updateTotalMoneyEarned(double totalMoney) {
+//        totalMoneyLabel.setText("Total Money Earned: " + totalMoney);
+//    }
 }

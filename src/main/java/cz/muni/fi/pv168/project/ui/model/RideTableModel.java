@@ -2,11 +2,16 @@ package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Ride;
+import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
+import cz.muni.fi.pv168.project.ui.renderers.DateRenderer;
 import cz.muni.fi.pv168.project.ui.tabs.Settings;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +19,12 @@ import java.util.List;
 public class RideTableModel extends AbstractTableModel implements EntityTableModel<Ride> {
     private List<Ride> rides;
     private final IRideService rideService;
-    private final String distanceColumnName = String.valueOf("Distance " + "("+ Settings.getDefaultDistanceUnit() + "s)");
 
 
     private final List<Column<Ride, ?>> columns = List.of(
             Column.editable("Amount currency", Double.class, Ride::getAmountCurrency, Ride::setAmountCurrency),
-            Column.editable("Currency Type", String.class, Ride::getCurrencyCode, Ride::setCurrencyCode),
-            Column.editable(distanceColumnName, Double.class, Ride::getDistance, Ride::setDistance),
+            Column.editable("Currency", String.class, Ride::getCurrencyCode, Ride::setCurrencyCode),
+            Column.editable("Distance", Double.class, Ride::getDistance, Ride::setDistance),
             Column.editable("Category", Category.class, Ride::getCategory, Ride::setCategory),
             Column.editable("Trip Type", TripType.class, Ride::getTripType, Ride::setTripType),
             Column.editable("Passengers", Integer.class, Ride::getNumberOfPassengers, Ride::setNumberOfPassengers),
@@ -29,11 +33,11 @@ public class RideTableModel extends AbstractTableModel implements EntityTableMod
 
     public RideTableModel(IRideService rideService) {
         this.rideService = rideService;
-        this.rides = new ArrayList<>(rideService.getAll());
+        this.rides = new ArrayList<>(rideService.findAll());
     }
 
     public void refresh() {
-        this.rides = new ArrayList<>(rideService.getAll());
+        this.rides = new ArrayList<>(rideService.findAll());
         fireTableDataChanged();
     }
 
@@ -55,6 +59,11 @@ public class RideTableModel extends AbstractTableModel implements EntityTableMod
         rideService.update(ride);
         int rowIndex = rides.indexOf(ride);
         fireTableRowsUpdated(rowIndex, rowIndex);
+    }
+
+    public void setRides(List<Ride> rides) {
+        this.rides = new ArrayList<>(rides);
+        fireTableDataChanged();
     }
 
     public Ride getRow(int rowIndex) {

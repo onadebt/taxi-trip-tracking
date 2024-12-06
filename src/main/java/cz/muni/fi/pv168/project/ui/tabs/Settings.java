@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
+import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +10,7 @@ import java.awt.*;
 public class Settings extends JPanel {
     private static DistanceUnit defaultDistanceUnit = DistanceUnit.Kilometer;
 
-    private Settings(IRideService rideService) {
+    public Settings(IRideService rideService) {
         super(new BorderLayout());
 
         JPanel panel = new JPanel();
@@ -55,10 +56,6 @@ public class Settings extends JPanel {
         this.add(distanceUnitComboBox);
         this.add(applyButton);
         this.setPreferredSize(new Dimension(300, 150));
-    }
-
-    public static JPanel createSettingsPanel(IRideService rideService) {
-        return new Settings(rideService);
     }
 
     public static DistanceUnit getDefaultDistanceUnit() {

@@ -46,7 +46,7 @@ public interface IRideService {
      * Get all rides
      * @return
      */
-    List<Ride> getAll();
+    List<Ride> findAll();
 
     /**
      * Checks whether ride values are valid

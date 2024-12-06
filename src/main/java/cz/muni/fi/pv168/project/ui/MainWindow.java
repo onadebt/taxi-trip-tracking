@@ -37,6 +37,7 @@ public class MainWindow {
         CategoryCrudService categoryCrudService = new CategoryCrudService((CategoryRepository) diProvider.getCategoryRepository(), validatorProvider.getCategoryValidator());
         CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyCrudService);
         CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
+        var rideTableModel = new RideTableModel(rideService);
         var categoryListModel = new EntityListModelAdapter<>(categoryTableModel);
         var currencyListModel = new EntityListModelAdapter<>(currencyTableModel);
 
@@ -54,16 +55,16 @@ public class MainWindow {
         JPanel homePage = new HomePage(rideService, currencyListModel, categoryListModel);
         tabbedPane.addTab("Home Page", homePage);
 
-        JPanel ridesHistory = new RidesHistory(rideService, currencyListModel, categoryListModel, importService, exportService);
+        JPanel ridesHistory = new RidesHistory(rideService, rideTableModel, currencyListModel, categoryListModel, importService, exportService);
         tabbedPane.addTab("Rides History", ridesHistory);
 
-        JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryTableModel);
+        JPanel ridesCategories = new RidesCategoriesPanel(categoryTableModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
         JPanel currencies = new Currencies(currencyTableModel, validatorProvider.getCurrencyValidator());
         tabbedPane.addTab("Currencies", currencies);
 
-        JPanel settings = Settings.createSettingsPanel(rideService);
+        JPanel settings = new Settings(rideService);
         tabbedPane.addTab("Settings", settings);
 
         JPanel aboutUs = AboutUs.createAboutUsPanel();

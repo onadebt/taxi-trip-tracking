@@ -79,7 +79,7 @@ public class JsonImportService implements ImportService {
     private void create(List<RidePortModel> rides) {
         var defaultDistUnit = settingsService.getDefaultDistance();
         for (var ride : rides) {
-            if (rideService.getAll().stream().anyMatch(r -> r.getUuid() == ride.getUuid())) {
+            if (rideService.findAll().stream().anyMatch(r -> r.getUuid() == ride.getUuid())) {
                 continue;
             }
 
@@ -96,7 +96,7 @@ public class JsonImportService implements ImportService {
             var currency = currencyService.getByTag(ride.getCurrencyTag());
             var category = categoryService.getByName(ride.getCategoryName());
 
-            if (rideService.getAll().stream().anyMatch(r -> r.getUuid().equals(ride.getUuid()))) {
+            if (rideService.findAll().stream().anyMatch(r -> r.getUuid().equals(ride.getUuid()))) {
                 rideService.update(createRideFromPortModel(ride, currency, category, defaultDistUnit));
             } else {
                 rideService.create(createRideFromPortModel(ride, currency, category, defaultDistUnit));
