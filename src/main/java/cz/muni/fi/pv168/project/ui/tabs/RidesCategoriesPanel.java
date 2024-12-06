@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RidesCategoriesPanel extends JPanel {
 
@@ -15,7 +17,7 @@ public class RidesCategoriesPanel extends JPanel {
     private final JTable categoryTable;
     private final ImageRenderer imageRenderer = new ImageRenderer(48, 48);
 
-    private RidesCategoriesPanel(CategoryTableModel categoryTableModel) {
+    public RidesCategoriesPanel(CategoryTableModel categoryTableModel) {
         super(new BorderLayout());
         this.categoryTableModel = categoryTableModel;
         this.categoryTable = new JTable(categoryTableModel);
@@ -77,18 +79,30 @@ public class RidesCategoriesPanel extends JPanel {
         deleteButton.addActionListener(e -> deleteCategory(getSelectedCategory()));
         buttonsPanel.add(deleteButton);
 
-        // Enable/Disable buttons based on selection
         categoryTable.getSelectionModel().addListSelectionListener(e -> {
             boolean selected = categoryTable.getSelectedRow() >= 0;
             editButton.setEnabled(selected);
             deleteButton.setEnabled(selected);
         });
 
-        this.add(buttonsPanel, BorderLayout.NORTH);
-    }
 
-    public static JPanel createRidesCategoriesPanel(CategoryTableModel categoryTableModel) {
-        return new RidesCategoriesPanel(categoryTableModel);
+        categoryTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showPopupMenu(e);
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showPopupMenu(e);
+                }
+            }
+        });
+
+        this.add(buttonsPanel, BorderLayout.NORTH);
     }
 
     private void addCategory() {
@@ -160,5 +174,25 @@ public class RidesCategoriesPanel extends JPanel {
         }
 
         return null;
+    }
+
+    private void showPopupMenu(MouseEvent e) {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem addCategory = new JMenuItem("Add Category");
+        addCategory.addActionListener(event -> addCategory());
+        popupMenu.add(addCategory);
+
+        JMenuItem editCategory = new JMenuItem("Edit Category");
+        editCategory.addActionListener(event -> editCategory(getSelectedCategory()));
+        popupMenu.add(editCategory);
+
+        popupMenu.addSeparator();
+
+        JMenuItem deleteCategory = new JMenuItem("Delete Category");
+        deleteCategory.addActionListener(event -> deleteCategory(getSelectedCategory()));
+        popupMenu.add(deleteCategory);
+
+        popupMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 }

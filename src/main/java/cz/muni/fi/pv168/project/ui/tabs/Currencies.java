@@ -48,6 +48,22 @@ public class Currencies extends JPanel {
         add(label, BorderLayout.NORTH);
         add(toolBar, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
+
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showPopupMenu(e);
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showPopupMenu(e);
+                }
+            }
+        });
     }
 
 
@@ -115,40 +131,6 @@ public class Currencies extends JPanel {
         return toolBar;
     }
 
-
-//    private JToolBar createToolBar(JTable table, EntityTableModel<Currency> tableModel) {
-//        JToolBar toolBar = new JToolBar();
-//
-//
-//
-//        JButton addButton = new JButton("Add New Currency");
-//        addButton.addActionListener(e -> {
-//            NewCurrencyDialog dialog = new NewCurrencyDialog();
-//            dialog.setVisible(true);
-//            refreshCurrenciesTable(table, tableModel);
-//        });
-//        toolBar.add(addButton);
-//
-//        JButton editNameButton = new JButton("Edit Name");
-//        editNameButton.addActionListener(e -> editName(table, tableModel));
-//        toolBar.add(editNameButton);
-//
-//        JButton editCodeButton = new JButton("Edit Code");
-//        editCodeButton.addActionListener(e -> editCode(table, tableModel));
-//        toolBar.add(editCodeButton);
-//
-//        JButton editExchangeRateButton = new JButton("Edit Exchange Rate");
-//        editExchangeRateButton.addActionListener(e -> editExchangeRate(table, tableModel));
-//        toolBar.add(editExchangeRateButton);
-//
-//        JButton deleteRowsButton = new JButton("Delete");
-//        deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
-//        toolBar.add(deleteRowsButton);
-//
-//        return toolBar;
-//    }
-
-
     private void rowSelectionChanged(ListSelectionEvent listSelectionEvent) {
         var selectionModel = (ListSelectionModel) listSelectionEvent.getSource();
         var count = selectionModel.getSelectedItemsCount();
@@ -166,4 +148,23 @@ public class Currencies extends JPanel {
         deleteAction.setEnabled(selectedItemsCount >= 1);
     }
 
+    private void showPopupMenu(MouseEvent e) {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem addCurrency = new JMenuItem("Add Currency");
+        addCurrency.addActionListener(addAction);
+        popupMenu.add(addCurrency);
+
+        JMenuItem editCurrency = new JMenuItem("Edit Currency");
+        editCurrency.addActionListener(editAction);
+        popupMenu.add(editCurrency);
+
+        popupMenu.addSeparator();
+
+        JMenuItem deleteCurrency = new JMenuItem("Delete Currency");
+        deleteCurrency.addActionListener(deleteAction);
+        popupMenu.add(deleteCurrency);
+
+        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+    }
 }
