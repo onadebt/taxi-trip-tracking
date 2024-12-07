@@ -22,12 +22,12 @@ public class CurrencyService implements ICurrencyService {
 
 
     @Override
-    public @Nullable Optional<Currency> findByCode(String code) {
+    public Optional<Currency> findByCode(String code) {
         return currencyRepository.findByCode(code);
     }
 
     @Override
-    public @Nullable Optional<Currency> findByName(String name) {
+    public Optional<Currency> findByName(String name) {
         return currencyRepository.findByName(name);
     }
 

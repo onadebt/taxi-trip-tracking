@@ -6,6 +6,7 @@ import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.service.interfaces.*;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 import cz.muni.fi.pv168.project.utils.DistanceConversionHelper;
 import cz.muni.fi.pv168.project.utils.PathHelper;
@@ -19,19 +20,22 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class JsonImportService implements ImportService {
     IRideService rideService;
     ICurrencyService currencyService;
     ICategoryService categoryService;
     ISettingsService settingsService;
+    Validator<Ride> rideValidator;
     Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new Gson_InstantTypeAdapter()).create();
 
-    public JsonImportService(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ISettingsService settingsService) {
+    public JsonImportService(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ISettingsService settingsService, Validator<Ride> rideValidator) {
         this.rideService = rideService;
         this.categoryService = categoryService;
         this.currencyService = currencyService;
         this.settingsService = settingsService;
+        this.rideValidator = rideValidator;
     }
 
     @Override
@@ -55,21 +59,21 @@ public class JsonImportService implements ImportService {
 
     private void validate(List<RidePortModel> rides) {
         for (var ride : rides) {
-            Category category = null;
+            Optional<Category> category = Optional.empty();
             if (!Objects.equals(ride.getCategoryName(), "")) {
-                category = categoryService.getByName(ride.getCategoryName());
-                if (category == null) {
+                category = categoryService.findByName(ride.getCategoryName());
+                if (category.isEmpty()) {
                     throw new DataPortException(String.format("Category of name \"%s\" does not exist. Import aborted.", ride.getCategoryName()));
                 }
             }
 
-            var currency = currencyService.getByTag(ride.getCurrencyTag());
-            if (currency == null) {
+            var currency = currencyService.findByCode(ride.getCurrencyTag());
+            if (currency.isEmpty()) {
                 throw new DataPortException(String.format("Currency of tag \"%s\" does not exist. Import aborted.", ride.getCurrencyTag()));
             }
 
             try {
-                rideService.validate(createRideFromPortModel(ride, currency, category, ride.getDistanceUnit()));
+                rideValidator.validate(createRideFromPortModel(ride, currency.get(), category.orElse(null), ride.getDistanceUnit()));
             } catch (ValidationException ex) {
                 throw new DataPortException(String.format("Imported data is not valid.\nRideUUID: %s\nReason: %s Import aborted.", ride.getUuid(), ex.getMessage()));
             }
@@ -83,23 +87,23 @@ public class JsonImportService implements ImportService {
                 continue;
             }
 
-            var currency = currencyService.getByTag(ride.getCurrencyTag());
-            var category = categoryService.getByName(ride.getCategoryName());
+            var currency = currencyService.findByCode(ride.getCurrencyTag());
+            var category = categoryService.findByName(ride.getCategoryName());
 
-            rideService.create(createRideFromPortModel(ride, currency, category, defaultDistUnit));
+            rideService.create(createRideFromPortModel(ride, currency.get(), category.orElse(null), defaultDistUnit));
         }
     }
 
     private void createUpdate(List<RidePortModel> rides) {
         var defaultDistUnit = settingsService.getDefaultDistance();
         for (var ride : rides) {
-            var currency = currencyService.getByTag(ride.getCurrencyTag());
-            var category = categoryService.getByName(ride.getCategoryName());
+            var currency = currencyService.findByCode(ride.getCurrencyTag());
+            var category = categoryService.findByName(ride.getCategoryName());
 
             if (rideService.findAll().stream().anyMatch(r -> r.getUuid().equals(ride.getUuid()))) {
-                rideService.update(createRideFromPortModel(ride, currency, category, defaultDistUnit));
+                rideService.update(createRideFromPortModel(ride, currency.get(), category.orElse(null), defaultDistUnit));
             } else {
-                rideService.create(createRideFromPortModel(ride, currency, category, defaultDistUnit));
+                rideService.create(createRideFromPortModel(ride, currency.get(), category.orElse(null), defaultDistUnit));
             }
         }
     }
@@ -111,7 +115,7 @@ public class JsonImportService implements ImportService {
 
     private Ride createRideFromPortModel(RidePortModel ridePortModel, Currency currency, @Nullable Category category, DistanceUnit defaultDistanceUnit) {
         if (ridePortModel.getDistanceUnit() != defaultDistanceUnit) {
-            if (defaultDistanceUnit == DistanceUnit.Kilometer) {
+            if (defaultDistanceUnit == DistanceUnit.KILOMETER) {
                 ridePortModel.setDistance(DistanceConversionHelper.milesToKilometers(ridePortModel.getDistance()));
             } else {
                 ridePortModel.setDistance(DistanceConversionHelper.kilometersToMiles(ridePortModel.getDistance()));

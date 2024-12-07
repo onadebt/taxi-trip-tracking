@@ -1,14 +1,10 @@
 package cz.muni.fi.pv168.project.ui;
 
-import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.providers.ValidatorProvider;
 import cz.muni.fi.pv168.project.repository.CategoryRepository;
 import cz.muni.fi.pv168.project.repository.CurrencyRepository;
 import cz.muni.fi.pv168.project.repository.RideRepository;
-import cz.muni.fi.pv168.project.service.crud.CategoryCrudService;
-import cz.muni.fi.pv168.project.service.crud.CurrencyCrudService;
-import cz.muni.fi.pv168.project.service.crud.RideCrudService;
 import cz.muni.fi.pv168.project.service.interfaces.*;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
@@ -35,13 +31,9 @@ public class MainWindow {
         ImportService importService = diProvider.getJsonImportService();
         ExportService exportService = diProvider.getJsonExportService();
 
-        RideCrudService rideCrudService = new RideCrudService((RideRepository) diProvider.getRideRepository(), validatorProvider.getRideValidator());
-        CurrencyCrudService currencyCrudService = new CurrencyCrudService((CurrencyRepository) diProvider.getCurrencyRepository(), validatorProvider.getCurrencyValidator());
-        CategoryCrudService categoryCrudService = new CategoryCrudService((CategoryRepository) diProvider.getCategoryRepository(), validatorProvider.getCategoryValidator());
-
-        RideTableModel rideTableModel = new RideTableModel(rideService, rideCrudService);
-        CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyCrudService);
-        CategoryTableModel categoryTableModel = new CategoryTableModel(categoryCrudService);
+        RideTableModel rideTableModel = new RideTableModel(rideService);
+        CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyService);
+        CategoryTableModel categoryTableModel = new CategoryTableModel(categoryService);
 
         var categoryListModel = new EntityListModelAdapter<>(categoryTableModel);
         var currencyListModel = new EntityListModelAdapter<>(currencyTableModel);
@@ -59,7 +51,7 @@ public class MainWindow {
         JPanel homePage = new HomePage(rideTableModel, rideService, currencyListModel, categoryListModel);
         tabbedPane.addTab("Home Page", homePage);
 
-        JPanel ridesHistory = new RidesHistory(rideTableModel, rideService, currencyListModel, categoryListModel, importService, exportService, rideCrudService);
+        JPanel ridesHistory = new RidesHistory(rideTableModel, rideService, currencyListModel, categoryListModel, importService, exportService);
         tabbedPane.addTab("Rides History", ridesHistory);
 
         JPanel ridesCategories = new RidesCategoriesPanel(categoryTableModel);
@@ -68,7 +60,7 @@ public class MainWindow {
         JPanel currencies = new Currencies(currencyTableModel, validatorProvider.getCurrencyValidator());
         tabbedPane.addTab("Currencies", currencies);
 
-        JPanel settings = new Settings(rideService);
+        JPanel settings = new SettingsPanel(settingsService, rideService);
         tabbedPane.addTab("Settings", settings);
 
         JPanel aboutUs = AboutUs.createAboutUsPanel();

@@ -2,10 +2,7 @@ package cz.muni.fi.pv168.project.providers;
 
 import cz.muni.fi.pv168.project.database.DatabaseManager;
 import cz.muni.fi.pv168.project.database.dao.*;
-import cz.muni.fi.pv168.project.database.mapper.CategoryMapper;
-import cz.muni.fi.pv168.project.database.mapper.CurrencyMapper;
-import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
-import cz.muni.fi.pv168.project.database.mapper.RideMapper;
+import cz.muni.fi.pv168.project.database.mapper.*;
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.repository.*;
 import cz.muni.fi.pv168.project.service.*;
@@ -26,15 +23,17 @@ public class DIProvider {
     private CategoryDataAccessObject categoryDao;
     private CurrencyDataAccessObject currencyDao;
     private RideDao rideDao;
+    private SettingsDao settingsDao;
 
     private EntityMapper<CategoryDbModel, Category> categoryMapper;
     private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
     private EntityMapper<RideDbModel, Ride> rideMapper;
+    private EntityMapper<SettingsDbModel, Settings> settingsMapper;
 
-    private RideRepository rideRepository;
-    private Repository<Currency> currencyRepository;
-    private Repository<Category> categoryRepository;
-    private ISettingsRepository settingsRepository;
+    private IRideRepository rideRepository;
+    private ICurrencyRepository currencyRepository;
+    private ICategoryRepository categoryRepository;
+    private Repository<Settings> settingsRepository;
 
     private IRideService rideService;
     private ICategoryService categoryService;
@@ -48,6 +47,8 @@ public class DIProvider {
         this.databaseManager = DatabaseManager.createProductionInstance();
         this.databaseManager.initSchema();
 
+        ValidatorProvider validatorProvider = new ValidatorProvider();
+
         this.categoryDao = new CategoryDao(databaseManager::getConnectionHandler);
         this.categoryMapper = new CategoryMapper();
         this.categoryRepository = new CategoryRepository(categoryDao, categoryMapper);
@@ -56,20 +57,27 @@ public class DIProvider {
         this.currencyMapper = new CurrencyMapper();
         this.currencyRepository = new CurrencyRepository(currencyDao, currencyMapper);
 
-        this.settingsRepository = new SettingsRepository();
         this.rideMapper = new RideMapper(categoryDao, categoryMapper, currencyDao, currencyMapper);
         this.rideDao = new RideDao(databaseManager::getConnectionHandler);
-        this.rideRepository = new RideRepository(currencyRepository, categoryRepository, rideDao, rideMapper);
+        this.rideRepository = new RideRepository(rideDao, rideMapper);
 
-        this.categoryService = new CategoryService(categoryRepository);
+        this.settingsDao = new SettingsDao(databaseManager::getConnectionHandler);
+        this.settingsMapper = new SettingsMapper();
+        this.settingsRepository = new SettingsRepository(settingsDao, settingsMapper);
+
+
+        this.categoryService = new CategoryService(categoryRepository, validatorProvider.getCategoryValidator());
+        this.currencyService = new CurrencyService(currencyRepository, validatorProvider.getCurrencyValidator());
+        this.rideService = new RideService(rideRepository, validatorProvider.getRideValidator());
+
         this.settingsService = new SettingsService(settingsRepository);
-        this.rideService = new RideService(categoryService, currencyService, rideRepository);
+
         this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
-        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
+        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService, validatorProvider.getRideValidator());
 
     }
 
-    public RideRepository getRideRepository() {
+    public IRideRepository getRideRepository() {
         return rideRepository;
     }
 
@@ -81,7 +89,7 @@ public class DIProvider {
         return categoryRepository;
     }
 
-    public ISettingsRepository getSettingsRepository() {
+    public Repository<Settings> getSettingsRepository() {
         return settingsRepository;
     }
 

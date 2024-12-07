@@ -103,6 +103,29 @@ public class RideDao implements DataAccessObject<RideDbModel> {
         }
     }
 
+    public Optional<RideDbModel> findByUuid(UUID uuid) {
+        var sql = """
+                SELECT id, categoryId, currencyId, amount, distance, passengers, tripType, createdAt, uuid
+                FROM Ride
+                WHERE uuid = ?
+                """;
+        try (
+                var connection = connections.get();
+                var statement = connection.use().prepareStatement(sql)
+        ) {
+            statement.setString(1, String.valueOf(uuid));
+            var resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(rideFromResultSet(resultSet));
+            } else {
+                // department not found
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new DataStorageException("Failed to load ride by uuid: " + uuid, ex);
+        }
+    }
+
     @Override
     public RideDbModel update(RideDbModel ride) {
         var sql = """
@@ -178,6 +201,29 @@ public class RideDao implements DataAccessObject<RideDbModel> {
             statement.executeUpdate();
         } catch (SQLException ex) {
             throw new DataStorageException("Failed to delete all rides", ex);
+        }
+    }
+
+    public void deleteByUuid(UUID uuid) {
+        var sql = """
+                DELETE FROM Ride
+                WHERE uuid = ?
+                """;
+        try (
+                var connection = connections.get();
+                var statement = connection.use().prepareStatement(sql)
+        ) {
+            statement.setString(1, String.valueOf(uuid));
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataStorageException("Ride not found, uuid: " + uuid);
+            }
+            if (rowsUpdated > 1) {
+                throw new DataStorageException("More then 1 ride (rows=%d) has been deleted: %s"
+                        .formatted(rowsUpdated, uuid));
+            }
+        } catch (SQLException ex) {
+            throw new DataStorageException("Failed to delete ride, uuid: " + uuid, ex);
         }
     }
 

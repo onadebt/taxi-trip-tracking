@@ -15,7 +15,7 @@ public class SettingsService implements ISettingsService {
     private final Repository<Settings> settingsRepository;
     private Settings settings;
 
-    private SettingsService(Repository<Settings> settingsRepository) {
+    public SettingsService(Repository<Settings> settingsRepository) {
         this.settingsRepository = settingsRepository;
         this.settings = settingsRepository.findAll().stream().findFirst().orElse(null);
     }

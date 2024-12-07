@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ICategoryService extends CrudService<Category> {
 
-    @Nullable Optional<Category> getByName(String name);
+    Optional<Category> findByName(String name);
 
 }

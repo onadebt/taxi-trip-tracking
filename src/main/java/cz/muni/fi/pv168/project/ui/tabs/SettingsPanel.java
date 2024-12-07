@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Settings;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.service.RideService;
 import cz.muni.fi.pv168.project.service.SettingsService;
+import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.interfaces.ISettingsService;
 
 import javax.swing.*;
@@ -11,9 +12,9 @@ import java.awt.*;
 
 public class SettingsPanel extends JPanel {
     private final ISettingsService settingsService;
-    private final RideService rideService;
+    private final IRideService rideService;
 
-    public SettingsPanel(ISettingsService settingsService, RideService rideService){
+    public SettingsPanel(ISettingsService settingsService, IRideService rideService){
         super(new BorderLayout());
         this.settingsService = settingsService;
         this.rideService = rideService;

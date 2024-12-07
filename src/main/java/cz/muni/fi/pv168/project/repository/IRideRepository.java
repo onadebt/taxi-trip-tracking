@@ -6,17 +6,11 @@ import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
-public interface IRideRepository {
-    void create(RideDbModel ride);
-    void update(RideDbModel ride);
-    void deleteByUUID(UUID rideUUID);
-    void deleteById(Long rideId);
-    void deleteAll();
-    @Nullable Ride getById(Long rideId);
-    RideDbModel getByUUID(UUID rideUUID);
-    void recalculateDistances(DistanceUnit newUnit);
-    List<RideDbModel> getAll();
+public interface IRideRepository extends Repository<Ride> {
+    void deleteByUuid(UUID uuid);
+    Optional<Ride> findByUuid(UUID uuid);
 }

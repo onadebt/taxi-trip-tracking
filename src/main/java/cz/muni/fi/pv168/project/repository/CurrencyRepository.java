@@ -5,12 +5,12 @@ import cz.muni.fi.pv168.project.database.dao.DataStorageException;
 import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import org.jetbrains.annotations.Nullable;
+
 
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyRepository implements Repository<Currency> {
+public class CurrencyRepository implements ICurrencyRepository {
     private final CurrencyDataAccessObject currencyDao;
     private final EntityMapper<CurrencyDbModel, Currency> currencyMapper;
 
@@ -36,28 +36,23 @@ public class CurrencyRepository implements Repository<Currency> {
         currencyDao.deleteById(currencyId);
     }
 
-    @Override
-    public Optional<Currency> findById(Long id) {
-        return Optional.empty();
-    }
 
-
-    public @Nullable Currency getById(Long currencyId) {
+    public Optional<Currency> findById(Long currencyId) {
         return currencyDao
                 .findById(currencyId)
-                .map(currencyMapper::mapToBusiness).orElse(null);
+                .map(currencyMapper::mapToBusiness);
     }
 
-    public @Nullable Currency getByCode(String code) {
+    public Optional<Currency> findByCode(String code) {
         return currencyDao
                 .findByCode(code)
-                .map(currencyMapper::mapToBusiness).orElse(null);
+                .map(currencyMapper::mapToBusiness);
     }
 
-    public @Nullable Currency getByName(String name) {
+    public Optional<Currency> findByName(String name) {
         return currencyDao
                 .findByName(name)
-                .map(currencyMapper::mapToBusiness).orElse(null);
+                .map(currencyMapper::mapToBusiness);
     }
 
     @Override

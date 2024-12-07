@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class CategoryRepository implements Repository<Category> {
+public class CategoryRepository implements ICategoryRepository {
 
     private final CategoryDataAccessObject categoryDao;
     private final EntityMapper<CategoryDbModel, Category> categoryMapper;
@@ -54,9 +54,9 @@ public class CategoryRepository implements Repository<Category> {
     @Override
     public void deleteAll() {}
 
-    public @Nullable Category getByName(String name) {
+    public Optional<Category> findByName(String name) {
         return categoryDao
                 .findByName(name)
-                .map(categoryMapper::mapToBusiness).orElse(null);
+                .map(categoryMapper::mapToBusiness);
     }
 }

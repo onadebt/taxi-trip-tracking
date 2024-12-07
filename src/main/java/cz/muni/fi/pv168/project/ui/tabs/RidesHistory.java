@@ -37,7 +37,6 @@ public class RidesHistory extends JPanel {
     private final JTable rideHistoryTable;
     private final List<Ride> rideHistory;
     private final IRideService rideService;
-    private final CrudService<Ride> rideCrudService;
     private final RideTableModel rideTableModel;
 
     private final ListModel<Currency> currencyListModel;
@@ -46,15 +45,14 @@ public class RidesHistory extends JPanel {
     private final ExportService exportService;
 
 
-    public RidesHistory(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ImportService importService, ExportService exportService, CrudService<Ride> rideCrudService) {
+    public RidesHistory(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ImportService importService, ExportService exportService) {
         super(new BorderLayout());
         this.rideService = rideService;
-        this.rideCrudService = rideCrudService;
         this.rideTableModel = rideTableModel;
 
         this.currencyListModel = currencyListModel;
         this.categoryListModel = categoryListModel;
-        this.rideHistory = rideCrudService.findAll();
+        this.rideHistory = rideService.findAll();
         this.importService = importService;
         this.exportService = exportService;
         this.rideHistoryTable = createRidesTable(rideTableModel);
