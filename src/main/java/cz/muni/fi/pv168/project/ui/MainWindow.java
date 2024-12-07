@@ -81,6 +81,11 @@ public class MainWindow {
                 rideTableModel.refresh();
                 currencyTableModel.refresh();
                 categoryTableModel.refresh();
+
+                // Reload HomePage tab
+                if (tabbedPane.getSelectedComponent() instanceof HomePage homePageInstance) {
+                    homePageInstance.refreshHomePage();
+                }
             });
         });
 
