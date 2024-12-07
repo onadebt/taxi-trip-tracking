@@ -1,41 +1,19 @@
 package cz.muni.fi.pv168.project.service.interfaces;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import org.jetbrains.annotations.Nullable;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 
-import java.util.List;
+import java.util.Optional;
 
-public interface ICurrencyService {
-    /**
-     * Create new currency according to model
-     * @param currency
-     */
-    void create(Currency currency);
+public interface ICurrencyService extends CrudService<Currency> {
 
     /**
-     * Update currency according to model
-     * @param currency
+     * Find currency by given {@code tag}.
      */
-    void update(Currency currency);
+    Optional<Currency> findByCode(String code);
 
     /**
-     * Delete currency with specified id
-     * @param currencyId
+     * Find currency by given {@code name}.
      */
-    void delete(Long currencyId);
-
-    /**
-     * Get currency by given id
-     * @param currencyId
-     * @return currency, null if not found
-     */
-    @Nullable Currency getById(Long currencyId);
-
-    @Nullable Currency getByTag(String tag);
-
-    /**
-     * Get all currencies
-     * @return currencies
-     */
-    List<Currency> getAll();
+    Optional<Currency> findByName(String name);
 }
