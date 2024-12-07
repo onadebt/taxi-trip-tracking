@@ -89,7 +89,7 @@ public class RideService implements IRideService {
 
     @Override
     public List<Ride> findAll() {
-        return RidesTestData.getMockRides();
+        return rideRepository.findAll();
     }
 
     @Override
