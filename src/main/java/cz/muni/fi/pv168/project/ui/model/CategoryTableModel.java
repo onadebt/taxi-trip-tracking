@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class CategoryTableModel extends AbstractTableModel implements EntityTableModel<Category> {
     private List<Category> categories;
-    private final CrudService<Category> categoryCrudService;
+    private final ICategoryService categoryService;
 
     private final List<Column<Category, ?>> columns = List.of(
             Column.editable("ID", Long.class, Category::getId, Category::setId),
@@ -18,20 +19,20 @@ public class CategoryTableModel extends AbstractTableModel implements EntityTabl
             Column.editable("Icon", Icon.class, Category::getIcon, Category::setIcon)
     );
 
-    public CategoryTableModel(CrudService<Category> categoryCrudService) {
-        this.categoryCrudService = categoryCrudService;
-        this.categories = new ArrayList<>(categoryCrudService.findAll());
+    public CategoryTableModel(ICategoryService categoryService) {
+        this.categoryService = categoryService;
+        this.categories = new ArrayList<>(categoryService.findAll());
     }
 
     public void refresh() {
-        this.categories = new ArrayList<>(categoryCrudService.findAll());
+        this.categories = new ArrayList<>(categoryService.findAll());
         fireTableDataChanged();
     }
 
     public void addRow(Category category) {
         try {
             int newRowIndex = getRowCount();
-            categoryCrudService.create(category).intoException();
+            categoryService.create(category).intoException();
             categories.add(category);
             fireTableRowsInserted(newRowIndex, newRowIndex);
         } catch (Exception ex) {
@@ -41,7 +42,7 @@ public class CategoryTableModel extends AbstractTableModel implements EntityTabl
 
     public void removeRow(int rowIndex) {
         var categoryToBeDeleted = getEntity(rowIndex);
-        categoryCrudService.deleteById(categoryToBeDeleted.getId());
+        categoryService.deleteById(categoryToBeDeleted.getId());
         categories.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
@@ -49,7 +50,7 @@ public class CategoryTableModel extends AbstractTableModel implements EntityTabl
     public void updateRow(Category category) {
         try {
             int rowIndex = categories.indexOf(category);
-            categoryCrudService.update(category).intoException();
+            categoryService.update(category).intoException();
             fireTableRowsUpdated(rowIndex, rowIndex);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -96,13 +97,5 @@ public class CategoryTableModel extends AbstractTableModel implements EntityTabl
 
     public Category getEntity(int rowIndex) {
         return categories.get(rowIndex);
-    }
-
-    public void addCategory(Category newCategory) {
-
-    }
-
-    public void removeCategory(Category category) {
-
     }
 }

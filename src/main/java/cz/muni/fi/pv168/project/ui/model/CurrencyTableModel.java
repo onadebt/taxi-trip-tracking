@@ -1,18 +1,19 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Currency;
+import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyTableModel extends AbstractTableModel implements EntityTableModel<Currency> {
 
     private List<Currency> currencies;
-    private final CrudService<Currency> currencyCrudService;
+    private final ICurrencyService currencyService;
 
     private final List<Column<Currency, ?>> columns = List.of(
             Column.editable("Name", String.class, Currency::getName, Currency::setName),
@@ -20,9 +21,9 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
             Column.editable("Exchange Rate", Double.class, Currency::getExchangeRate, Currency::setExchangeRate)
     );
 
-    public CurrencyTableModel(CrudService<Currency> currencyCrudService) {
-        this.currencyCrudService = currencyCrudService;
-        this.currencies = new ArrayList<>(currencyCrudService.findAll());
+    public CurrencyTableModel(ICurrencyService currencyService) {
+        this.currencyService = currencyService;
+        this.currencies = new ArrayList<>(currencyService.findAll());
     }
 
     @Override
@@ -49,7 +50,7 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
     public void deleteRow(int rowIndex) {
         try {
             var currencyToBeDeleted = getEntity(rowIndex);
-            currencyCrudService.deleteById(currencyToBeDeleted.getId());
+            currencyService.deleteById(currencyToBeDeleted.getId());
             currencies.remove(rowIndex);
             fireTableRowsDeleted(rowIndex, rowIndex);
         } catch (Exception ex) {
@@ -59,7 +60,7 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
 
     public void addRow(Currency currency) {
         try {
-            currencyCrudService.create(currency).intoException();
+            currencyService.create(currency).intoException();
             int newRowIndex = currencies.size();
             currencies.add(currency);
             fireTableRowsInserted(newRowIndex, newRowIndex);
@@ -70,7 +71,7 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
 
     public void updateRow(Currency currency) {
         try {
-            currencyCrudService.update(currency).intoException();
+            currencyService.update(currency).intoException();
             int rowIndex = currencies.indexOf(currency);
             fireTableRowsUpdated(rowIndex, rowIndex);
         } catch (Exception ex) {
@@ -84,7 +85,7 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
     }
 
     public void refresh() {
-        this.currencies = new ArrayList<>(currencyCrudService.findAll());
+        this.currencies = new ArrayList<>(currencyService.findAll());
         fireTableDataChanged();
     }
 }

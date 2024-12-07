@@ -1,19 +1,13 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.crud.CrudService;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
-import cz.muni.fi.pv168.project.ui.renderers.DateRenderer;
-import cz.muni.fi.pv168.project.ui.tabs.Settings;
 
-import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +15,11 @@ import java.util.List;
 public class RideTableModel extends AbstractTableModel implements EntityTableModel<Ride> {
     private List<Ride> rides;
     private final IRideService rideService;
-    private final CrudService<Ride> rideCrudService;
 
 
     private final List<Column<Ride, ?>> columns = List.of(
             Column.editable("Amount currency", Double.class, Ride::getAmountCurrency, Ride::setAmountCurrency),
-            Column.editable("Currency", String.class, Ride::getCurrencyCode, Ride::setCurrencyCode),
+            Column.editable("Currency", Currency.class, Ride::getCurrency, Ride::setCurrency),
             Column.editable("Distance", Double.class, Ride::getDistance, Ride::setDistance),
             Column.editable("Category", Category.class, Ride::getCategory, Ride::setCategory),
             Column.editable("Trip Type", TripType.class, Ride::getTripType, Ride::setTripType),
@@ -34,33 +27,32 @@ public class RideTableModel extends AbstractTableModel implements EntityTableMod
             Column.editable("Started at", Instant.class, Ride::getCreatedAt, Ride::setCreatedAt)
     );
 
-    public RideTableModel(IRideService rideService, CrudService<Ride> rideCrudService) {
+    public RideTableModel(IRideService rideService) {
         this.rideService = rideService;
-        this.rideCrudService = rideCrudService;
-        this.rides = new ArrayList<>(rideCrudService.findAll());
+        this.rides = new ArrayList<>(rideService.findAll());
     }
 
     public void refresh() {
-        this.rides = new ArrayList<>(rideCrudService.findAll());
+        this.rides = new ArrayList<>(rideService.findAll());
         fireTableDataChanged();
     }
 
     public void addRow(Ride ride) {
         int newRowIndex = getRowCount();
-        rideCrudService.create(ride);
+        rideService.create(ride);
         rides.add(ride);
         fireTableRowsInserted(newRowIndex, newRowIndex);
     }
 
     public void removeRow(int rowIndex) {
         var rideToBeDeleted = getEntity(rowIndex);
-        rideCrudService.deleteById(rideToBeDeleted.getId());
+        rideService.deleteById(rideToBeDeleted.getId());
         rides.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
     public void updateRow(Ride ride) {
-        rideCrudService.update(ride);
+        rideService.update(ride);
         int rowIndex = rides.indexOf(ride);
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
