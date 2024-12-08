@@ -1,36 +1,35 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
-import javax.swing.*;
-import javax.swing.table.TableColumn;
-
+import com.toedter.calendar.JDateChooser;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.RideFilterCriteria;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.service.RideFilterService;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.ui.action.JsonExportAction;
 import cz.muni.fi.pv168.project.ui.action.JsonImportAction;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.List;
-
-import com.toedter.calendar.JDateChooser;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 import cz.muni.fi.pv168.project.ui.renderers.*;
+
+import javax.swing.*;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class RidesHistory extends JPanel {
 
@@ -135,7 +134,13 @@ public class RidesHistory extends JPanel {
 
         rideHistoryTable.getSelectionModel().addListSelectionListener(e -> {
             boolean selected = rideHistoryTable.getSelectedRowCount() == 1;
-            editAmountButton.setEnabled(selected);
+            if (selected) {
+                int selectedRow = rideHistoryTable.getSelectedRow();
+                TripType tripType = (TripType) tableModel.getValueAt(selectedRow, 4);
+                editAmountButton.setEnabled(tripType != TripType.Personal);
+            } else {
+                editAmountButton.setEnabled(false);
+            }
             editCurrencyButton.setEnabled(selected);
             editDistanceButton.setEnabled(selected);
             editCategoryButton.setEnabled(selected);
@@ -144,7 +149,6 @@ public class RidesHistory extends JPanel {
             editDateButton.setEnabled(selected);
         });
 
-        // Enable/Disable buttons based on selection
         rideHistoryTable.getSelectionModel().addListSelectionListener(e -> {
             boolean selected = rideHistoryTable.getSelectedRow() >= 0;
             deleteRowsButton.setEnabled(selected);
@@ -156,11 +160,16 @@ public class RidesHistory extends JPanel {
 
     private JTable createRidesTable(RideTableModel rideTableModel) {
         JTable table = new JTable(rideTableModel);
+
+        TableColumn currencyColumn = table.getColumnModel().getColumn(1);
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
         TableColumn dateColumn = table.getColumnModel().getColumn(6);
+        TableColumn distanceColumn = table.getColumnModel().getColumn(2);
 
+        currencyColumn.setCellRenderer(new CurrencyRenderer());
         categoryColumn.setCellRenderer(new CategoryNameIconRenderer());
         dateColumn.setCellRenderer(new DateRenderer());
+        distanceColumn.setCellRenderer(new DistanceRenderer());
         table.setRowHeight(32);
 
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -191,9 +200,12 @@ public class RidesHistory extends JPanel {
         int selectedRowCount = table.getSelectedRowCount();
 
         if (selectedRowCount == 1) {
-            // Add all edit options when only one row is selected
+            int selectedRow = table.getSelectedRow();
+            TripType tripType = (TripType) tableModel.getValueAt(selectedRow, 4);
+
             JMenuItem editAmountItem = new JMenuItem("Edit Amount");
             editAmountItem.addActionListener(event -> editAmount(table, tableModel));
+            editAmountItem.setEnabled(tripType != TripType.Personal);
             popupMenu.add(editAmountItem);
 
             JMenuItem editCurrencyItem = new JMenuItem("Edit Currency");
@@ -235,12 +247,15 @@ public class RidesHistory extends JPanel {
             Object currentAmount = tableModel.getValueAt(row, 0);
             String newAmountStr = JOptionPane.showInputDialog(table, "Enter new amount:", currentAmount);
 
-            try {
-                double newAmount = Double.parseDouble(newAmountStr);
-                tableModel.setValueAt(newAmount, row, 0);
-                rideHistory.get(row).setAmountCurrency(newAmount);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(table, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
+
+            if (newAmountStr != null) {
+                try {
+                    double newAmount = Double.parseDouble(newAmountStr);
+                    tableModel.setValueAt(newAmount, row, 0);
+                    rideHistory.get(row).setAmountCurrency(newAmount);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(table, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
@@ -250,11 +265,13 @@ public class RidesHistory extends JPanel {
             Object currentDistance = tableModel.getValueAt(row, 2);
             String newDistanceStr = JOptionPane.showInputDialog(table, "Enter new distance:", currentDistance);
 
-            try {
-                double newDistance = Double.parseDouble(newDistanceStr);
-                tableModel.setValueAt(newDistance, row, 2);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(table, "Invalid distance entered.", "Error", JOptionPane.ERROR_MESSAGE);
+            if (newDistanceStr != null) {
+                try {
+                    double newDistance = Double.parseDouble(newDistanceStr);
+                    tableModel.setValueAt(newDistance, row, 2);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(table, "Invalid distance entered.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
@@ -331,12 +348,14 @@ public class RidesHistory extends JPanel {
             String currentCreatedAtStr = dateFormat.format(currentDate);
             String newDateStr = JOptionPane.showInputDialog(table, "Enter new date:", currentCreatedAtStr);
 
-            try {
-                Date parsedDate = dateFormat.parse(newDateStr);
-                Timestamp newDate = new Timestamp(parsedDate.getTime());
-                tableModel.setValueAt(newDate.toInstant(), row, 6);
-            } catch (ParseException ex) {
-                JOptionPane.showMessageDialog(table, "Invalid date entered. Please use the format dd-MM-yyyy HH:mm:ss.", "Error", JOptionPane.ERROR_MESSAGE);
+            if (newDateStr != null) {
+                try {
+                    Date parsedDate = dateFormat.parse(newDateStr);
+                    Timestamp newDate = new Timestamp(parsedDate.getTime());
+                    tableModel.setValueAt(newDate.toInstant(), row, 6);
+                } catch (ParseException ex) {
+                    JOptionPane.showMessageDialog(table, "Invalid date entered. Please use the format dd-MM-yyyy HH:mm:ss.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
@@ -357,7 +376,6 @@ public class RidesHistory extends JPanel {
     }
 
     private JPanel createFilterPanel(JTable table, RideTableModel tableModel) {
-        // TODO: automatic update of ComboBoxes on DB change
         JPanel filterPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -402,7 +420,6 @@ public class RidesHistory extends JPanel {
         gbc.gridx = 2;
         filterPanel.add(new JLabel("Category"), gbc);
         JComboBox<Category> categoryField = createCategoryComboBox(new CategoryNameRenderer());
-//        categoryField.setRenderer(new CategoryRenderer());
         gbc.gridx = 3;
         filterPanel.add(categoryField, gbc);
 
@@ -511,75 +528,6 @@ public class RidesHistory extends JPanel {
     }
 
 
-    //    private void applyFilters(JTable table, RideTableModel tableModel,
-//                              JTextField minAmountField, JTextField maxAmountField,
-//                              JComboBox<Currency> currencyField, JTextField minDistanceField,
-//                              JTextField maxDistanceField, JComboBox<Category> categoryField,
-//                              JComboBox<TripType> tripTypeField, JTextField minPeopleField,
-//                              JTextField maxPeopleField, JDateChooser startDateChooser, JDateChooser endDateChooser) {
-//
-//        TableRowSorter<RideTableModel> sorter = new TableRowSorter<>(tableModel);
-//        table.setRowSorter(sorter);
-//
-//        List<RowFilter<Object, Object>> filters = new ArrayList<>();
-//
-//        Integer minAmount = parseIntField(minAmountField.getText());
-//        Integer maxAmount = parseIntField(maxAmountField.getText());
-//        if (minAmount != null || maxAmount != null) {
-//            filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, minAmount != null ? minAmount - 1 : Integer.MIN_VALUE, 0));
-//            filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, maxAmount != null ? maxAmount + 1 : Integer.MAX_VALUE, 0));
-//        }
-//
-//        String selectedCurrency = (String) currencyField.getSelectedItem();
-//        if (!"Any".equals(selectedCurrency)) {
-//            filters.add(RowFilter.regexFilter(selectedCurrency, 1));
-//        }
-//
-//        Integer minDistance = parseIntField(minDistanceField.getText());
-//        Integer maxDistance = parseIntField(maxDistanceField.getText());
-//        if (minDistance != null || maxDistance != null) {
-//            filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, minDistance != null ? minDistance - 1 : Integer.MIN_VALUE, 2));
-//            filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, maxDistance != null ? maxDistance + 1 : Integer.MAX_VALUE, 2));
-//        }
-//
-//        String selectedCategory = (String) categoryField.getSelectedItem();
-//        if (!"Any".equals(selectedCategory)) {
-//            if ("No Category".equals(selectedCategory)) {
-//                filters.add(RowFilter.regexFilter("^$", 3));
-//            } else {
-//                filters.add(RowFilter.regexFilter(selectedCategory, 3));
-//            }
-//        }
-//
-//        TripType selectedRide = (TripType) tripTypeField.getSelectedItem();
-//        if (selectedRide != null) {
-//            filters.add(RowFilter.regexFilter(selectedRide.name(), 4));
-//        }
-//
-//        Integer minPeople = parseIntField(minPeopleField.getText());
-//        Integer maxPeople = parseIntField(maxPeopleField.getText());
-//        if (minPeople != null || maxPeople != null) {
-//            filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, minPeople != null ? minPeople - 1 : Integer.MIN_VALUE, 5));
-//            filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, maxPeople != null ? maxPeople + 1 : Integer.MAX_VALUE, 5));
-//        }
-//
-//        Date startDate = startDateChooser.getDate();
-//        Date endDate = endDateChooser.getDate();
-//        if (startDate != null || endDate != null) {
-//            Timestamp startTimestamp = startDate != null ? new Timestamp(startDate.getTime()) : new Timestamp(Long.MIN_VALUE);
-//            Timestamp endTimestamp = endDate != null ? new Timestamp(endDate.getTime()) : new Timestamp(Long.MAX_VALUE);
-//
-//            filters.add(RowFilter.dateFilter(RowFilter.ComparisonType.AFTER, startTimestamp, 6));
-//            filters.add(RowFilter.dateFilter(RowFilter.ComparisonType.BEFORE, endTimestamp, 6));
-//        }
-//
-//        RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
-//        sorter.setRowFilter(combinedFilter);
-//    }
-
-
-
-
     private Double parseDoubleField(String text) {
         try {
             return text.isEmpty() ? null : Double.parseDouble(text);
@@ -605,7 +553,7 @@ public class RidesHistory extends JPanel {
     }
 
     private JComboBox<Currency> createCurrencyComboBox() {
-        ComboBoxModel<Currency> currencyComboBoxModel = new ComboBoxModelAdapter<>(currencyListModel);;
+        ComboBoxModel<Currency> currencyComboBoxModel = new ComboBoxModelAdapter<>(currencyListModel);
         var currencyComboBox = new JComboBox<>(currencyComboBoxModel);
         currencyComboBox.setRenderer(new CurrencyRenderer());
 
