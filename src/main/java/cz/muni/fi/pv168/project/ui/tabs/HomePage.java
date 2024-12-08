@@ -1,83 +1,93 @@
+// HomePage.java
 package cz.muni.fi.pv168.project.ui.tabs;
 
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
+import cz.muni.fi.pv168.project.service.interfaces.ISettingsService;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 
 public class HomePage extends JPanel {
     private final IRideService rideService;
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
-    private final RideTableModel rideTableModel;
+    private final ISettingsService settingsService;
+    private JPanel statsPanel;
+    private JPanel snapshotPanel;
+    JPanel centralPanel;
+    private GridBagConstraints gbc;
 
-    private JPanel centerPanel;
-
-    public HomePage(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
+    public HomePage(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ISettingsService settingsService) {
         super(new BorderLayout());
         this.rideService = rideService;
         this.currencyListModel = currencyListModel;
         this.categoryListModel = categoryListModel;
-        this.rideTableModel = rideTableModel;
+        this.settingsService = settingsService;
 
-        initializeHomePage();
-    }
-
-    private void initializeHomePage() {
         JPanel filterPanel = createFilterPanel();
         this.add(filterPanel, BorderLayout.NORTH);
 
         List<Ride> rideHistory = rideService.findAll();
-        centerPanel = createCenterPanel(filterPanel, rideHistory);
 
-        this.add(centerPanel, BorderLayout.CENTER);
-    }
-
-    public void refreshHomePage() {
-        List<Ride> rideHistory = rideService.findAll();
-        this.remove(centerPanel);
-
-        JPanel filterPanel = createFilterPanel();
-        centerPanel = createCenterPanel(filterPanel, rideHistory);
-
-        this.add(centerPanel, BorderLayout.CENTER);
-        revalidate();
-        repaint();
-    }
-
-    private JPanel createCenterPanel(JPanel filterPanel, List<Ride> rideHistory) {
-        JPanel statsPanel = createStatsPanel(rideHistory);
-        JPanel snapshotPanel = createLastRidesPanel(rideHistory);
+        statsPanel = createStatsPanel(rideHistory);
+        snapshotPanel = createLastRidesPanel(rideHistory);
 
         JButton addButton = new JButton("Add Ride");
         addButton.addActionListener(new NewRideAction(this, rideTableModel, rideService, currencyListModel, categoryListModel));
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        centralPanel = new JPanel(new GridBagLayout());
+        gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(10, 0, 10, 0);
 
-        centerPanel.add(filterPanel, gbc);
+        centralPanel.add(filterPanel, gbc);
 
         gbc.gridy = 1;
-        centerPanel.add(statsPanel, gbc);
+        centralPanel.add(statsPanel, gbc);
 
         gbc.gridy = 2;
-        centerPanel.add(addButton, gbc);
+        centralPanel.add(addButton, gbc);
 
         gbc.gridy = 3;
-        centerPanel.add(snapshotPanel, gbc);
+        centralPanel.add(snapshotPanel, gbc);
 
-        return centerPanel;
+        this.add(centralPanel, BorderLayout.CENTER);
+    }
+
+
+    public void refreshHomePage() {
+        refreshStatsPanel();
+        refreshLastRidesPanel();
+    }
+
+    public void refreshStatsPanel() {
+        List<Ride> rideHistory = rideService.findAll();
+        centralPanel.remove(statsPanel);
+        statsPanel = createStatsPanel(rideHistory);
+        gbc.gridy = 1;
+        centralPanel.add(statsPanel, gbc);
+        centralPanel.revalidate();
+        centralPanel.repaint();
+    }
+
+    public void refreshLastRidesPanel() {
+        List<Ride> rideHistory = rideService.findAll();
+        centralPanel.remove(snapshotPanel);
+        snapshotPanel = createLastRidesPanel(rideHistory);
+        gbc.gridy = 3;
+        centralPanel.add(snapshotPanel, gbc);
+        centralPanel.revalidate();
+        centralPanel.repaint();
     }
 
     private JPanel createFilterPanel() {
@@ -113,7 +123,8 @@ public class HomePage extends JPanel {
         addStatLabel(statsPanel, "Total Money Earned:");
         addStatLabel(statsPanel, "Total Rides:");
 
-        addStatValue(statsPanel, String.format("%.2f km", totalDistance));
+        String distanceUnit = settingsService.getDefaultDistance().getShortcut();
+        addStatValue(statsPanel, String.format("%.2f %s", totalDistance, distanceUnit));
         addStatValue(statsPanel, String.format("%.2f EUR", totalAmount));
         addStatValue(statsPanel, String.format("%d", totalDrives));
 
@@ -149,10 +160,9 @@ public class HomePage extends JPanel {
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
 
-        String categoryName = (ride.getCategory() != null && ride.getCategory().getName() != null) ? ride.getCategory().getName() : null;
-
-        JLabel rideLabel = new JLabel(String.format("%s, Distance: %.2f km, Amount: %.2f %s",
-                categoryName, ride.getDistance(), ride.getAmountCurrency(), ride.getCurrency().getCode()));
+        Optional<String> categoryName = Optional.ofNullable(ride.getCategory()).map(Category::getName).orElse("Unknown").describeConstable();
+        JLabel rideLabel = new JLabel(String.format("%s, Distance: %.2f %s, Amount: %.2f %s",
+                categoryName.get(), ride.getDistance(), settingsService.getDefaultDistance().getShortcut(), ride.getAmountCurrency(), ride.getCurrency().getCode()));
         rideLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         ridePanel.add(rideLabel);
 
@@ -178,8 +188,10 @@ public class HomePage extends JPanel {
     }
 
     private double calculateTotalDistance(List<Ride> rideHistory) {
-        return rideHistory.stream()
-                .mapToDouble(Ride::getDistance)
-                .sum();
+        double totalDistance = 0;
+        for (Ride ride : rideHistory) {
+            totalDistance += ride.getDistance();
+        }
+        return totalDistance;
     }
 }
