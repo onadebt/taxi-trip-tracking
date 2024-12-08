@@ -25,4 +25,10 @@ public interface ISettingsService {
      * @param unit
      */
     void setDefaultDistance(DistanceUnit unit);
+
+    /**
+     * Get settings by name
+     * @param name
+     */
+    Optional<Settings> getSettingsByName(String name);
 }

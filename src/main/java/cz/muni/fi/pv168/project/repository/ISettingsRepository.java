@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface ISettingsRepository {
     Optional<Settings> getSettings(Settings settings);
     void setSettings(Settings settings);
+    Optional<Settings> getSettingsByName(String name);
+
 }

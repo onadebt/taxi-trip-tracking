@@ -13,8 +13,12 @@ public class SettingsValidator implements Validator<Settings> {
             return result;
         }
 
-        if (model.getDefaultDistanceUnit() == null) {
-            result.add("Default distance unit must be specified.");
+        if (model.getName() == null) {
+            result.add("Settings name cannot be null.");
+        }
+
+        if (model.getValue() == null) {
+            result.add("Settings value cannot be null.");
         }
 
         return result;

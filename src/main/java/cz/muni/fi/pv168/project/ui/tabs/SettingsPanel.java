@@ -13,6 +13,7 @@ import java.awt.*;
 public class SettingsPanel extends JPanel {
     private final ISettingsService settingsService;
     private final IRideService rideService;
+    private final String defaultDistanceUnit = "DefaultDistanceUnit";
 
     public SettingsPanel(ISettingsService settingsService, IRideService rideService){
         super(new BorderLayout());
@@ -29,20 +30,18 @@ public class SettingsPanel extends JPanel {
 
         JComboBox<DistanceUnit> distanceUnitComboBox = new JComboBox<>(DistanceUnit.values());
         distanceUnitComboBox.setPreferredSize(new Dimension(100, 20));
-        distanceUnitComboBox.setSelectedItem(settingsService.getSettings().map(Settings::getDefaultDistanceUnit).orElse(DistanceUnit.KILOMETER));
+        distanceUnitComboBox.setSelectedItem(settingsService.getDefaultDistance());
 
         JButton applyButton = new JButton("Apply");
         applyButton.setPreferredSize(new Dimension(80, 25));
         applyButton.addActionListener(e -> {
             DistanceUnit selectedUnit = (DistanceUnit) distanceUnitComboBox.getSelectedItem();
 
-            Settings settings = settingsService.getSettings().orElse(new Settings(null));
-            if (selectedUnit != null && !selectedUnit.equals(settings.getDefaultDistanceUnit())) {
+            if (selectedUnit != settingsService.getDefaultDistance()) {
                 rideService.recalculateDistances(settingsService.getDefaultDistance(), selectedUnit);
-                settings.setDefaultDistanceUnit(selectedUnit);
+                settingsService.setDefaultDistance(selectedUnit);
             }
 
-            settingsService.saveSettings(settings);
 
             JOptionPane.showMessageDialog(this,
                     "Settings have been updated.",

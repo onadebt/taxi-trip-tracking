@@ -25,4 +25,10 @@ public class SettingsRepository implements ISettingsRepository {
     public void setSettings(Settings settings) {
         settingsDao.setSettings(settingsMapper.mapNewEntityToDatabase(settings));
     }
+
+    @Override
+    public Optional<Settings> getSettingsByName(String name) {
+        return settingsDao.getSettings(name).map(settingsMapper::mapToBusiness);
+
+    }
 }
