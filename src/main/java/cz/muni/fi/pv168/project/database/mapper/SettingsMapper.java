@@ -13,15 +13,17 @@ public class SettingsMapper implements EntityMapper<SettingsDbModel, Settings> {
     public Settings mapToBusiness(SettingsDbModel entity) {
         return new Settings(
                 entity.getId(),
-                DistanceUnit.valueOf(entity.getDefaultDistanceUnit())
-        );
+                entity.getName(),
+                entity.getValue()
+                );
     }
 
     @Override
     public SettingsDbModel mapNewEntityToDatabase(Settings entity) {
         return new SettingsDbModel(
                 entity.getId(),
-                entity.getDefaultDistanceUnit().toString()
+                entity.getName(),
+                entity.getValue()
         );
     }
 
@@ -29,7 +31,8 @@ public class SettingsMapper implements EntityMapper<SettingsDbModel, Settings> {
     public SettingsDbModel mapExistingEntityToDatabase(Settings entity, Long dbId) {
         return new SettingsDbModel(
                 dbId,
-                entity.getDefaultDistanceUnit().toString()
+                entity.getName(),
+                entity.getValue()
         );
     }
 }

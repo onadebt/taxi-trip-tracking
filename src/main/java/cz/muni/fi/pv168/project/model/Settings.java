@@ -4,27 +4,29 @@ import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import org.jetbrains.annotations.Nullable;
 
 public class Settings extends Entity{
-    private DistanceUnit defaultDistanceUnit;
+    private String name;
+    private String value;
 
-    public Settings(@Nullable Long id, DistanceUnit defaultDistanceUnit) {
+
+    public Settings(@Nullable Long id, String name, String value) {
         super(id);
-        this.defaultDistanceUnit = defaultDistanceUnit;
+        this.name = name;
+        this.value = value;
     }
 
-    public Settings(DistanceUnit defaultDistanceUnit) {
-        super(null);
-        this.defaultDistanceUnit = defaultDistanceUnit;
+    public String getName() {
+        return name;
     }
 
-    public Settings() {
-        super(null);
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public DistanceUnit getDefaultDistanceUnit() {
-        return defaultDistanceUnit;
+    public String getValue() {
+        return value;
     }
 
-    public void setDefaultDistanceUnit(DistanceUnit defaultDistanceUnit) {
-        this.defaultDistanceUnit = defaultDistanceUnit;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

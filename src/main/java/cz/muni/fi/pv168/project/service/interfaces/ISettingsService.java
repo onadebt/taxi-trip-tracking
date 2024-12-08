@@ -9,7 +9,7 @@ import cz.muni.fi.pv168.project.service.crud.CrudService;
 
 import java.util.Optional;
 
-public interface ISettingsService extends CrudService<Settings> {
+public interface ISettingsService {
 
 
     /**
@@ -25,8 +25,4 @@ public interface ISettingsService extends CrudService<Settings> {
      * @param unit
      */
     void setDefaultDistance(DistanceUnit unit);
-
-    Optional<Settings> getSettings();
-
-    void saveSettings(Settings newSettings);
 }

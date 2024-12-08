@@ -4,14 +4,16 @@ import org.jetbrains.annotations.Nullable;
 
 public class SettingsDbModel {
     private Long id;
-    private String defaultDistanceUnit;
+    private String name;
+    private String value;
 
     public SettingsDbModel() {
     }
 
-    public SettingsDbModel(@Nullable Long id, String defaultDistanceUnit) {
+    public SettingsDbModel(@Nullable Long id, String name, String value) {
         this.id = id;
-        this.defaultDistanceUnit = defaultDistanceUnit;
+        this.name = name;
+        this.value = value;
     }
 
     public Long getId() {
@@ -22,11 +24,19 @@ public class SettingsDbModel {
         this.id = id;
     }
 
-    public String getDefaultDistanceUnit() {
-        return defaultDistanceUnit;
+    public String getName() {
+        return name;
     }
 
-    public void setDefaultDistanceUnit(String defaultDistanceUnit) {
-        this.defaultDistanceUnit = defaultDistanceUnit;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

@@ -33,7 +33,7 @@ public class DIProvider {
     private IRideRepository rideRepository;
     private ICurrencyRepository currencyRepository;
     private ICategoryRepository categoryRepository;
-    private Repository<Settings> settingsRepository;
+    private ISettingsRepository settingsRepository;
 
     private IRideService rideService;
     private ICategoryService categoryService;
@@ -89,7 +89,7 @@ public class DIProvider {
         return categoryRepository;
     }
 
-    public Repository<Settings> getSettingsRepository() {
+    public ISettingsRepository getSettingsRepository() {
         return settingsRepository;
     }
 
