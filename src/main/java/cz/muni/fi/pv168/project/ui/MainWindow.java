@@ -2,9 +2,6 @@ package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.providers.ValidatorProvider;
-import cz.muni.fi.pv168.project.repository.CategoryRepository;
-import cz.muni.fi.pv168.project.repository.CurrencyRepository;
-import cz.muni.fi.pv168.project.repository.RideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.*;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
@@ -20,7 +17,6 @@ public class MainWindow {
     private final JTabbedPane tabbedPane;
 
     public MainWindow() {
-        // Initialize DIProvider and extract services/repositories
         DIProvider diProvider = new DIProvider();
         ValidatorProvider validatorProvider = new ValidatorProvider();
 
@@ -47,8 +43,7 @@ public class MainWindow {
         tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Arial", Font.BOLD, 18));
 
-        // Pass only necessary dependencies to each panel
-        JPanel homePage = new HomePage(rideTableModel, rideService, currencyListModel, categoryListModel);
+        JPanel homePage = new HomePage(rideTableModel, rideService, currencyListModel, categoryListModel, settingsService);
         tabbedPane.addTab("Home Page", homePage);
 
         JPanel ridesHistory = new RidesHistory(rideTableModel, rideService, currencyListModel, categoryListModel, importService, exportService);
@@ -66,26 +61,21 @@ public class MainWindow {
         JPanel aboutUs = AboutUs.createAboutUsPanel();
         tabbedPane.addTab("About Us", aboutUs);
 
-        // Add a listener to refresh pages when tabs change
         tabbedPane.addChangeListener(e -> {
             SwingUtilities.invokeLater(() -> {
-                // Reloads all tables on tab change
                 rideTableModel.refresh();
                 currencyTableModel.refresh();
                 categoryTableModel.refresh();
 
-                // Reload HomePage tab
                 if (tabbedPane.getSelectedComponent() instanceof HomePage homePageInstance) {
                     homePageInstance.refreshHomePage();
                 }
             });
         });
 
-        // Add the tabbed pane to the frame
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
     }
 
-    // Method to show the window
     public void show() {
         frame.setVisible(true);
     }

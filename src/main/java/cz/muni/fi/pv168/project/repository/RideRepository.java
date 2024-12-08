@@ -12,8 +12,8 @@ import java.util.UUID;
 
 
 public class RideRepository implements IRideRepository {
-    private RideDao rideDao;
-    private EntityMapper<RideDbModel, Ride> rideMapper;
+    private final RideDao rideDao;
+    private final EntityMapper<RideDbModel, Ride> rideMapper;
 
     public RideRepository(RideDao rideDao, EntityMapper<RideDbModel, Ride> rideMapper) {
         this.rideDao = rideDao;
@@ -27,7 +27,6 @@ public class RideRepository implements IRideRepository {
             update(ride);
         }
     }
-
 
 
     @Override
@@ -65,11 +64,11 @@ public class RideRepository implements IRideRepository {
     @Override
     public Optional<Ride> findById(Long id) {
         var ride = rideDao.findById(id);
-        return ride.map(r -> rideMapper.mapToBusiness(r));
+        return ride.map(rideMapper::mapToBusiness);
     }
 
     public Optional<Ride> findByUuid(UUID uuid) {
         var ride = rideDao.findByUuid(uuid);
-        return ride.map(r -> rideMapper.mapToBusiness(r));
+        return ride.map(rideMapper::mapToBusiness);
     }
 }
