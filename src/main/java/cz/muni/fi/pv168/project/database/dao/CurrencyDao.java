@@ -194,14 +194,15 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
     @Override
     public void deleteById(Long id) {
         var sqlUpdate = """
-                UPDATE Ride
-                SET currencyId = ?, amount = amount / (SELECT rate FROM Currency WHERE id = ?);
-                """;
+            UPDATE Ride
+            SET currencyId = ?, amount = amount / (SELECT rate FROM Currency WHERE id = ?)
+            WHERE currencyId = ?;
+            """;
         var sqlDelete = """
-                DELETE FROM Currency
-                WHERE id = ?;
-                
-                """;
+            DELETE FROM Currency
+            WHERE id = ?;
+            """;
+
         try (var connection = connections.get().use()) {
             connection.setAutoCommit(false);
 
@@ -211,6 +212,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
             ) {
                 statementUpdate.setLong(1, 15);
                 statementUpdate.setLong(2, id);
+                statementUpdate.setLong(3, id);
                 statementUpdate.executeUpdate();
 
                 statementDelete.setLong(1, id);
@@ -229,6 +231,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
             throw new DataStorageException("Database connection error", ex);
         }
     }
+
 
     @Override
     public void deleteAll() {
