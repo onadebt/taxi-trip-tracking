@@ -43,9 +43,8 @@ public class NewRideAction extends AbstractAction {
         optionalRide.ifPresent(ride -> {
             try {
                 System.out.println("Creating ride: " + ride);
-                rideService.create(ride);
                 rideTableModel.addRow(ride);
-                rideTableModel.refresh(); // this refresh fixed Adding new ride from HomePage (time was not visible)
+                rideTableModel.refresh();
             } catch (ValidationException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Invalid entry", JOptionPane.ERROR_MESSAGE);
             }
