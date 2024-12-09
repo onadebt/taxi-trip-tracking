@@ -4,6 +4,7 @@ package cz.muni.fi.pv168.project.ui.tabs;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.model.Ride;
+import cz.muni.fi.pv168.project.service.RideFilterStatisticsService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.interfaces.ISettingsService;
 import cz.muni.fi.pv168.project.ui.action.NewRideAction;
@@ -11,8 +12,13 @@ import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class HomePage extends JPanel {
     private final IRideService rideService;
@@ -23,6 +29,7 @@ public class HomePage extends JPanel {
     private JPanel snapshotPanel;
     JPanel centralPanel;
     private GridBagConstraints gbc;
+    private RideFilterStatisticsService rideFilterStatisticsService;
 
     public HomePage(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ISettingsService settingsService) {
         super(new BorderLayout());
@@ -30,6 +37,7 @@ public class HomePage extends JPanel {
         this.currencyListModel = currencyListModel;
         this.categoryListModel = categoryListModel;
         this.settingsService = settingsService;
+        this.rideFilterStatisticsService = new RideFilterStatisticsService();
 
         JPanel filterPanel = createFilterPanel();
         this.add(filterPanel, BorderLayout.NORTH);
@@ -40,7 +48,10 @@ public class HomePage extends JPanel {
         snapshotPanel = createLastRidesPanel(rideHistory);
 
         JButton addButton = new JButton("Add Ride");
-        addButton.addActionListener(new NewRideAction(this, rideTableModel, rideService, currencyListModel, categoryListModel));
+        addButton.addActionListener( e -> {
+            new NewRideAction(this, rideTableModel, rideService, currencyListModel, categoryListModel).actionPerformed(e);
+            refreshStatsPanel();
+        });
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         centralPanel = new JPanel(new GridBagLayout());
@@ -98,16 +109,24 @@ public class HomePage extends JPanel {
         JRadioButton dayButton = new JRadioButton("Day");
         JRadioButton weekButton = new JRadioButton("Week");
         JRadioButton monthButton = new JRadioButton("Month");
+        JRadioButton totalButton = new JRadioButton("Total");
 
         ButtonGroup group = new ButtonGroup();
         group.add(dayButton);
         group.add(weekButton);
         group.add(monthButton);
+        group.add(totalButton);
 
         filterPanel.add(filterLabel);
         filterPanel.add(dayButton);
         filterPanel.add(weekButton);
         filterPanel.add(monthButton);
+        filterPanel.add(totalButton);
+
+        dayButton.addActionListener(e -> filterRidesByPeriod("day"));
+        weekButton.addActionListener(e -> filterRidesByPeriod("week"));
+        monthButton.addActionListener(e -> filterRidesByPeriod("month"));
+        totalButton.addActionListener(e -> updateStatsPanel(rideService.findAll()));
 
         return filterPanel;
     }
@@ -167,6 +186,27 @@ public class HomePage extends JPanel {
         ridePanel.add(rideLabel);
 
         return ridePanel;
+    }
+
+    private void filterRidesByPeriod(String period) {
+        List<Ride> rideHistory = rideService.findAll();
+        List<Ride> filteredRides = switch (period) {
+            case "day" -> rideFilterStatisticsService.filterRidesByDay(rideHistory);
+            case "week" -> rideFilterStatisticsService.filterRidesByWeek(rideHistory);
+            case "month" -> rideFilterStatisticsService.filterRidesByMonth(rideHistory);
+            default -> rideHistory;
+        };
+
+        updateStatsPanel(filteredRides);
+    }
+
+    private void updateStatsPanel(List<Ride> filteredRides) {
+        centralPanel.remove(statsPanel);
+        statsPanel = createStatsPanel(filteredRides);
+        gbc.gridy = 1;
+        centralPanel.add(statsPanel, gbc);
+        centralPanel.revalidate();
+        centralPanel.repaint();
     }
 
     private void addStatLabel(JPanel panel, String label) {
