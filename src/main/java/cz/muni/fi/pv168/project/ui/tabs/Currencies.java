@@ -32,10 +32,10 @@ public class Currencies extends JPanel {
     private final Action editAction;
     private final Action deleteAction;
 
-    public Currencies(CurrencyTableModel currencyTableModel, /*CurrencyListModel currencyListModel,*/ CurrencyValidator currencyValidator) {
+    public Currencies(CurrencyTableModel currencyTableModel, CurrencyValidator currencyValidator) {
         setLayout(new BorderLayout());
 
-        this.table = createCurrenciesTable(currencyTableModel/*, currencyListModel*/);
+        this.table = createCurrenciesTable(currencyTableModel);
         this.onSelectionChange = this::changeActionsState;
         this.currencyTableModel = currencyTableModel;
         this.addAction = new NewCurrencyAction(table, currencyValidator);
@@ -43,7 +43,7 @@ public class Currencies extends JPanel {
         this.deleteAction = new DeleteCurrencyAction(table);
 
         JLabel label = new JLabel("Currencies");
-        JToolBar toolBar = createToolBar(currencyTableModel, currencyValidator);
+        JToolBar toolBar = createToolBar();
 
         add(label, BorderLayout.NORTH);
         add(toolBar, BorderLayout.NORTH);
@@ -67,8 +67,7 @@ public class Currencies extends JPanel {
     }
 
 
-
-    private JTable createCurrenciesTable(CurrencyTableModel currencyTableModel/*, CurrencyListModel currencyListModel*/) {
+    private JTable createCurrenciesTable(CurrencyTableModel currencyTableModel) {
         var table = new JTable(currencyTableModel);
 
         var currencyRenderer = new CurrencyRenderer();
@@ -77,15 +76,11 @@ public class Currencies extends JPanel {
         table.setAutoCreateRowSorter(true);
         table.getSelectionModel().addListSelectionListener(this::rowSelectionChanged);
 
-//        var currencyComboBox = new JComboBox<>(new ComboBoxModelAdapter<>(currencyListModel));
-//        currencyComboBox.setRenderer(currencyRenderer);
-//        table.setDefaultEditor(Currency.class, new DefaultCellEditor(currencyComboBox));
-
         return table;
     }
 
 
-    private JToolBar createToolBar(CurrencyTableModel tableModel, CurrencyValidator currencyValidator) {
+    private JToolBar createToolBar() {
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -104,13 +99,8 @@ public class Currencies extends JPanel {
         deleteButton.addActionListener(deleteAction);
         toolBar.add(deleteButton);
 
-        // change the row height here:
         table.setRowHeight(32);
-
-        // select only 1 currency at a time
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        // Enable/Disable buttons based on selection
         table.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = table.getSelectedRow();
             boolean isSelected = selectedRow >= 0;
@@ -119,7 +109,6 @@ public class Currencies extends JPanel {
                 Object value = table.getValueAt(selectedRow, 0);
                 boolean isEuro = "Euro".equals(value);
 
-                // Enable buttons only if the row is selected and not "Euro"
                 editButton.setEnabled(!isEuro);
                 deleteButton.setEnabled(!isEuro);
             } else {
@@ -139,9 +128,6 @@ public class Currencies extends JPanel {
         }
     }
 
-    public void setPopupMenu(JPopupMenu popupMenu) {
-        table.setComponentPopupMenu(popupMenu);
-    }
 
     private void changeActionsState(int selectedItemsCount) {
         editAction.setEnabled(selectedItemsCount == 1);

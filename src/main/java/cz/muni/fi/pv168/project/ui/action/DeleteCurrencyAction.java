@@ -21,10 +21,7 @@ public final class DeleteCurrencyAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         var currencyTableModel = (CurrencyTableModel) currencyTable.getModel();
         Arrays.stream(currencyTable.getSelectedRows())
-                // view row index must be converted to model row index
                 .map(currencyTable::convertRowIndexToModel).boxed()
-                // We need to delete rows in descending order to not change index of rows
-                // which are not deleted yet
                 .sorted(Comparator.reverseOrder()).forEach(currencyTableModel::deleteRow);
     }
 }

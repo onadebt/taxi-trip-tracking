@@ -16,6 +16,7 @@ import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 import cz.muni.fi.pv168.project.ui.renderers.*;
+import org.h2.table.Table;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -161,11 +162,13 @@ public class RidesHistory extends JPanel {
     private JTable createRidesTable(RideTableModel rideTableModel) {
         JTable table = new JTable(rideTableModel);
 
+        TableColumn amountColumn = table.getColumnModel().getColumn(0);
         TableColumn currencyColumn = table.getColumnModel().getColumn(1);
         TableColumn categoryColumn = table.getColumnModel().getColumn(3);
         TableColumn dateColumn = table.getColumnModel().getColumn(6);
         TableColumn distanceColumn = table.getColumnModel().getColumn(2);
 
+        amountColumn.setCellRenderer(new AmountRenderer());
         currencyColumn.setCellRenderer(new CurrencyRenderer());
         categoryColumn.setCellRenderer(new CategoryNameIconRenderer());
         dateColumn.setCellRenderer(new DateRenderer());
@@ -424,20 +427,20 @@ public class RidesHistory extends JPanel {
         filterPanel.add(categoryField, gbc);
 
         gbc.gridx = 4;
-        filterPanel.add(new JLabel("Personal Ride"), gbc);
+        filterPanel.add(new JLabel("Trip Type"), gbc);
         JComboBox<TripType> tripTypeJComboBox = new JComboBox<>(TripType.values());
         gbc.gridx = 5;
         filterPanel.add(tripTypeJComboBox, gbc);
 
         gbc.gridx = 6;
-        filterPanel.add(new JLabel("People (Min)"), gbc);
+        filterPanel.add(new JLabel("Passengers (Min)"), gbc);
         JTextField minPeopleField = new JTextField();
         gbc.gridx = 7;
         filterPanel.add(minPeopleField, gbc);
 
         gbc.gridy = 2;
         gbc.gridx = 0;
-        filterPanel.add(new JLabel("People (Max)"), gbc);
+        filterPanel.add(new JLabel("Passengers (Max)"), gbc);
         JTextField maxPeopleField = new JTextField();
         gbc.gridx = 1;
         filterPanel.add(maxPeopleField, gbc);
@@ -455,12 +458,6 @@ public class RidesHistory extends JPanel {
         endDateChooser.setLocale(Locale.ENGLISH);
         gbc.gridx = 5;
         filterPanel.add(endDateChooser, gbc);
-
-        gbc.gridx = 6;
-        filterPanel.add(new JLabel("Some Other Filter"), gbc);
-        JTextField otherFilterField = new JTextField();
-        gbc.gridx = 7;
-        filterPanel.add(otherFilterField, gbc);
 
         gbc.gridy = 3;
         gbc.gridx = 0;

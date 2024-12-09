@@ -4,6 +4,7 @@ import cz.muni.fi.pv168.project.model.Currency;
 import cz.muni.fi.pv168.project.service.validation.Validator;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 
 public class NewCurrencyDialog extends EntityDialog<Currency> {
@@ -19,6 +20,12 @@ public class NewCurrencyDialog extends EntityDialog<Currency> {
             Validator<Currency> entityValidator) {
         super(Objects.requireNonNull(entityValidator));
         this.currency = currency;
+
+        nameField.setPreferredSize(new Dimension(100, 20));
+        codeField.setPreferredSize(new Dimension(35, 20));
+        exchangeRateField.setPreferredSize(new Dimension(35, 20));
+
+
         setValues();
         addFields();
     }

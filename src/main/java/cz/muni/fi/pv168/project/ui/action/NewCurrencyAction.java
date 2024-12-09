@@ -35,8 +35,8 @@ public class NewCurrencyAction extends AbstractAction {
     private Currency createPrefilledCurrency() {
         return new Currency(
                 null,
-                "Czech crown",
-                "CZK",
+                "",
+                "",
                 1.0
         );
     }
