@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 public class Ride extends Entity {
-//    private @Nullable Long id;
     private BigDecimal amountCurrency;
     private Currency currency;
     private Double distance;
@@ -62,14 +61,6 @@ public class Ride extends Entity {
     public void setDistanceUnit(DistanceUnit distanceUnit) {
         this.distanceUnit = distanceUnit;
     }
-
-//    public @Nullable Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(@Nullable Long id) {
-//        this.id = id;
-//    }
 
     public BigDecimal getAmountCurrency() {
         return amountCurrency;
