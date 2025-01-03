@@ -5,12 +5,13 @@ import cz.muni.fi.pv168.project.model.enums.TripType;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
 public class Ride extends Entity {
 //    private @Nullable Long id;
-    private Double amountCurrency;
+    private BigDecimal amountCurrency;
     private Currency currency;
     private Double distance;
     private DistanceUnit distanceUnit;
@@ -22,7 +23,7 @@ public class Ride extends Entity {
     private UUID uuid;
 
     /* New ride */
-    public Ride(@Nullable Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers) {
+    public Ride(@Nullable Long id, BigDecimal amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers) {
         super(id);
         this.amountCurrency = amountCurrency;
         this.currency = currency;
@@ -37,7 +38,7 @@ public class Ride extends Entity {
 
 
     /*Ride general*/
-    public Ride(Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers, Instant createdAt, UUID uuid) {
+    public Ride(Long id, BigDecimal amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers, Instant createdAt, UUID uuid) {
         super(id);
         this.amountCurrency = amountCurrency;
         this.currency = currency;
@@ -70,11 +71,11 @@ public class Ride extends Entity {
 //        this.id = id;
 //    }
 
-    public Double getAmountCurrency() {
+    public BigDecimal getAmountCurrency() {
         return amountCurrency;
     }
 
-    public void setAmountCurrency(Double amountCurrency) {
+    public void setAmountCurrency(BigDecimal amountCurrency) {
         this.amountCurrency = amountCurrency;
     }
 

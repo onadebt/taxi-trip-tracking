@@ -2,13 +2,15 @@ package cz.muni.fi.pv168.project.model;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+
 public class Currency extends Entity {
     //    private @Nullable Long id;
     private String name;
     private String code;
-    private Double exchangeRate;
+    private BigDecimal exchangeRate;
 
-    public Currency(@Nullable Long id, String name, String code, Double exchangeRate) {
+    public Currency(@Nullable Long id, String name, String code, BigDecimal exchangeRate) {
 //        this.id = id;
         super(id);
         setName(name);
@@ -46,11 +48,11 @@ public class Currency extends Entity {
         this.code = code;
     }
 
-    public Double getExchangeRate() {
+    public BigDecimal getExchangeRate() {
         return exchangeRate;
     }
 
-    public void setExchangeRate(Double exchangeRate) {
+    public void setExchangeRate(BigDecimal exchangeRate) {
         this.exchangeRate = exchangeRate;
     }
 

@@ -33,7 +33,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
         ) {
             statement.setString(1, newCurrency.getName());
             statement.setString(2, newCurrency.getTag());
-            statement.setDouble(3, newCurrency.getRate());
+            statement.setBigDecimal(3, newCurrency.getRate());
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
@@ -175,7 +175,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
         ) {
             statement.setString(1, entity.getName());
             statement.setString(2, entity.getTag());
-            statement.setDouble(3, entity.getRate());
+            statement.setBigDecimal(3, entity.getRate());
             statement.setLong(4, entity.getCurrencyId());
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
@@ -251,7 +251,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getString("tag"),
-                resultSet.getDouble("rate")
+                resultSet.getBigDecimal("rate")
         );
     }
 }

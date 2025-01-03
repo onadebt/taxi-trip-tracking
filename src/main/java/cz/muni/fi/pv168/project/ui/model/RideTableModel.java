@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 
 import javax.swing.table.AbstractTableModel;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class RideTableModel extends AbstractTableModel implements EntityTableMod
 
 
     private final List<Column<Ride, ?>> columns = List.of(
-            Column.editable("Amount currency", Double.class, Ride::getAmountCurrency, Ride::setAmountCurrency),
+            Column.editable("Amount currency", BigDecimal.class, Ride::getAmountCurrency, Ride::setAmountCurrency),
             Column.editable("Currency", Currency.class, Ride::getCurrency, Ride::setCurrency),
             Column.editable("Distance", Double.class, Ride::getDistance, Ride::setDistance),
             Column.editable("Category", Category.class, Ride::getCategory, Ride::setCategory),

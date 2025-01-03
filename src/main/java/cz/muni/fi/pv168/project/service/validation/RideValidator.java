@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.service.validation;
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.service.validation.common.StringLengthValidator;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class RideValidator implements Validator<Ride> {
@@ -18,7 +19,7 @@ public class RideValidator implements Validator<Ride> {
             return result;
         }
 
-        if (model.getAmountCurrency() == null || model.getAmountCurrency() < 0) {
+        if (model.getAmountCurrency() == null || model.getAmountCurrency().compareTo(BigDecimal.ZERO) < 0) {
             result.add("Amount currency must be a non-negative value.");
         }
 

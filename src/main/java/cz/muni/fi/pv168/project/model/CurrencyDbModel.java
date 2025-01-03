@@ -1,12 +1,14 @@
 package cz.muni.fi.pv168.project.model;
 
+import java.math.BigDecimal;
+
 public class CurrencyDbModel {
     private Long currencyId;
     private String name;
     private String tag;
-    private double rate;
+    private BigDecimal rate;
 
-    public CurrencyDbModel(Long currencyId, String name, String tag, double rate) {
+    public CurrencyDbModel(Long currencyId, String name, String tag, BigDecimal rate) {
         this.currencyId = currencyId;
         this.tag = tag;
         this.name = name;
@@ -37,11 +39,11 @@ public class CurrencyDbModel {
         this.tag = tag;
     }
 
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 }

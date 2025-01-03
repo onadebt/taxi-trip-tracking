@@ -7,6 +7,7 @@ import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class CurrencyTableModel extends AbstractTableModel implements EntityTabl
     private final List<Column<Currency, ?>> columns = List.of(
             Column.editable("Name", String.class, Currency::getName, Currency::setName),
             Column.editable("Code", String.class, Currency::getCode, Currency::setCode),
-            Column.editable("Exchange Rate", Double.class, Currency::getExchangeRate, Currency::setExchangeRate)
+            Column.editable("Exchange Rate", BigDecimal.class, Currency::getExchangeRate, Currency::setExchangeRate)
     );
 
     public CurrencyTableModel(ICurrencyService currencyService) {

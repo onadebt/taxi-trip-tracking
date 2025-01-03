@@ -3,12 +3,13 @@ package cz.muni.fi.pv168.project.model;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
 public class RideDbModel {
     private @Nullable Long rideId;
-    private double amountCurrency;
+    private BigDecimal amountCurrency;
     private Long currencyId;
     private double distance;
     private @Nullable Long categoryId;
@@ -18,7 +19,7 @@ public class RideDbModel {
     private UUID uuid;
 
     public RideDbModel(){};
-    public RideDbModel(@Nullable Long rideId, double amountCurrency, Long currencyId, double distance, @Nullable Long categoryId,
+    public RideDbModel(@Nullable Long rideId, BigDecimal amountCurrency, Long currencyId, double distance, @Nullable Long categoryId,
                        Integer passengers, TripType tripType, Instant createdDate, UUID uuid) {
         this.rideId = rideId;
         this.amountCurrency = amountCurrency;
@@ -39,11 +40,11 @@ public class RideDbModel {
         this.rideId = rideId;
     }
 
-    public double getAmountCurrency() {
+    public BigDecimal getAmountCurrency() {
         return amountCurrency;
     }
 
-    public void setAmountCurrency(double amountCurrency) {
+    public void setAmountCurrency(BigDecimal amountCurrency) {
         this.amountCurrency = amountCurrency;
     }
 

@@ -12,8 +12,8 @@ public class RideFilterService {
     public List<Ride> filterRides(List<Ride> rides, RideFilterCriteria criteria) {
 
         return rides.stream()
-                .filter(ride -> criteria.getMinAmount() == null || ride.getAmountCurrency() >= criteria.getMinAmount())
-                .filter(ride -> criteria.getMaxAmount() == null || ride.getAmountCurrency() <= criteria.getMaxAmount())
+                .filter(ride -> criteria.getMinAmount() == null || ride.getAmountCurrency().compareTo(criteria.getMinAmount()) >= 0)
+                .filter(ride -> criteria.getMaxAmount() == null || ride.getAmountCurrency().compareTo(criteria.getMaxAmount()) <= 0)
                 .filter(ride -> criteria.getCurrency() == null || ride.getCurrency().getCode().equals(criteria.getCurrency().getCode()))
                 .filter(ride -> criteria.getMinDistance() == null || ride.getDistance() >= criteria.getMinDistance())
                 .filter(ride -> criteria.getMaxDistance() == null || ride.getDistance() <= criteria.getMaxDistance())

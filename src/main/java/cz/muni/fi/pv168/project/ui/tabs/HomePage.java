@@ -12,22 +12,18 @@ import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class HomePage extends JPanel {
     private final IRideService rideService;
     private final ListModel<Currency> currencyListModel;
     private final ListModel<Category> categoryListModel;
     private final ISettingsService settingsService;
+    JPanel centralPanel;
     private JPanel statsPanel;
     private JPanel snapshotPanel;
-    JPanel centralPanel;
     private GridBagConstraints gbc;
     private RideFilterStatisticsService rideFilterStatisticsService;
 
@@ -48,7 +44,7 @@ public class HomePage extends JPanel {
         snapshotPanel = createLastRidesPanel(rideHistory);
 
         JButton addButton = new JButton("Add Ride");
-        addButton.addActionListener( e -> {
+        addButton.addActionListener(e -> {
             new NewRideAction(this, rideTableModel, rideService, currencyListModel, categoryListModel).actionPerformed(e);
             refreshStatsPanel();
         });
@@ -134,7 +130,7 @@ public class HomePage extends JPanel {
     private JPanel createStatsPanel(List<Ride> rideHistory) {
         JPanel statsPanel = new JPanel(new GridLayout(2, 3, 10, 10));
 
-        double totalAmount = calculateTotalAmount(rideHistory);
+        BigDecimal totalAmount = calculateTotalAmount(rideHistory);
         double totalDistance = calculateTotalDistance(rideHistory);
         int totalDrives = rideHistory.size();
 
@@ -221,10 +217,10 @@ public class HomePage extends JPanel {
         panel.add(statValue);
     }
 
-    private double calculateTotalAmount(List<Ride> rideHistory) {
+    private BigDecimal calculateTotalAmount(List<Ride> rideHistory) {
         return rideHistory.stream()
-                .mapToDouble(ride -> ride.getAmountCurrency() * ride.getCurrency().getExchangeRate())
-                .sum();
+                .map(ride -> ride.getAmountCurrency().multiply(ride.getCurrency().getExchangeRate()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private double calculateTotalDistance(List<Ride> rideHistory) {

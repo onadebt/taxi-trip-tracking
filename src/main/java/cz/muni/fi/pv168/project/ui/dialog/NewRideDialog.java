@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 
@@ -37,13 +38,14 @@ public class NewRideDialog extends EntityDialog<Ride> {
 
     @Override
     Ride getEntity() {
-        double amount = 0;
+        BigDecimal amount = BigDecimal.ZERO;
         double distance = 0;
         int passengers = 1;
         var err = "";
         try {
             err = "Invalid number format in \"amount\" field";
-            amount = Double.parseDouble(amountField.getText());
+//            amount = Double.parseDouble(amountField.getText());
+            amount = new BigDecimal(amountField.getText());
             err = "Invalid number format in \"distance\" field";
             distance = Double.parseDouble(distanceField.getText());
             err = "Invalid number format in \"passengers\" field";
@@ -61,7 +63,7 @@ public class NewRideDialog extends EntityDialog<Ride> {
             return ride;
         }
 
-        ride.setAmountCurrency(amountField.isEnabled() ? amount : 0);
+        ride.setAmountCurrency(amountField.isEnabled() ? amount : BigDecimal.ZERO);
         ride.setDistance(distance);
         ride.setNumberOfPassengers(passengers);
         ride.setCurrency((Currency) currencyModel.getSelectedItem());

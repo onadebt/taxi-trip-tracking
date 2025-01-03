@@ -8,6 +8,7 @@ import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class NewCurrencyAction extends AbstractAction {
@@ -37,7 +38,7 @@ public class NewCurrencyAction extends AbstractAction {
                 null,
                 "",
                 "",
-                1.0
+                new BigDecimal("1.0")
         );
     }
 }

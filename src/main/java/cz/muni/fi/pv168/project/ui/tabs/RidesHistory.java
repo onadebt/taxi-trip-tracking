@@ -23,6 +23,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -253,7 +254,8 @@ public class RidesHistory extends JPanel {
 
             if (newAmountStr != null) {
                 try {
-                    double newAmount = Double.parseDouble(newAmountStr);
+//                    double newAmount = Double.parseDouble(newAmountStr);
+                    BigDecimal newAmount = new BigDecimal(newAmountStr);
                     tableModel.setValueAt(newAmount, row, 0);
                     rideHistory.get(row).setAmountCurrency(newAmount);
                 } catch (NumberFormatException ex) {
@@ -505,8 +507,12 @@ public class RidesHistory extends JPanel {
 
         RideFilterCriteria criteria = new RideFilterCriteria();
 
-        criteria.setMinAmount(parseDoubleField(minAmountField.getText()));
-        criteria.setMaxAmount(parseDoubleField(maxAmountField.getText()));
+
+        String minAmountText = minAmountField.getText();
+        String maxAmountText = maxAmountField.getText();
+
+        criteria.setMinAmount(minAmountText.isEmpty() ? null : new BigDecimal(minAmountText));
+        criteria.setMaxAmount(maxAmountText.isEmpty() ? null : new BigDecimal(maxAmountText));
         criteria.setCurrency((Currency) currencyField.getSelectedItem());
         criteria.setMinDistance(parseDoubleField(minDistanceField.getText()));
         criteria.setMaxDistance(parseDoubleField(maxDistanceField.getText()));

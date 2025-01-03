@@ -5,6 +5,7 @@ import cz.muni.fi.pv168.project.service.validation.Validator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class NewCurrencyDialog extends EntityDialog<Currency> {
@@ -46,7 +47,7 @@ public class NewCurrencyDialog extends EntityDialog<Currency> {
     Currency getEntity() {
         currency.setName(nameField.getText());
         currency.setCode(codeField.getText());
-        currency.setExchangeRate(Double.parseDouble(exchangeRateField.getText()));
+        currency.setExchangeRate(new BigDecimal(exchangeRateField.getText()));
         return currency;
     }
 }

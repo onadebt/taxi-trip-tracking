@@ -2,11 +2,12 @@ package cz.muni.fi.pv168.project.model;
 
 import cz.muni.fi.pv168.project.model.enums.TripType;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public class RideFilterCriteria {
-    private Double minAmount;
-    private Double maxAmount;
+    private BigDecimal minAmount;
+    private BigDecimal maxAmount;
     private Currency currency;
     private Double minDistance;
     private Double maxDistance;
@@ -17,19 +18,19 @@ public class RideFilterCriteria {
     private Instant startDate;
     private Instant endDate;
 
-    public Double getMinAmount() {
+    public BigDecimal getMinAmount() {
         return minAmount;
     }
 
-    public void setMinAmount(Double minAmount) {
+    public void setMinAmount(BigDecimal minAmount) {
         this.minAmount = minAmount;
     }
 
-    public Double getMaxAmount() {
+    public BigDecimal getMaxAmount() {
         return maxAmount;
     }
 
-    public void setMaxAmount(Double maxAmount) {
+    public void setMaxAmount(BigDecimal maxAmount) {
         this.maxAmount = maxAmount;
     }
 

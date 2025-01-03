@@ -29,7 +29,7 @@ public class RideDao implements DataAccessObject<RideDbModel> {
         ) {
             statement.setObject(1, newRide.getCategoryId(), Types.BIGINT);
             statement.setLong(2, newRide.getCurrencyId());
-            statement.setDouble(3, newRide.getAmountCurrency());
+            statement.setBigDecimal(3, newRide.getAmountCurrency());
             statement.setDouble(4, newRide.getDistance());
             statement.setInt(5, newRide.getPassengers());
             statement.setString(6, newRide.getTripType().toString());
@@ -146,7 +146,7 @@ public class RideDao implements DataAccessObject<RideDbModel> {
         ) {
             statement.setObject(1, ride.getCategoryId(), Types.BIGINT);
             statement.setLong(2, ride.getCurrencyId());
-            statement.setDouble(3, ride.getAmountCurrency());
+            statement.setBigDecimal(3, ride.getAmountCurrency());
             statement.setDouble(4, ride.getDistance());
             statement.setInt(5, ride.getPassengers());
             statement.setString(6, ride.getTripType().toString());
@@ -230,7 +230,7 @@ public class RideDao implements DataAccessObject<RideDbModel> {
     private static RideDbModel rideFromResultSet(ResultSet resultSet) throws SQLException {
         return new RideDbModel(
                 resultSet.getLong("id"),
-                resultSet.getDouble("amount"),
+                resultSet.getBigDecimal("amount"),
                 resultSet.getLong("currencyId"),
                 resultSet.getDouble("distance"),
                 resultSet.getLong("categoryId"),
