@@ -2,31 +2,27 @@ package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.Ride;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RideFilterStatisticsService {
     public List<Ride> filterRidesByDay(List<Ride> rideHistory) {
-        LocalDate today = LocalDate.now();
+        Instant today = Instant.now().truncatedTo(ChronoUnit.DAYS);
         return rideHistory.stream()
-                .filter(ride -> LocalDate.ofInstant(ride.getCreatedAt(), ZoneId.systemDefault()).isEqual(today))
+                .filter(ride -> today.equals(ride.getCreatedAt().truncatedTo(ChronoUnit.DAYS)))
                 .collect(Collectors.toList());
     }
 
     public List<Ride> filterRidesByWeek(List<Ride> rideHistory) {
-        LocalDate today = LocalDate.now();
-        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
-        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+        Instant today = Instant.now();
+        Instant startOfWeek = today.atZone(ZoneId.systemDefault()).with(DayOfWeek.MONDAY).toInstant();
+        Instant endOfWeek = today.atZone(ZoneId.systemDefault()).with(DayOfWeek.SUNDAY).toInstant();
+
 
         return rideHistory.stream()
-                .filter(ride -> {
-                    LocalDate rideDate = LocalDate.ofInstant(ride.getCreatedAt(), ZoneId.systemDefault());
-                    return !rideDate.isBefore(startOfWeek) && !rideDate.isAfter(endOfWeek);
-                })
+                .filter(ride -> !ride.getCreatedAt().isBefore(startOfWeek) && !ride.getCreatedAt().isAfter(endOfWeek))
                 .collect(Collectors.toList());
     }
 
