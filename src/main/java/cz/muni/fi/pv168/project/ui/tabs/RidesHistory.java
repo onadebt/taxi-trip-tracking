@@ -404,23 +404,50 @@ public class RidesHistory extends JPanel {
         filterPanel.add(maxAmountField, gbc);
 
         gbc.gridx = 4;
-        filterPanel.add(new JLabel("Currency"), gbc);
-        JComboBox<Currency> currencyField = createCurrencyComboBox();
-        gbc.gridx = 5;
-        filterPanel.add(currencyField, gbc);
-
-        gbc.gridx = 6;
         filterPanel.add(new JLabel("Distance (Min)"), gbc);
         JTextField minDistanceField = new JTextField();
-        gbc.gridx = 7;
+        gbc.gridx = 5;
         filterPanel.add(minDistanceField, gbc);
+
+        gbc.gridx = 6;
+        filterPanel.add(new JLabel("Distance (Max)"), gbc);
+        JTextField maxDistanceField = new JTextField();
+        gbc.gridx = 7;
+        filterPanel.add(maxDistanceField, gbc);
 
         gbc.gridy = 1;
         gbc.gridx = 0;
-        filterPanel.add(new JLabel("Distance (Max)"), gbc);
-        JTextField maxDistanceField = new JTextField();
+        filterPanel.add(new JLabel("Passengers (Min)"), gbc);
+        JTextField minPeopleField = new JTextField();
         gbc.gridx = 1;
-        filterPanel.add(maxDistanceField, gbc);
+        filterPanel.add(minPeopleField, gbc);
+
+        gbc.gridx = 2;
+        filterPanel.add(new JLabel("Passengers (Max)"), gbc);
+        JTextField maxPeopleField = new JTextField();
+        gbc.gridx = 3;
+        filterPanel.add(maxPeopleField, gbc);
+
+        gbc.gridx = 4;
+        filterPanel.add(new JLabel("Start Date"), gbc);
+        JDateChooser startDateChooser = new JDateChooser();
+        startDateChooser.setLocale(Locale.ENGLISH);
+        gbc.gridx = 5;
+        filterPanel.add(startDateChooser, gbc);
+
+        gbc.gridx = 6;
+        filterPanel.add(new JLabel("End Date"), gbc);
+        JDateChooser endDateChooser = new JDateChooser();
+        endDateChooser.setLocale(Locale.ENGLISH);
+        gbc.gridx = 7;
+        filterPanel.add(endDateChooser, gbc);
+
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        filterPanel.add(new JLabel("Currency"), gbc);
+        JComboBox<Currency> currencyField = createCurrencyComboBox();
+        gbc.gridx = 1;
+        filterPanel.add(currencyField, gbc);
 
         gbc.gridx = 2;
         filterPanel.add(new JLabel("Category"), gbc);
@@ -433,33 +460,6 @@ public class RidesHistory extends JPanel {
         JComboBox<TripType> tripTypeJComboBox = new JComboBox<>(TripType.values());
         gbc.gridx = 5;
         filterPanel.add(tripTypeJComboBox, gbc);
-
-        gbc.gridx = 6;
-        filterPanel.add(new JLabel("Passengers (Min)"), gbc);
-        JTextField minPeopleField = new JTextField();
-        gbc.gridx = 7;
-        filterPanel.add(minPeopleField, gbc);
-
-        gbc.gridy = 2;
-        gbc.gridx = 0;
-        filterPanel.add(new JLabel("Passengers (Max)"), gbc);
-        JTextField maxPeopleField = new JTextField();
-        gbc.gridx = 1;
-        filterPanel.add(maxPeopleField, gbc);
-
-        gbc.gridx = 2;
-        filterPanel.add(new JLabel("Start Date"), gbc);
-        JDateChooser startDateChooser = new JDateChooser();
-        startDateChooser.setLocale(Locale.ENGLISH);
-        gbc.gridx = 3;
-        filterPanel.add(startDateChooser, gbc);
-
-        gbc.gridx = 4;
-        filterPanel.add(new JLabel("End Date"), gbc);
-        JDateChooser endDateChooser = new JDateChooser();
-        endDateChooser.setLocale(Locale.ENGLISH);
-        gbc.gridx = 5;
-        filterPanel.add(endDateChooser, gbc);
 
         gbc.gridy = 3;
         gbc.gridx = 0;
