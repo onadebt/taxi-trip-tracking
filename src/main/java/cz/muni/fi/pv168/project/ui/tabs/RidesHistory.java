@@ -492,6 +492,8 @@ public class RidesHistory extends JPanel {
             maxPeopleField.setText("");
             startDateChooser.setDate(null);
             endDateChooser.setDate(null);
+
+            filterButton.doClick();
         });
         filterPanel.add(clearButton, gbc);
 

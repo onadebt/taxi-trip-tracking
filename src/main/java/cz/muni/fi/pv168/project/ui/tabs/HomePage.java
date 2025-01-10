@@ -75,6 +75,19 @@ public class HomePage extends JPanel {
     public void refreshHomePage() {
         refreshStatsPanel();
         refreshLastRidesPanel();
+        refreshFilterPanel();
+    }
+
+    public void refreshFilterPanel() {
+        Component filterPanel = centralPanel.getComponent(0);
+
+        centralPanel.remove(filterPanel);
+        filterPanel = createFilterPanel();
+
+        gbc.gridy = 0;
+        centralPanel.add(filterPanel, gbc);
+        centralPanel.revalidate();
+        centralPanel.repaint();
     }
 
     public void refreshStatsPanel() {
@@ -124,6 +137,7 @@ public class HomePage extends JPanel {
         monthButton.addActionListener(e -> filterRidesByPeriod("month"));
         totalButton.addActionListener(e -> updateStatsPanel(rideService.findAll()));
 
+        totalButton.setSelected(true);
         return filterPanel;
     }
 
