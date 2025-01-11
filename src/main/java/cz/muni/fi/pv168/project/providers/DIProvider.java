@@ -1,6 +1,6 @@
 package cz.muni.fi.pv168.project.providers;
 
-import cz.muni.fi.pv168.project.database.DatabaseManager;
+import cz.muni.fi.pv168.project.database.*;
 import cz.muni.fi.pv168.project.database.dao.*;
 import cz.muni.fi.pv168.project.database.mapper.*;
 import cz.muni.fi.pv168.project.model.*;
@@ -19,6 +19,8 @@ import cz.muni.fi.pv168.project.service.validation.Validator;
 
 public class DIProvider {
     private final DatabaseManager databaseManager;
+    private final TransactionExecutor transactionExecutor;
+    private final TransactionManager transactionManager;
 
     private CategoryDataAccessObject categoryDao;
     private CurrencyDataAccessObject currencyDao;
@@ -47,6 +49,10 @@ public class DIProvider {
         this.databaseManager = DatabaseManager.createProductionInstance();
         this.databaseManager.initSchema();
 
+        this.transactionManager = new TransactionManagerImpl(databaseManager);
+        this.transactionExecutor = new TransactionExecutorImpl(transactionManager::beginTransaction);
+
+
         ValidatorProvider validatorProvider = new ValidatorProvider();
 
         this.categoryDao = new CategoryDao(databaseManager::getConnectionHandler);
@@ -73,7 +79,7 @@ public class DIProvider {
         this.settingsService = new SettingsService(settingsRepository);
 
         this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
-        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService, validatorProvider.getRideValidator());
+        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService, validatorProvider.getRideValidator(), transactionExecutor);
 
     }
 
