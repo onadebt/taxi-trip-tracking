@@ -23,6 +23,7 @@ public class HomePage extends JPanel {
     private final ISettingsService settingsService;
     JPanel centralPanel;
     private JPanel statsPanel;
+    private JPanel filterPanel;
     private JPanel snapshotPanel;
     private GridBagConstraints gbc;
     private RideFilterStatisticsService rideFilterStatisticsService;
@@ -35,7 +36,7 @@ public class HomePage extends JPanel {
         this.settingsService = settingsService;
         this.rideFilterStatisticsService = new RideFilterStatisticsService();
 
-        JPanel filterPanel = createFilterPanel();
+        filterPanel = createFilterPanel();
         this.add(filterPanel, BorderLayout.NORTH);
 
         List<Ride> rideHistory = rideService.findAll();
@@ -73,21 +74,20 @@ public class HomePage extends JPanel {
 
 
     public void refreshHomePage() {
+        refreshFilterPanel();
         refreshStatsPanel();
         refreshLastRidesPanel();
-        refreshFilterPanel();
     }
 
     public void refreshFilterPanel() {
-        Component filterPanel = centralPanel.getComponent(0);
-
         centralPanel.remove(filterPanel);
         filterPanel = createFilterPanel();
-
         gbc.gridy = 0;
         centralPanel.add(filterPanel, gbc);
         centralPanel.revalidate();
         centralPanel.repaint();
+
+        System.out.println("filter panel refreshed");
     }
 
     public void refreshStatsPanel() {
@@ -137,7 +137,10 @@ public class HomePage extends JPanel {
         monthButton.addActionListener(e -> filterRidesByPeriod("month"));
         totalButton.addActionListener(e -> updateStatsPanel(rideService.findAll()));
 
-        totalButton.setSelected(true);
+        SwingUtilities.invokeLater(() -> {
+            totalButton.setSelected(true);
+        });
+
         return filterPanel;
     }
 
