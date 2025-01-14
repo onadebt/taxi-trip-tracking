@@ -86,8 +86,6 @@ public class HomePage extends JPanel {
         centralPanel.add(filterPanel, gbc);
         centralPanel.revalidate();
         centralPanel.repaint();
-
-        System.out.println("filter panel refreshed");
     }
 
     public void refreshStatsPanel() {
