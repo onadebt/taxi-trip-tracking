@@ -1,17 +1,22 @@
 package cz.muni.fi.pv168.project.ui.action;
 
-import cz.muni.fi.pv168.project.service.port.DataPortException;
-import cz.muni.fi.pv168.project.service.port.ImportService;
+import cz.muni.fi.pv168.project.model.PortData;
+import cz.muni.fi.pv168.project.service.port.*;
 import cz.muni.fi.pv168.project.ui.dialog.ImportDialog;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
+import java.util.function.Consumer;
 
 public class JsonImportAction extends AbstractAction {
     private final JComponent parent;
     private final ImportService jsonImportService;
+    private Importer importer;
+    Consumer<Double> progressReporter;
+
+
     public JsonImportAction(JComponent parent, ImportService jsonImportService) {
         super("Import");
         this.parent = parent;
@@ -36,13 +41,16 @@ public class JsonImportAction extends AbstractAction {
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                jsonImportService.importData(chooser.getSelectedFile().getPath(), mode);
-                JOptionPane.showMessageDialog(parent, "Import successful", "Import", JOptionPane.INFORMATION_MESSAGE);
+                new AsyncImporter(jsonImportService, this::onSuccess, progressReporter).importData(chooser.getSelectedFile().getPath(), mode);
             } catch (DataPortException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         }
         // TODO - refresh ridesHistory and HomePage rides and stats
+    }
+
+    private void onSuccess() {
+        JOptionPane.showMessageDialog(parent, "Import successful", "Import", JOptionPane.INFORMATION_MESSAGE);
     }
 }

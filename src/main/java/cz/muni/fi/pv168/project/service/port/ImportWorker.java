@@ -2,51 +2,54 @@ package cz.muni.fi.pv168.project.service.port;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import cz.muni.fi.pv168.project.database.TransactionException;
+import cz.muni.fi.pv168.project.database.TransactionExecutor;
 import cz.muni.fi.pv168.project.model.PortData;
-import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
-import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
-import cz.muni.fi.pv168.project.service.interfaces.IRideService;
-import cz.muni.fi.pv168.project.service.interfaces.ISettingsService;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 import cz.muni.fi.pv168.project.utils.PathHelper;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ImportWorker extends SwingWorker<Void, Integer> {
-    private Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new Gson_InstantTypeAdapter()).create();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new Gson_InstantTypeAdapter()).create();
+    private final ImportService jsonImportService;
 
-    private String importFile;
-    private Consumer<PortData> importFunction;
+    private final PortData data;
+    private final ImportMode mode;
+
+    private final Consumer<Double> progressReporter;
+    private final Runnable onFinish;
 
 
-
-    public ImportWorker(String importFile, Consumer<PortData> importFunction) {
-        this.importFile = importFile;
-        this.importFunction = importFunction;
+    public ImportWorker(PortData data, ImportMode mode, ImportService jsonImportService, Consumer<Double> progressReporter, Runnable onFinish ) {
+        this.data = data;
+        this.jsonImportService = jsonImportService;
+        this.progressReporter = progressReporter;
+        this.onFinish = onFinish;
+        this.mode = mode;
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
-        PortData data;
-        try (var reader = Files.newBufferedReader(Path.of(PathHelper.AddExtensionIfMissing(importFile, "json")), StandardCharsets.UTF_8)) {
-            data = gson.fromJson(reader, PortData.class);
-
-        } catch (IOException ex) {
-            throw new DataPortException("Could not read from specified file", ex);
+    protected Void doInBackground() throws DataPortException {
+        try {
+            jsonImportService.importData(data, mode, this::publish);
+        } catch (TransactionException ex) {
+            throw new DataPortException(ex.getMessage(), ex);
         }
-
-        importFunction.accept(data);
         return null;
     }
 
     @Override
     protected void done() {
+        super.done();
+        onFinish.run();
+    }
+
+    @Override
+    protected void process(List<Integer> chunks) {
 
     }
 }

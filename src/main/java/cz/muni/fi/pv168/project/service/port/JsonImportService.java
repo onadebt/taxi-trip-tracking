@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class JsonImportService implements ImportService {
     IRideService rideService;
@@ -50,22 +51,21 @@ public class JsonImportService implements ImportService {
     }
 
     @Override
-    public void importData(String path, ImportMode mode) {
-        List<RidePortModel> data;
-        try (var reader = Files.newBufferedReader(Path.of(PathHelper.AddExtensionIfMissing(path, "json")), StandardCharsets.UTF_8)) {
-            data = Arrays.stream(gson.fromJson(reader, RidePortModel[].class)).toList();
+    public void importData(PortData data, ImportMode mode, Consumer<Integer> setProgress) {
 
-        } catch (IOException ex) {
-            throw new DataPortException("Could not read from specified file", ex);
-        }
 
         validate(data);
 
-        switch (mode) {
-            case Create -> create(data);
-            case CreateUpdate -> createUpdate(data);
-            case Overwrite -> overwrite(data);
-        }
+        transactionExecutor.executeInTransaction(
+                () -> {
+                    switch (mode) {
+                        case Create -> create(data);
+                        case CreateUpdate -> createUpdate(data);
+                        case Overwrite -> overwrite(data);
+                    }
+                }
+        );
+
     }
 
     private void validate(List<RidePortModel> rides) {
