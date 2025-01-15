@@ -52,10 +52,6 @@ public class JsonImportService implements ImportService {
 
     @Override
     public void importData(PortData data, ImportMode mode, Consumer<Integer> setProgress) {
-
-
-        validate(data);
-
         transactionExecutor.executeInTransaction(
                 () -> {
                     switch (mode) {
@@ -68,32 +64,23 @@ public class JsonImportService implements ImportService {
 
     }
 
-    private void validate(List<RidePortModel> rides) {
-        for (var ride : rides) {
-            Optional<Category> category = Optional.empty();
-            if (!Objects.equals(ride.getCategoryName(), "")) {
-                category = categoryService.findByName(ride.getCategoryName());
-                if (category.isEmpty()) {
-                    throw new DataPortException(String.format("Category of name \"%s\" does not exist. Import aborted.", ride.getCategoryName()));
-                }
-            }
-
-            var currency = currencyService.findByCode(ride.getCurrencyTag());
-            if (currency.isEmpty()) {
-                throw new DataPortException(String.format("Currency of tag \"%s\" does not exist. Import aborted.", ride.getCurrencyTag()));
-            }
-
-            try {
-                rideValidator.validate(createRideFromPortModel(ride, currency.get(), category.orElse(null), ride.getDistanceUnit()));
-            } catch (ValidationException ex) {
-                throw new DataPortException(String.format("Imported data is not valid.\nRideUUID: %s\nReason: %s Import aborted.", ride.getUuid(), ex.getMessage()));
+    private void create(PortData data) {
+        var defaultDistUnit = settingsService.getDefaultDistance();
+        for (var currency : data.getCurrencies()) {
+            var foundCurrency = currencyService.findByCode(currency.getCode());
+            if (foundCurrency.isEmpty()) {
+                currencyService.create(currency);
             }
         }
-    }
 
-    private void create(List<RidePortModel> rides) {
-        var defaultDistUnit = settingsService.getDefaultDistance();
-        for (var ride : rides) {
+        for (var category : data.getCategories()) {
+            var foundCategory = categoryService.findByName(category.getName());
+            if (foundCategory.isEmpty()) {
+                categoryService.create(category);
+            }
+        }
+
+        for (var ride : data.getRides()) {
             if (rideService.findAll().stream().anyMatch(r -> r.getUuid() == ride.getUuid())) {
                 continue;
             }
@@ -105,9 +92,28 @@ public class JsonImportService implements ImportService {
         }
     }
 
-    private void createUpdate(List<RidePortModel> rides) {
+    private void createUpdate(PortData data) {
         var defaultDistUnit = settingsService.getDefaultDistance();
-        for (var ride : rides) {
+        for (var currency : data.getCurrencies()) {
+            var foundCurrency = currencyService.findByCode(currency.getCode());
+            if (foundCurrency.isEmpty()) {
+                currencyService.create(currency);
+            } else {
+                currency.setId(foundCurrency.get().getId());
+                currencyService.update(currency);
+            }
+        }
+
+        for (var category : data.getCategories()) {
+            var foundCategory = categoryService.findByName(category.getName());
+            if (foundCategory.isEmpty()) {
+                categoryService.create(category);
+            } else {
+                category.setId(foundCategory.get().getId());
+                categoryService.update(category);
+            }
+        }
+        for (var ride : data.getRides()) {
             var currency = currencyService.findByCode(ride.getCurrencyTag());
             var category = categoryService.findByName(ride.getCategoryName());
 
@@ -119,9 +125,11 @@ public class JsonImportService implements ImportService {
         }
     }
 
-    private void overwrite(List<RidePortModel> rides) {
+    private void overwrite(PortData data) {
         rideService.deleteAll();
-        create(rides);
+        currencyService.deleteAll();
+        categoryService.deleteAll();
+        create(data);
     }
 
     private Ride createRideFromPortModel(RidePortModel ridePortModel, Currency currency, @Nullable Category category, DistanceUnit defaultDistanceUnit) {
