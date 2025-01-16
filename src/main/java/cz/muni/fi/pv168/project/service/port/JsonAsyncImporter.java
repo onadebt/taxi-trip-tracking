@@ -13,13 +13,13 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.function.Consumer;
 
-public class AsyncImporter implements Importer {
-    private final Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new Gson_InstantTypeAdapter()).create();
+public class JsonAsyncImporter implements Importer {
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new Gson_InstantTypeAdapter()).setExclusionStrategies(new JsonExclusionStrategy()).create();
     private final ImportService jsonImportService;
     private final Runnable onSuccess;
     private final Consumer<Double> progressReporter;
 
-    public AsyncImporter(ImportService jsonImportService, Runnable onSuccess, Consumer<Double> progressReporter) {
+    public JsonAsyncImporter(ImportService jsonImportService, Runnable onSuccess, Consumer<Double> progressReporter) {
         this.jsonImportService = jsonImportService;
         this.onSuccess = onSuccess;
         this.progressReporter = progressReporter;

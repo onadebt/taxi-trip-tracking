@@ -1,6 +1,5 @@
 package cz.muni.fi.pv168.project.ui.action;
 
-import cz.muni.fi.pv168.project.model.PortData;
 import cz.muni.fi.pv168.project.service.port.*;
 import cz.muni.fi.pv168.project.ui.dialog.ImportDialog;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
@@ -13,14 +12,14 @@ import java.util.function.Consumer;
 public class JsonImportAction extends AbstractAction {
     private final JComponent parent;
     private final ImportService jsonImportService;
-    private Importer importer;
-    Consumer<Double> progressReporter;
+    JProgressBar progressBar;
 
 
-    public JsonImportAction(JComponent parent, ImportService jsonImportService) {
+    public JsonImportAction(JComponent parent, ImportService jsonImportService, JProgressBar progressBar) {
         super("Import");
         this.parent = parent;
         this.jsonImportService = jsonImportService;
+        this.progressBar = progressBar;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -41,11 +40,10 @@ public class JsonImportAction extends AbstractAction {
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                new AsyncImporter(jsonImportService, this::onSuccess, progressReporter).importData(chooser.getSelectedFile().getPath(), mode);
+                new JsonAsyncImporter(jsonImportService, this::onSuccess, (i -> progressBar.setValue((int) Math.round(i) * 100))).importData(chooser.getSelectedFile().getPath(), mode);
             } catch (DataPortException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-
         }
         // TODO - refresh ridesHistory and HomePage rides and stats
     }

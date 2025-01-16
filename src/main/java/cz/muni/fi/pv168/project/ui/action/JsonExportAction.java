@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.action;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.port.DataPortException;
 import cz.muni.fi.pv168.project.service.port.ExportService;
+import cz.muni.fi.pv168.project.service.port.ExportWorker;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -26,11 +27,14 @@ public class JsonExportAction extends AbstractAction {
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                jsonExportService.exportData(chooser.getSelectedFile().getPath());
-                JOptionPane.showMessageDialog(parent, "Export successful");
+                new ExportWorker(chooser.getSelectedFile().getPath(), jsonExportService, this::onSuccess).execute();
             } catch (DataPortException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void onSuccess() {
+        JOptionPane.showMessageDialog(parent, "Export successful");
     }
 }

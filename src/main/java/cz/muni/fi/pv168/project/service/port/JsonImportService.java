@@ -38,8 +38,6 @@ public class JsonImportService implements ImportService {
 
     TransactionExecutor transactionExecutor;
 
-    Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new Gson_InstantTypeAdapter()).create();
-
     public JsonImportService(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ISettingsService settingsService, Validator<Ride> rideValidator,
                              TransactionExecutor transactionExecutor) {
         this.rideService = rideService;
@@ -55,33 +53,41 @@ public class JsonImportService implements ImportService {
         transactionExecutor.executeInTransaction(
                 () -> {
                     switch (mode) {
-                        case Create -> create(data);
-                        case CreateUpdate -> createUpdate(data);
-                        case Overwrite -> overwrite(data);
+                        case Create -> create(data, setProgress);
+                        case CreateUpdate -> createUpdate(data, setProgress);
+                        case Overwrite -> overwrite(data, setProgress);
                     }
                 }
         );
 
     }
 
-    private void create(PortData data) {
+    private void create(PortData data, Consumer<Integer> setProgress) {
         var defaultDistUnit = settingsService.getDefaultDistance();
+        var processedRows = 0;
         for (var currency : data.getCurrencies()) {
             var foundCurrency = currencyService.findByCode(currency.getCode());
             if (foundCurrency.isEmpty()) {
                 currencyService.create(currency);
             }
+            processedRows++;
+            setProgress.accept(processedRows);
         }
 
         for (var category : data.getCategories()) {
+            category.setIconPath(category.getIconPath());
             var foundCategory = categoryService.findByName(category.getName());
             if (foundCategory.isEmpty()) {
                 categoryService.create(category);
             }
+            processedRows++;
+            setProgress.accept(processedRows);
         }
 
         for (var ride : data.getRides()) {
             if (rideService.findAll().stream().anyMatch(r -> r.getUuid() == ride.getUuid())) {
+                processedRows++;
+                setProgress.accept(processedRows);
                 continue;
             }
 
@@ -89,11 +95,14 @@ public class JsonImportService implements ImportService {
             var category = categoryService.findByName(ride.getCategoryName());
 
             rideService.create(createRideFromPortModel(ride, currency.get(), category.orElse(null), defaultDistUnit));
+            processedRows++;
+            setProgress.accept(processedRows);
         }
     }
 
-    private void createUpdate(PortData data) {
+    private void createUpdate(PortData data, Consumer<Integer> setProgress) {
         var defaultDistUnit = settingsService.getDefaultDistance();
+        var processedRows = 0;
         for (var currency : data.getCurrencies()) {
             var foundCurrency = currencyService.findByCode(currency.getCode());
             if (foundCurrency.isEmpty()) {
@@ -102,9 +111,12 @@ public class JsonImportService implements ImportService {
                 currency.setId(foundCurrency.get().getId());
                 currencyService.update(currency);
             }
+            processedRows++;
+            setProgress.accept(processedRows);
         }
 
         for (var category : data.getCategories()) {
+            category.setIconPath(category.getIconPath());
             var foundCategory = categoryService.findByName(category.getName());
             if (foundCategory.isEmpty()) {
                 categoryService.create(category);
@@ -112,6 +124,8 @@ public class JsonImportService implements ImportService {
                 category.setId(foundCategory.get().getId());
                 categoryService.update(category);
             }
+            processedRows++;
+            setProgress.accept(processedRows);
         }
         for (var ride : data.getRides()) {
             var currency = currencyService.findByCode(ride.getCurrencyTag());
@@ -122,14 +136,16 @@ public class JsonImportService implements ImportService {
             } else {
                 rideService.create(createRideFromPortModel(ride, currency.get(), category.orElse(null), defaultDistUnit));
             }
+            processedRows++;
+            setProgress.accept(processedRows);
         }
     }
 
-    private void overwrite(PortData data) {
+    private void overwrite(PortData data, Consumer<Integer> setProgress) {
         rideService.deleteAll();
         currencyService.deleteAll();
         categoryService.deleteAll();
-        create(data);
+        create(data, setProgress);
     }
 
     private Ride createRideFromPortModel(RidePortModel ridePortModel, Currency currency, @Nullable Category category, DistanceUnit defaultDistanceUnit) {

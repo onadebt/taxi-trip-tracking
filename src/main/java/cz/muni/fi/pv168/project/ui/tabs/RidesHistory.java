@@ -126,13 +126,15 @@ public class RidesHistory extends JPanel {
         deleteRowsButton.setEnabled(false);
         toolBar.add(deleteRowsButton);
 
+        JProgressBar progressBar = new JProgressBar();
         JButton importButton = new JButton("Import");
-        importButton.addActionListener(new JsonImportAction(this, importService));
+        importButton.addActionListener(new JsonImportAction(this, importService, progressBar));
         toolBar.add(importButton);
 
         JButton exportButton = new JButton("Export");
         exportButton.addActionListener(new JsonExportAction(this, exportService, rideService));
         toolBar.add(exportButton);
+        toolBar.add(progressBar);
 
         rideHistoryTable.getSelectionModel().addListSelectionListener(e -> {
             boolean selected = rideHistoryTable.getSelectedRowCount() == 1;

@@ -2,10 +2,13 @@ package cz.muni.fi.pv168.project.model;
 
 import javax.swing.*;
 import java.util.Objects;
+
+import cz.muni.fi.pv168.project.service.port.JsonIgnore;
 import cz.muni.fi.pv168.project.ui.resources.Icons;
 
 public class Category extends Entity {
     private String name;
+    @JsonIgnore
     private Icon icon;
     private String iconPath;
 
