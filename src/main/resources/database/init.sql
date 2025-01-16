@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS "Currency"
     "id"        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "name"              VARCHAR(255) NOT NULL UNIQUE,
     "tag"               VARCHAR(10) NOT NULL UNIQUE,
-    "rate"              NUMERIC NOT NULL,
+    "rate"              NUMERIC(10, 3) NOT NULL,
     "createdAt"         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
