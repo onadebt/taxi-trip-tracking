@@ -121,7 +121,7 @@ public class RidesHistory extends JPanel {
 
         JProgressBar progressBar = new JProgressBar();
         JButton importButton = new JButton("Import");
-        importButton.addActionListener(new JsonImportAction(this, importService, progressBar));
+        importButton.addActionListener(new JsonImportAction(this, importService, progressBar, rideTableModel));
         toolBar.add(importButton);
 
         JButton exportButton = new JButton("Export");
