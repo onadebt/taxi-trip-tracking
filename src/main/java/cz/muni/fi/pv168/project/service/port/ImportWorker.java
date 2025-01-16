@@ -34,6 +34,7 @@ public class ImportWorker extends SwingWorker<Void, Integer> {
         try {
             jsonImportService.importData(data, mode, this::publish);
         } catch (TransactionException ex) {
+            publish(0);
             throw new DataPortException(ex.getMessage(), ex);
         }
         return null;
