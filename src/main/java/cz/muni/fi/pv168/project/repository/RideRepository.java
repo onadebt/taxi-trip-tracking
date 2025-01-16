@@ -2,9 +2,10 @@ package cz.muni.fi.pv168.project.repository;
 
 import cz.muni.fi.pv168.project.database.dao.DataStorageException;
 import cz.muni.fi.pv168.project.database.dao.RideDao;
-import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
+import cz.muni.fi.pv168.project.database.mappers.EntityMapper;
 import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.model.RideDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
+import cz.muni.fi.pv168.project.repository.interfaces.IRideRepository;
 
 import java.util.List;
 import java.util.Optional;

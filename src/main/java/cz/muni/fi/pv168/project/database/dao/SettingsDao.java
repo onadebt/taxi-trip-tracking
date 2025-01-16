@@ -1,12 +1,10 @@
 package cz.muni.fi.pv168.project.database.dao;
 
 import cz.muni.fi.pv168.project.database.ConnectionHandler;
-import cz.muni.fi.pv168.project.model.SettingsDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.SettingsDbModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
 import java.util.*;
 import java.util.function.Supplier;
 

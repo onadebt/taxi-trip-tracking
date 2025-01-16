@@ -1,8 +1,6 @@
 package cz.muni.fi.pv168.project.ui.model;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 
 import javax.swing.*;

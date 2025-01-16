@@ -1,11 +1,10 @@
 package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
+import cz.muni.fi.pv168.project.repository.interfaces.ICurrencyRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
 import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 import cz.muni.fi.pv168.project.service.validation.Validator;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;

@@ -1,9 +1,7 @@
-package cz.muni.fi.pv168.project.repository;
+package cz.muni.fi.pv168.project.repository.interfaces;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ICurrencyRepository extends Repository<Currency> {

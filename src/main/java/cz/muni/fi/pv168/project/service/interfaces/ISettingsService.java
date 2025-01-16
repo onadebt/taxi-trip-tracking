@@ -1,11 +1,7 @@
 package cz.muni.fi.pv168.project.service.interfaces;
 
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.Settings;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
-import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
 
 import java.util.Optional;
 

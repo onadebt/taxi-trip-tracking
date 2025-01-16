@@ -1,15 +1,11 @@
 package cz.muni.fi.pv168.project.repository;
 
 import cz.muni.fi.pv168.project.database.dao.CategoryDataAccessObject;
-import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
 import cz.muni.fi.pv168.project.database.dao.DataStorageException;
-import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
+import cz.muni.fi.pv168.project.database.mappers.EntityMapper;
 import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
-import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import cz.muni.fi.pv168.project.ui.resources.Icons;
-import org.jetbrains.annotations.Nullable;
+import cz.muni.fi.pv168.project.model.DbModels.CategoryDbModel;
+import cz.muni.fi.pv168.project.repository.interfaces.ICategoryRepository;
 
 import java.util.List;
 import java.util.Optional;

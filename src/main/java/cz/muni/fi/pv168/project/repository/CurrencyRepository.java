@@ -2,9 +2,10 @@ package cz.muni.fi.pv168.project.repository;
 
 import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
 import cz.muni.fi.pv168.project.database.dao.DataStorageException;
-import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
+import cz.muni.fi.pv168.project.database.mappers.EntityMapper;
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
+import cz.muni.fi.pv168.project.repository.interfaces.ICurrencyRepository;
 
 
 import java.util.List;

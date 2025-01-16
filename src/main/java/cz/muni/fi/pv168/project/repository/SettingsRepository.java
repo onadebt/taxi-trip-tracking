@@ -1,9 +1,10 @@
 package cz.muni.fi.pv168.project.repository;
 
 import cz.muni.fi.pv168.project.database.dao.SettingsDao;
-import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
+import cz.muni.fi.pv168.project.database.mappers.EntityMapper;
 import cz.muni.fi.pv168.project.model.Settings;
-import cz.muni.fi.pv168.project.model.SettingsDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.SettingsDbModel;
+import cz.muni.fi.pv168.project.repository.interfaces.ISettingsRepository;
 
 import java.util.Optional;
 

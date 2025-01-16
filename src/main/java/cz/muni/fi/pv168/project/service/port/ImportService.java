@@ -1,10 +1,8 @@
 package cz.muni.fi.pv168.project.service.port;
 
 import cz.muni.fi.pv168.project.model.PortData;
-import cz.muni.fi.pv168.project.model.RideDbModel;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public interface ImportService {

@@ -2,8 +2,7 @@ package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.Ride;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
-import cz.muni.fi.pv168.project.repository.IRideRepository;
-import cz.muni.fi.pv168.project.service.crud.CrudService;
+import cz.muni.fi.pv168.project.repository.interfaces.IRideRepository;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 import cz.muni.fi.pv168.project.service.validation.Validator;

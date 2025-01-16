@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.project.database.dao;
 
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CategoryDbModel;
 
 import java.util.Optional;
 

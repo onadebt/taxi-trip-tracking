@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.project.model;
+package cz.muni.fi.pv168.project.model.DbModels;
 
 import cz.muni.fi.pv168.project.model.enums.TripType;
 import org.jetbrains.annotations.Nullable;

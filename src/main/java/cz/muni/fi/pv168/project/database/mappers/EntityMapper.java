@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.project.database.mapper;
+package cz.muni.fi.pv168.project.database.mappers;
 
 /**
  * Map from one entity to another

@@ -1,7 +1,7 @@
 package cz.muni.fi.pv168.project.database.dao;
 
 import cz.muni.fi.pv168.project.database.ConnectionHandler;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * DAO for {@link cz.muni.fi.pv168.project.model.CurrencyDbModel} entity.
+ * DAO for {@link CurrencyDbModel} entity.
  */
 public final class CurrencyDao implements CurrencyDataAccessObject {
 

@@ -1,11 +1,10 @@
-package cz.muni.fi.pv168.project.database.mapper;
+package cz.muni.fi.pv168.project.database.mappers;
 
 import cz.muni.fi.pv168.project.model.Settings;
-import cz.muni.fi.pv168.project.model.SettingsDbModel;
-import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
+import cz.muni.fi.pv168.project.model.DbModels.SettingsDbModel;
 
 /**
- * Mapper from the {@link cz.muni.fi.pv168.project.model.SettingsDbModel} to {@link cz.muni.fi.pv168.project.model.Settings}.
+ * Mapper from the {@link SettingsDbModel} to {@link cz.muni.fi.pv168.project.model.Settings}.
  */
 public class SettingsMapper implements EntityMapper<SettingsDbModel, Settings> {
 

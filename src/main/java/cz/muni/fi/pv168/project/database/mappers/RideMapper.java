@@ -1,13 +1,15 @@
-package cz.muni.fi.pv168.project.database.mapper;
+package cz.muni.fi.pv168.project.database.mappers;
 
 import cz.muni.fi.pv168.project.database.dao.DataAccessObject;
 import cz.muni.fi.pv168.project.model.*;
-import cz.muni.fi.pv168.project.database.RideDbConverter;
+import cz.muni.fi.pv168.project.model.DbModels.CategoryDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
 
 import javax.swing.*;
 
 /**
- * Mapper from the {@link cz.muni.fi.pv168.project.model.RideDbModel} to {@link cz.muni.fi.pv168.project.model.Ride}.
+ * Mapper from the {@link RideDbModel} to {@link cz.muni.fi.pv168.project.model.Ride}.
  */
 public final class RideMapper implements EntityMapper<RideDbModel, Ride> {
 

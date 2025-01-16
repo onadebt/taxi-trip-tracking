@@ -1,10 +1,10 @@
-package cz.muni.fi.pv168.project.database.mapper;
+package cz.muni.fi.pv168.project.database.mappers;
 
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
 
 /**
- * Mapper from the {@link cz.muni.fi.pv168.project.model.CurrencyDbModel} to {@link cz.muni.fi.pv168.project.model.Currency}.
+ * Mapper from the {@link CurrencyDbModel} to {@link cz.muni.fi.pv168.project.model.Currency}.
  */
 public final class CurrencyMapper implements EntityMapper<CurrencyDbModel, Currency> {
 

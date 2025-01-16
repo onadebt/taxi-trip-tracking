@@ -1,8 +1,7 @@
 package cz.muni.fi.pv168.project.database.dao;
 
 import cz.muni.fi.pv168.project.database.ConnectionHandler;
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
-import cz.muni.fi.pv168.project.model.CategoryDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CategoryDbModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +13,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * DAO for {@link cz.muni.fi.pv168.project.model.CategoryDbModel} entity.
+ * DAO for {@link CategoryDbModel} entity.
  */
 public final class CategoryDao implements CategoryDataAccessObject {
 

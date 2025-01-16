@@ -1,32 +1,14 @@
 package cz.muni.fi.pv168.project.service.port;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import cz.muni.fi.pv168.project.database.TransactionExecutor;
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
-import cz.muni.fi.pv168.project.model.exception.ValidationException;
-import cz.muni.fi.pv168.project.repository.ICategoryRepository;
-import cz.muni.fi.pv168.project.repository.ICurrencyRepository;
-import cz.muni.fi.pv168.project.repository.IRideRepository;
-import cz.muni.fi.pv168.project.repository.ISettingsRepository;
 import cz.muni.fi.pv168.project.service.interfaces.*;
 import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 import cz.muni.fi.pv168.project.utils.DistanceConversionHelper;
-import cz.muni.fi.pv168.project.utils.PathHelper;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class JsonImportService implements ImportService {

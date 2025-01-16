@@ -2,7 +2,7 @@ package cz.muni.fi.pv168.project.service;
 
 import cz.muni.fi.pv168.project.model.Settings;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
-import cz.muni.fi.pv168.project.repository.ISettingsRepository;
+import cz.muni.fi.pv168.project.repository.interfaces.ISettingsRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ISettingsService;
 import java.util.Optional;
 

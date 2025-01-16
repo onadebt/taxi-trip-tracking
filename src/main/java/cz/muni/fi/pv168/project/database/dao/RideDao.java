@@ -1,7 +1,7 @@
 package cz.muni.fi.pv168.project.database.dao;
 
 import cz.muni.fi.pv168.project.database.ConnectionHandler;
-import cz.muni.fi.pv168.project.model.RideDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 
 import java.sql.ResultSet;

@@ -2,9 +2,14 @@ package cz.muni.fi.pv168.project.providers;
 
 import cz.muni.fi.pv168.project.database.*;
 import cz.muni.fi.pv168.project.database.dao.*;
-import cz.muni.fi.pv168.project.database.mapper.*;
+import cz.muni.fi.pv168.project.database.mappers.*;
 import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.model.DbModels.CategoryDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.SettingsDbModel;
 import cz.muni.fi.pv168.project.repository.*;
+import cz.muni.fi.pv168.project.repository.interfaces.*;
 import cz.muni.fi.pv168.project.service.*;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
@@ -14,8 +19,6 @@ import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.service.port.JsonExportService;
 import cz.muni.fi.pv168.project.service.port.JsonImportService;
-import cz.muni.fi.pv168.project.service.validation.CurrencyValidator;
-import cz.muni.fi.pv168.project.service.validation.Validator;
 
 public class DIProvider {
     private final DatabaseManager databaseManager;

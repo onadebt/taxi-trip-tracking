@@ -1,7 +1,6 @@
-package cz.muni.fi.pv168.project.repository;
+package cz.muni.fi.pv168.project.repository.interfaces;
 
 import cz.muni.fi.pv168.project.model.Category;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 

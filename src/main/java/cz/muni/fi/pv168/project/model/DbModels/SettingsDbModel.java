@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.project.model;
+package cz.muni.fi.pv168.project.model.DbModels;
 
 import org.jetbrains.annotations.Nullable;
 
