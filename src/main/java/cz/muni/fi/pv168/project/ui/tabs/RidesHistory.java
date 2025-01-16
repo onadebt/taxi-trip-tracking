@@ -1,12 +1,7 @@
 package cz.muni.fi.pv168.project.ui.tabs;
 
-import com.toedter.calendar.JDateChooser;
-import cz.muni.fi.pv168.project.model.Category;
-import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.model.RideFilterCriteria;
+import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.model.enums.TripType;
-import cz.muni.fi.pv168.project.service.RideFilterService;
 import cz.muni.fi.pv168.project.service.interfaces.IRideService;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
@@ -16,7 +11,6 @@ import cz.muni.fi.pv168.project.ui.action.NewRideAction;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 import cz.muni.fi.pv168.project.ui.renderers.*;
-import org.h2.table.Table;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -30,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class RidesHistory extends JPanel {
@@ -44,7 +37,6 @@ public class RidesHistory extends JPanel {
     private final ListModel<Category> categoryListModel;
     private final ImportService importService;
     private final ExportService exportService;
-
 
     public RidesHistory(RideTableModel rideTableModel, IRideService rideService, ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel, ImportService importService, ExportService exportService) {
         super(new BorderLayout());
@@ -65,16 +57,17 @@ public class RidesHistory extends JPanel {
 
         JToolBar toolBar = createToolBar(rideHistoryTable, rideTableModel);
 
-        JPanel filterPanel = createFilterPanel(rideHistoryTable, rideTableModel);
+        RideFilterPanel filterPanel = new RideFilterPanel(rideHistoryTable, rideTableModel, rideService, categoryListModel, currencyListModel);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.add(toolBar);
-        topPanel.add(filterPanel);
+        topPanel.add(filterPanel.createFilterPanel());
 
         this.add(topPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
     }
+
 
     private JToolBar createToolBar(JTable table, RideTableModel tableModel) {
         JToolBar toolBar = new JToolBar();
@@ -256,7 +249,6 @@ public class RidesHistory extends JPanel {
 
             if (newAmountStr != null) {
                 try {
-//                    double newAmount = Double.parseDouble(newAmountStr);
                     BigDecimal newAmount = new BigDecimal(newAmountStr);
                     tableModel.setValueAt(newAmount, row, 0);
                     rideHistory.get(row).setAmountCurrency(newAmount);
@@ -367,7 +359,6 @@ public class RidesHistory extends JPanel {
         }
     }
 
-
     private void deleteSelectedRows(JTable table, RideTableModel tableModel) {
         int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length > 0) {
@@ -382,178 +373,9 @@ public class RidesHistory extends JPanel {
         }
     }
 
-    private JPanel createFilterPanel(JTable table, RideTableModel tableModel) {
-        JPanel filterPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        filterPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
-
-        gbc.weightx = 0.125;
-
-        gbc.gridy = 0;
-        gbc.gridx = 0;
-        filterPanel.add(new JLabel("Amount (Min)"), gbc);
-        JTextField minAmountField = new JTextField();
-        gbc.gridx = 1;
-        filterPanel.add(minAmountField, gbc);
-
-        gbc.gridx = 2;
-        filterPanel.add(new JLabel("Amount (Max)"), gbc);
-        JTextField maxAmountField = new JTextField();
-        gbc.gridx = 3;
-        filterPanel.add(maxAmountField, gbc);
-
-        gbc.gridx = 4;
-        filterPanel.add(new JLabel("Distance (Min)"), gbc);
-        JTextField minDistanceField = new JTextField();
-        gbc.gridx = 5;
-        filterPanel.add(minDistanceField, gbc);
-
-        gbc.gridx = 6;
-        filterPanel.add(new JLabel("Distance (Max)"), gbc);
-        JTextField maxDistanceField = new JTextField();
-        gbc.gridx = 7;
-        filterPanel.add(maxDistanceField, gbc);
-
-        gbc.gridy = 1;
-        gbc.gridx = 0;
-        filterPanel.add(new JLabel("Passengers (Min)"), gbc);
-        JTextField minPeopleField = new JTextField();
-        gbc.gridx = 1;
-        filterPanel.add(minPeopleField, gbc);
-
-        gbc.gridx = 2;
-        filterPanel.add(new JLabel("Passengers (Max)"), gbc);
-        JTextField maxPeopleField = new JTextField();
-        gbc.gridx = 3;
-        filterPanel.add(maxPeopleField, gbc);
-
-        gbc.gridx = 4;
-        filterPanel.add(new JLabel("Start Date"), gbc);
-        JDateChooser startDateChooser = new JDateChooser();
-        startDateChooser.setLocale(Locale.ENGLISH);
-        gbc.gridx = 5;
-        filterPanel.add(startDateChooser, gbc);
-
-        gbc.gridx = 6;
-        filterPanel.add(new JLabel("End Date"), gbc);
-        JDateChooser endDateChooser = new JDateChooser();
-        endDateChooser.setLocale(Locale.ENGLISH);
-        gbc.gridx = 7;
-        filterPanel.add(endDateChooser, gbc);
-
-        gbc.gridy = 2;
-        gbc.gridx = 0;
-        filterPanel.add(new JLabel("Currency"), gbc);
-        JComboBox<Currency> currencyField = createCurrencyComboBox();
-        gbc.gridx = 1;
-        filterPanel.add(currencyField, gbc);
-
-        gbc.gridx = 2;
-        filterPanel.add(new JLabel("Category"), gbc);
-        JComboBox<Category> categoryField = createCategoryComboBox(new CategoryNameRenderer());
-        gbc.gridx = 3;
-        filterPanel.add(categoryField, gbc);
-
-        gbc.gridx = 4;
-        filterPanel.add(new JLabel("Trip Type"), gbc);
-        JComboBox<TripType> tripTypeJComboBox = new JComboBox<>(TripType.values());
-        gbc.gridx = 5;
-        filterPanel.add(tripTypeJComboBox, gbc);
-
-        gbc.gridy = 3;
-        gbc.gridx = 0;
-        gbc.gridwidth = 8;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.LINE_START;
-        gbc.insets = new Insets(10, 5, 10, 5);
-
-        JButton filterButton = new JButton("Apply");
-        filterButton.setPreferredSize(new Dimension(150, filterButton.getPreferredSize().height));
-        filterButton.addActionListener(e -> applyFilters(
-                table, tableModel, minAmountField, maxAmountField, currencyField,
-                minDistanceField, maxDistanceField, categoryField, tripTypeJComboBox,
-                minPeopleField, maxPeopleField, startDateChooser, endDateChooser));
-        filterPanel.add(filterButton, gbc);
-
-
-        gbc.gridx = 1;
-        JButton clearButton = new JButton("Clear Filters");
-        clearButton.setPreferredSize(new Dimension(150, clearButton.getPreferredSize().height));
-        clearButton.addActionListener(e -> {
-            minAmountField.setText("");
-            maxAmountField.setText("");
-            currencyField.setSelectedIndex(-1);
-            minDistanceField.setText("");
-            maxDistanceField.setText("");
-            categoryField.setSelectedIndex(-1);
-            tripTypeJComboBox.setSelectedIndex(-1);
-            minPeopleField.setText("");
-            maxPeopleField.setText("");
-            startDateChooser.setDate(null);
-            endDateChooser.setDate(null);
-
-            filterButton.doClick();
-        });
-        filterPanel.add(clearButton, gbc);
-
-        return filterPanel;
-    }
-
-    private void applyFilters(JTable table, RideTableModel tableModel,
-                              JTextField minAmountField, JTextField maxAmountField,
-                              JComboBox<Currency> currencyField, JTextField minDistanceField,
-                              JTextField maxDistanceField, JComboBox<Category> categoryField,
-                              JComboBox<TripType> tripTypeField, JTextField minPeopleField,
-                              JTextField maxPeopleField, JDateChooser startDateChooser, JDateChooser endDateChooser) {
-
-        RideFilterCriteria criteria = new RideFilterCriteria();
-
-
-        String minAmountText = minAmountField.getText();
-        String maxAmountText = maxAmountField.getText();
-
-        criteria.setMinAmount(minAmountText.isEmpty() ? null : new BigDecimal(minAmountText));
-        criteria.setMaxAmount(maxAmountText.isEmpty() ? null : new BigDecimal(maxAmountText));
-        criteria.setCurrency((Currency) currencyField.getSelectedItem());
-        criteria.setMinDistance(parseDoubleField(minDistanceField.getText()));
-        criteria.setMaxDistance(parseDoubleField(maxDistanceField.getText()));
-        criteria.setCategory((Category) categoryField.getSelectedItem());
-        criteria.setTripType((TripType) tripTypeField.getSelectedItem());
-        criteria.setMinPassengers(parseIntField(minPeopleField.getText()));
-        criteria.setMaxPassengers(parseIntField(maxPeopleField.getText()));
-        criteria.setStartDate(startDateChooser.getDate() != null ? startDateChooser.getDate().toInstant() : null);
-        criteria.setEndDate(endDateChooser.getDate() != null ? endDateChooser.getDate().toInstant() : null);
-
-        RideFilterService filterService = new RideFilterService();
-        List<Ride> filteredRides = filterService.filterRides(rideService.findAll(), criteria);
-
-        tableModel.setRides(filteredRides);
-        table.repaint();
-    }
-
-
-    private Double parseDoubleField(String text) {
-        try {
-            return text.isEmpty() ? null : Double.parseDouble(text);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private Integer parseIntField(String text) {
-        try {
-            return text.isEmpty() ? null : Integer.parseInt(text);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
     private JComboBox<Category> createCategoryComboBox(AbstractRenderer<Category> categoryRenderer) {
         ComboBoxModel<Category> categoryComboBoxModel = new ComboBoxModelAdapter<>(categoryListModel);
-        var categoryComboBox = new JComboBox<>(categoryComboBoxModel);
+        JComboBox<Category> categoryComboBox = new JComboBox<>(categoryComboBoxModel);
         categoryComboBox.setRenderer(categoryRenderer);
 
         return categoryComboBox;
@@ -561,7 +383,7 @@ public class RidesHistory extends JPanel {
 
     private JComboBox<Currency> createCurrencyComboBox() {
         ComboBoxModel<Currency> currencyComboBoxModel = new ComboBoxModelAdapter<>(currencyListModel);
-        var currencyComboBox = new JComboBox<>(currencyComboBoxModel);
+        JComboBox<Currency> currencyComboBox = new JComboBox<>(currencyComboBoxModel);
         currencyComboBox.setRenderer(new CurrencyRenderer());
 
         return currencyComboBox;
