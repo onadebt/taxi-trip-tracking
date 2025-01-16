@@ -3,6 +3,7 @@ package cz.muni.fi.pv168.project.ui.action;
 import cz.muni.fi.pv168.project.service.port.*;
 import cz.muni.fi.pv168.project.ui.dialog.ImportDialog;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
+import cz.muni.fi.pv168.project.ui.model.RideTableModel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -13,13 +14,15 @@ public class JsonImportAction extends AbstractAction {
     private final JComponent parent;
     private final ImportService jsonImportService;
     JProgressBar progressBar;
+    private final RideTableModel rideTableModel;
 
 
-    public JsonImportAction(JComponent parent, ImportService jsonImportService, JProgressBar progressBar) {
+    public JsonImportAction(JComponent parent, ImportService jsonImportService, JProgressBar progressBar, RideTableModel rideTableModel) {
         super("Import");
         this.parent = parent;
         this.jsonImportService = jsonImportService;
         this.progressBar = progressBar;
+        this.rideTableModel = rideTableModel;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -45,10 +48,12 @@ public class JsonImportAction extends AbstractAction {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        // TODO - refresh ridesHistory and HomePage rides and stats
     }
 
     private void onSuccess() {
-        JOptionPane.showMessageDialog(parent, "Import successful", "Import", JOptionPane.INFORMATION_MESSAGE);
+        SwingUtilities.invokeLater(() -> {
+            rideTableModel.refresh();
+            JOptionPane.showMessageDialog(parent, "Import successful", "Import", JOptionPane.INFORMATION_MESSAGE);
+        });
     }
 }
