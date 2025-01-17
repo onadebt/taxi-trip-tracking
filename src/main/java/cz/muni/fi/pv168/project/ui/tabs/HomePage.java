@@ -47,7 +47,7 @@ public class HomePage extends JPanel {
         JButton addButton = new JButton("Add Ride");
         addButton.addActionListener(e -> {
             new NewRideAction(this, rideTableModel, rideService, currencyListModel, categoryListModel).actionPerformed(e);
-            refreshStatsPanel();
+            refreshHomePage();
         });
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -71,7 +71,6 @@ public class HomePage extends JPanel {
 
         this.add(centralPanel, BorderLayout.CENTER);
     }
-
 
     public void refreshHomePage() {
         refreshFilterPanel();
