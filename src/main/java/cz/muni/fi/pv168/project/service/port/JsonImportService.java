@@ -67,7 +67,7 @@ public class JsonImportService implements ImportService {
         }
 
         for (var ride : data.getRides()) {
-            if (rideService.findAll().stream().anyMatch(r -> r.getUuid() == ride.getUuid())) {
+            if (rideService.findAll().stream().anyMatch(r -> r.getUuid().equals(ride.getUuid()))) {
                 processedRows++;
                 setProgress.accept(processedRows);
                 continue;
