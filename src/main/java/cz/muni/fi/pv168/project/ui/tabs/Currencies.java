@@ -135,6 +135,10 @@ public class Currencies extends JPanel {
     }
 
     private void showPopupMenu(MouseEvent e) {
+        int selectedRow = table.getSelectedRow();
+        boolean isSelected = selectedRow >= 0;
+        boolean isEuro = isSelected && "Euro".equals(table.getValueAt(selectedRow, 0));
+
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem addCurrency = new JMenuItem("Add Currency");
@@ -143,12 +147,14 @@ public class Currencies extends JPanel {
 
         JMenuItem editCurrency = new JMenuItem("Edit Currency");
         editCurrency.addActionListener(editAction);
+        editCurrency.setEnabled(!isEuro && isSelected);
         popupMenu.add(editCurrency);
 
         popupMenu.addSeparator();
 
         JMenuItem deleteCurrency = new JMenuItem("Delete Currency");
         deleteCurrency.addActionListener(deleteAction);
+        deleteCurrency.setEnabled(!isEuro && isSelected);
         popupMenu.add(deleteCurrency);
 
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
