@@ -44,7 +44,6 @@ public class NewRideDialog extends EntityDialog<Ride> {
         var err = "";
         try {
             err = "Invalid number format in \"amount\" field";
-//            amount = Double.parseDouble(amountField.getText());
             amount = new BigDecimal(amountField.getText());
             err = "Invalid number format in \"distance\" field";
             distance = Double.parseDouble(distanceField.getText());

@@ -3,7 +3,9 @@ package cz.muni.fi.pv168.project.service.port;
 import cz.muni.fi.pv168.project.database.TransactionExecutor;
 import cz.muni.fi.pv168.project.model.*;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.service.interfaces.*;
+import cz.muni.fi.pv168.project.service.validation.PortDataValidator;
 import cz.muni.fi.pv168.project.service.validation.Validator;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 import cz.muni.fi.pv168.project.utils.DistanceConversionHelper;
@@ -16,32 +18,37 @@ public class JsonImportService implements ImportService {
     ICurrencyService currencyService;
     ICategoryService categoryService;
     ISettingsService settingsService;
-    Validator<Ride> rideValidator;
+    PortDataValidator portDataValidator;
 
     TransactionExecutor transactionExecutor;
 
-    public JsonImportService(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ISettingsService settingsService, Validator<Ride> rideValidator,
+    public JsonImportService(IRideService rideService, ICurrencyService currencyService, ICategoryService categoryService, ISettingsService settingsService, PortDataValidator portDataValidator,
                              TransactionExecutor transactionExecutor) {
         this.rideService = rideService;
         this.categoryService = categoryService;
         this.currencyService = currencyService;
         this.settingsService = settingsService;
-        this.rideValidator = rideValidator;
         this.transactionExecutor = transactionExecutor;
+        this.portDataValidator = portDataValidator;
     }
 
     @Override
     public void importData(PortData data, ImportMode mode, Consumer<Integer> setProgress) {
-        transactionExecutor.executeInTransaction(
-                () -> {
-                    switch (mode) {
-                        case Create -> create(data, setProgress);
-                        case CreateUpdate -> createUpdate(data, setProgress);
-                        case Overwrite -> overwrite(data, setProgress);
+        try {
+            portDataValidator.validatePortData(data);
+            transactionExecutor.executeInTransaction(
+                    () -> {
+                        switch (mode) {
+                            case Create -> create(data, setProgress);
+                            case CreateUpdate -> createUpdate(data, setProgress);
+                            case Overwrite -> overwrite(data, setProgress);
+                        }
                     }
-                }
-        );
-
+            );
+        } catch (ValidationException ex) {
+            System.err.println("Validation error: " + ex.getMessage());
+            throw ex;
+        }
     }
 
     private void create(PortData data, Consumer<Integer> setProgress) {

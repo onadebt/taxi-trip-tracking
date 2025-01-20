@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.project.ui.action;
 
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.service.port.*;
 import cz.muni.fi.pv168.project.ui.dialog.ImportDialog;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
@@ -44,6 +45,8 @@ public class JsonImportAction extends AbstractAction {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 new JsonAsyncImporter(jsonImportService, this::onSuccess, (i -> progressBar.setValue((int) Math.round(i) * 100))).importData(chooser.getSelectedFile().getPath(), mode);
+            } catch (ValidationException ex) {
+                JOptionPane.showMessageDialog(parent, ex.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             } catch (DataPortException ex) {
                 JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

@@ -82,7 +82,7 @@ public class DIProvider {
         this.settingsService = new SettingsService(settingsRepository);
 
         this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
-        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService, validatorProvider.getRideValidator(), transactionExecutor);
+        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService, validatorProvider.getPortDataValidator(), transactionExecutor);
 
     }
 
