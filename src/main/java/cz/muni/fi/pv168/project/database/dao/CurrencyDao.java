@@ -235,7 +235,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
 
     @Override
     public void deleteAll() {
-        var sql = "DELETE FROM Currency";
+        var sql = "TRUNCATE TABLE Currency";
         try (
                 var connection = connections.get();
                 var statement = connection.use().prepareStatement(sql)

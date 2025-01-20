@@ -204,7 +204,7 @@ public final class CategoryDao implements CategoryDataAccessObject {
 
     @Override
     public void deleteAll() {
-        var sql = "DELETE FROM Category";
+        var sql = "TRUNCATE TABLE Category";
         try (
                 var connection = connections.get();
                 var statement = connection.use().prepareStatement(sql)

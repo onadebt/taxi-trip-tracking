@@ -193,7 +193,7 @@ public class RideDao implements DataAccessObject<RideDbModel> {
 
     @Override
     public void deleteAll() {
-        var sql = "DELETE FROM Ride";
+        var sql = "TRUNCATE TABLE Ride";
         try (
                 var connection = connections.get();
                 var statement = connection.use().prepareStatement(sql)
