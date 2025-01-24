@@ -3,9 +3,11 @@ package cz.muni.fi.pv168.project.service.port;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import cz.muni.fi.pv168.project.model.PortData;
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 import cz.muni.fi.pv168.project.utils.PathHelper;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -32,9 +34,8 @@ public class JsonAsyncImporter implements Importer {
             data = gson.fromJson(reader, PortData.class);
             ImportWorker importWorker = new ImportWorker(data, mode, jsonImportService, progressReporter, onSuccess);
             importWorker.execute();
-
         } catch (IOException ex) {
-            throw new DataPortException("Could not read from specified file", ex);
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE));
         }
     }
 }

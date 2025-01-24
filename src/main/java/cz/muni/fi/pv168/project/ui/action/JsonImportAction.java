@@ -43,13 +43,7 @@ public class JsonImportAction extends AbstractAction {
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                new JsonAsyncImporter(jsonImportService, this::onSuccess, (i -> progressBar.setValue((int) Math.round(i) * 100))).importData(chooser.getSelectedFile().getPath(), mode);
-            } catch (ValidationException ex) {
-                JOptionPane.showMessageDialog(parent, ex.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
-            } catch (DataPortException ex) {
-                JOptionPane.showMessageDialog(parent, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            new JsonAsyncImporter(jsonImportService, this::onSuccess, (i -> progressBar.setValue((int) Math.round(i) * 100))).importData(chooser.getSelectedFile().getPath(), mode);
         }
     }
 

@@ -2,6 +2,7 @@ package cz.muni.fi.pv168.project.service.port;
 
 import cz.muni.fi.pv168.project.database.TransactionException;
 import cz.muni.fi.pv168.project.model.PortData;
+import cz.muni.fi.pv168.project.model.exception.ValidationException;
 import cz.muni.fi.pv168.project.ui.model.ImportMode;
 
 
@@ -33,9 +34,9 @@ public class ImportWorker extends SwingWorker<Void, Integer> {
     protected Void doInBackground() throws DataPortException {
         try {
             jsonImportService.importData(data, mode, this::publish);
-        } catch (TransactionException ex) {
+        } catch (TransactionException | ValidationException ex) {
             publish(0);
-            throw new DataPortException(ex.getMessage(), ex);
+            throw ex;
         }
         return null;
     }
@@ -44,7 +45,12 @@ public class ImportWorker extends SwingWorker<Void, Integer> {
     protected void done() {
         super.done();
         progressReporter.accept((double) 0);
-        onFinish.run();
+        try{
+            get();
+            onFinish.run();
+        } catch (Exception ex) {
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, ex.getCause().getMessage(), "Error", JOptionPane.ERROR_MESSAGE));
+        }
     }
 
     @Override
