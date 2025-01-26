@@ -1,13 +1,15 @@
 package cz.muni.fi.pv168.project.providers;
 
-import cz.muni.fi.pv168.project.database.DatabaseManager;
-import cz.muni.fi.pv168.project.database.dao.CurrencyDao;
-import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
-import cz.muni.fi.pv168.project.database.mapper.CurrencyMapper;
-import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
-import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.database.*;
+import cz.muni.fi.pv168.project.database.dao.*;
+import cz.muni.fi.pv168.project.database.mappers.*;
+import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.model.DbModels.CategoryDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.SettingsDbModel;
 import cz.muni.fi.pv168.project.repository.*;
+import cz.muni.fi.pv168.project.repository.interfaces.*;
 import cz.muni.fi.pv168.project.service.*;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
 import cz.muni.fi.pv168.project.service.interfaces.ICurrencyService;
@@ -17,14 +19,21 @@ import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
 import cz.muni.fi.pv168.project.service.port.JsonExportService;
 import cz.muni.fi.pv168.project.service.port.JsonImportService;
-import cz.muni.fi.pv168.project.service.validation.CurrencyValidator;
-import cz.muni.fi.pv168.project.service.validation.Validator;
 
 public class DIProvider {
     private final DatabaseManager databaseManager;
+    private final TransactionExecutor transactionExecutor;
+    private final TransactionManager transactionManager;
 
+    private CategoryDataAccessObject categoryDao;
     private CurrencyDataAccessObject currencyDao;
+    private RideDao rideDao;
+    private SettingsDao settingsDao;
+
+    private EntityMapper<CategoryDbModel, Category> categoryMapper;
     private EntityMapper<CurrencyDbModel, Currency> currencyMapper;
+    private EntityMapper<RideDbModel, Ride> rideMapper;
+    private EntityMapper<SettingsDbModel, Settings> settingsMapper;
 
     private IRideRepository rideRepository;
     private ICurrencyRepository currencyRepository;
@@ -38,26 +47,42 @@ public class DIProvider {
     private ExportService jsonExportService;
     private ImportService jsonImportService;
 
-    private Validator<Currency> currencyValidator;
-
     public DIProvider() {
 
         this.databaseManager = DatabaseManager.createProductionInstance();
         this.databaseManager.initSchema();
-        this.categoryRepository = new CategoryRepository();
+
+        this.transactionManager = new TransactionManagerImpl(databaseManager);
+        this.transactionExecutor = new TransactionExecutorImpl(transactionManager::beginTransaction);
+
+
+        ValidatorProvider validatorProvider = new ValidatorProvider();
+
+        this.categoryDao = new CategoryDao(databaseManager::getConnectionHandler);
+        this.categoryMapper = new CategoryMapper();
+        this.categoryRepository = new CategoryRepository(categoryDao, categoryMapper);
+
         this.currencyDao = new CurrencyDao(databaseManager::getConnectionHandler);
         this.currencyMapper = new CurrencyMapper();
         this.currencyRepository = new CurrencyRepository(currencyDao, currencyMapper);
-        this.settingsRepository = new SettingsRepository();
-        this.rideRepository = new RideRepository(currencyRepository, categoryRepository);
 
-        this.currencyValidator = new CurrencyValidator();
+        this.rideMapper = new RideMapper(categoryDao, categoryMapper, currencyDao, currencyMapper);
+        this.rideDao = new RideDao(databaseManager::getConnectionHandler);
+        this.rideRepository = new RideRepository(rideDao, rideMapper);
 
-        this.categoryService = new CategoryService(categoryRepository);
+        this.settingsDao = new SettingsDao(databaseManager::getConnectionHandler);
+        this.settingsMapper = new SettingsMapper();
+        this.settingsRepository = new SettingsRepository(settingsDao, settingsMapper);
+
+
+        this.categoryService = new CategoryService(categoryRepository, validatorProvider.getCategoryValidator());
+        this.currencyService = new CurrencyService(currencyRepository, validatorProvider.getCurrencyValidator());
+        this.rideService = new RideService(rideRepository, validatorProvider.getRideValidator());
+
         this.settingsService = new SettingsService(settingsRepository);
-        this.rideService = new RideService(categoryService, currencyService, rideRepository);
+
         this.jsonExportService = new JsonExportService(rideService, currencyService, categoryService, settingsService);
-        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService);
+        this.jsonImportService = new JsonImportService(rideService, currencyService, categoryService, settingsService, validatorProvider.getPortDataValidator(), transactionExecutor);
 
     }
 
@@ -65,11 +90,11 @@ public class DIProvider {
         return rideRepository;
     }
 
-    public ICurrencyRepository getCurrencyRepository() {
+    public Repository<Currency> getCurrencyRepository() {
         return currencyRepository;
     }
 
-    public ICategoryRepository getCategoryRepository() {
+    public Repository<Category> getCategoryRepository() {
         return categoryRepository;
     }
 

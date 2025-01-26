@@ -5,14 +5,15 @@ import cz.muni.fi.pv168.project.model.enums.TripType;
 import cz.muni.fi.pv168.project.model.Category;
 import cz.muni.fi.pv168.project.ui.model.ComboBoxModelAdapter;
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.ui.renderers.CategoryRenderer;
+import cz.muni.fi.pv168.project.ui.renderers.CategoryNameIconRenderer;
 import cz.muni.fi.pv168.project.ui.renderers.CurrencyRenderer;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
+import java.math.BigDecimal;
+import java.util.UUID;
 
 
 public class NewRideDialog extends EntityDialog<Ride> {
@@ -26,6 +27,7 @@ public class NewRideDialog extends EntityDialog<Ride> {
     private final Ride ride = new Ride();
 
     private boolean validationOk = true;
+    private JComboBox<Currency> currencyBox;
 
     public NewRideDialog(ListModel<Currency> currencyListModel, ListModel<Category> categoryListModel) {
         this.currencyModel = new ComboBoxModelAdapter<>(currencyListModel);
@@ -36,13 +38,13 @@ public class NewRideDialog extends EntityDialog<Ride> {
 
     @Override
     Ride getEntity() {
-        double amount = 0;
+        BigDecimal amount = BigDecimal.ZERO;
         double distance = 0;
         int passengers = 1;
         var err = "";
         try {
             err = "Invalid number format in \"amount\" field";
-            amount = Double.parseDouble(amountField.getText());
+            amount = new BigDecimal(amountField.getText());
             err = "Invalid number format in \"distance\" field";
             distance = Double.parseDouble(distanceField.getText());
             err = "Invalid number format in \"passengers\" field";
@@ -55,25 +57,27 @@ public class NewRideDialog extends EntityDialog<Ride> {
         }
 
         if (currencyModel.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this.panel, "All fields except category has to be filled", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this.panel, "All available fields except category has to be filled", "Error", JOptionPane.ERROR_MESSAGE);
             validationOk = false;
             return ride;
         }
-        ride.setAmountCurrency(amountField.isEnabled() ? amount : 0);
+
+        ride.setAmountCurrency(amountField.isEnabled() ? amount : BigDecimal.ZERO);
         ride.setDistance(distance);
         ride.setNumberOfPassengers(passengers);
         ride.setCurrency((Currency) currencyModel.getSelectedItem());
         ride.setCategory((@Nullable Category) categoryModel.getSelectedItem());
         ride.setTripType((TripType) tripTypeModel.getSelectedItem());
+        ride.setUuid(UUID.randomUUID());
         return ride;
     }
 
     private void createFields(){
-        var currencyBox = new JComboBox<>(currencyModel);
+        currencyBox = new JComboBox<>(currencyModel);
         currencyBox.setRenderer(new CurrencyRenderer());
 
         var categoryBox = new JComboBox<>(categoryModel);
-        categoryBox.setRenderer(new CategoryRenderer());
+        categoryBox.setRenderer(new CategoryNameIconRenderer());
 
         var tripTypeBox = new JComboBox<>(tripTypeModel);
         tripTypeBox.addItemListener(new TripTypeItemListener());
@@ -96,7 +100,12 @@ public class NewRideDialog extends EntityDialog<Ride> {
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 TripType item = (TripType) e.getItem();
-                amountField.setEnabled(item != TripType.Personal);
+                amountField.setEnabled(item == TripType.Paid);
+                currencyModel.setSelectedItem(null);
+
+                if (!amountField.isEnabled()) {
+                    amountField.setText("0.0");
+                }
             }
         }
     }

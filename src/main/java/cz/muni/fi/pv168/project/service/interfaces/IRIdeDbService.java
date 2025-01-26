@@ -1,6 +1,6 @@
 package cz.muni.fi.pv168.project.service.interfaces;
 
-import cz.muni.fi.pv168.project.model.RideDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
 
 import java.util.List;
 

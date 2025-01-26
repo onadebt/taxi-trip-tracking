@@ -23,9 +23,10 @@ public class Icons {
         return namedIcons.get(name);
     }
 
-    private static Icon createIcon(String name) {
+    public static Icon createIcon(String name) {
         URL url = Icons.class.getResource(name);
         if (url == null) {
+            //return new ImageIcon("/icons/small-car.png");
             throw new IllegalArgumentException("Icon resource not found on classpath: " + name);
         }
         return new ImageIcon(url);

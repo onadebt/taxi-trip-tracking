@@ -27,6 +27,8 @@ public class RidePortConverter {
         port.setPassengers(ride.getNumberOfPassengers());
         port.setCreatedDate(ride.getCreatedAt());
         port.setUuid(ride.getUuid());
+        port.setCategoryName(ride.getCategory() == null ? null : ride.getCategory().getName());
+        port.setCurrencyTag(ride.getCurrency().getCode());
         return port;
     }
 }

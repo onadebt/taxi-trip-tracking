@@ -2,13 +2,10 @@ package cz.muni.fi.pv168.project.ui;
 
 import cz.muni.fi.pv168.project.providers.DIProvider;
 import cz.muni.fi.pv168.project.providers.ValidatorProvider;
-import cz.muni.fi.pv168.project.repository.CurrencyRepository;
-import cz.muni.fi.pv168.project.service.crud.CurrencyCrudService;
 import cz.muni.fi.pv168.project.service.interfaces.*;
 import cz.muni.fi.pv168.project.service.port.ExportService;
 import cz.muni.fi.pv168.project.service.port.ImportService;
-import cz.muni.fi.pv168.project.ui.model.CategoryTableModel;
-import cz.muni.fi.pv168.project.ui.model.CurrencyTableModel;
+import cz.muni.fi.pv168.project.ui.model.*;
 import cz.muni.fi.pv168.project.ui.tabs.*;
 
 import javax.swing.*;
@@ -20,7 +17,6 @@ public class MainWindow {
     private final JTabbedPane tabbedPane;
 
     public MainWindow() {
-        // Initialize DIProvider and extract services/repositories
         DIProvider diProvider = new DIProvider();
         ValidatorProvider validatorProvider = new ValidatorProvider();
 
@@ -31,9 +27,13 @@ public class MainWindow {
         ImportService importService = diProvider.getJsonImportService();
         ExportService exportService = diProvider.getJsonExportService();
 
-        CurrencyCrudService currencyCrudService = new CurrencyCrudService((CurrencyRepository) diProvider.getCurrencyRepository(), validatorProvider.getCurrencyValidator());
-        CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyCrudService);
+        RideTableModel rideTableModel = new RideTableModel(rideService);
+        CurrencyTableModel currencyTableModel = new CurrencyTableModel(currencyService);
         CategoryTableModel categoryTableModel = new CategoryTableModel(categoryService);
+
+        var categoryListModel = new EntityListModelAdapter<>(categoryTableModel);
+        var currencyListModel = new EntityListModelAdapter<>(currencyTableModel);
+
 
         frame = new JFrame("Taxi trip tracking");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,38 +43,39 @@ public class MainWindow {
         tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Arial", Font.BOLD, 18));
 
-        // Pass only necessary dependencies to each panel
-        JPanel homePage = HomePage.createHomePagePanel(rideService, currencyCrudService, categoryService);
+        JPanel homePage = new HomePage(rideTableModel, rideService, currencyListModel, categoryListModel, settingsService);
         tabbedPane.addTab("Home Page", homePage);
 
-        JPanel ridesHistory = RidesHistory.createRidesHistoryPanel(rideService, /*currencyService,*/ currencyCrudService, categoryService, importService, exportService);
+        JPanel ridesHistory = new RidesHistory(rideTableModel, rideService, currencyListModel, categoryListModel, importService, exportService);
         tabbedPane.addTab("Rides History", ridesHistory);
 
-        JPanel ridesCategories = RidesCategoriesPanel.createRidesCategoriesPanel(categoryTableModel);
+        JPanel ridesCategories = new RidesCategoriesPanel(categoryTableModel);
         tabbedPane.addTab("Rides Categories", ridesCategories);
 
-//        JPanel currencies = Currencies.createCurrenciesPanel(currencyService);
         JPanel currencies = new Currencies(currencyTableModel, validatorProvider.getCurrencyValidator());
         tabbedPane.addTab("Currencies", currencies);
 
-        JPanel settings = Settings.createSettingsPanel(rideService);
+        JPanel settings = new SettingsPanel(settingsService, rideService);
         tabbedPane.addTab("Settings", settings);
 
         JPanel aboutUs = AboutUs.createAboutUsPanel();
         tabbedPane.addTab("About Us", aboutUs);
 
-        // Add a listener to refresh pages when tabs change
         tabbedPane.addChangeListener(e -> {
             SwingUtilities.invokeLater(() -> {
-                // TODO: implement refresh logic for individual tabs
+                rideTableModel.refresh();
+                currencyTableModel.refresh();
+                categoryTableModel.refresh();
+
+                if (tabbedPane.getSelectedComponent() instanceof HomePage homePageInstance) {
+                    homePageInstance.refreshHomePage();
+                }
             });
         });
 
-        // Add the tabbed pane to the frame
         frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
     }
 
-    // Method to show the window
     public void show() {
         frame.setVisible(true);
     }

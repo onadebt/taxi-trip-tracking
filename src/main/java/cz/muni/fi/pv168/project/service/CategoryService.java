@@ -1,55 +1,81 @@
 package cz.muni.fi.pv168.project.service;
 
-import cz.muni.fi.pv168.project.repository.ICategoryRepository;
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.repository.interfaces.ICategoryRepository;
 import cz.muni.fi.pv168.project.service.interfaces.ICategoryService;
-import cz.muni.fi.pv168.project.service.mockData.CategoryTestData;
-import org.jetbrains.annotations.Nullable;
+import cz.muni.fi.pv168.project.service.validation.ValidationResult;
+import cz.muni.fi.pv168.project.service.validation.Validator;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class CategoryService implements ICategoryService {
     private final ICategoryRepository categoryRepository;
+    private final Validator<Category> categoryValidator;
 
-    public CategoryService(ICategoryRepository categoryRepository) {
+    public CategoryService(ICategoryRepository categoryRepository, Validator<Category> categoryValidator) {
         this.categoryRepository = categoryRepository;
+        this.categoryValidator = categoryValidator;
+    }
+
+
+    @Override
+    public Optional<Category> findByName(String name) {
+        return categoryRepository.findByName(name);
     }
 
     @Override
-    public void create(Category category) {
-        // TODO: Implement this method
+    public Optional<Category> findById(Long id) {
+        return categoryRepository.findById(id);
     }
 
     @Override
-    public void update(Category category) {
-        // TODO: Implement this method
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
     }
 
     @Override
-    public void deleteById(Long categoryId) {
-        // TODO: Implement this method
+    public ValidationResult create(Category newEntity) {
+        var validationResult = categoryValidator.validate(newEntity);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        if (categoryRepository.findByName(newEntity.getName()).isPresent()) {
+            return ValidationResult.failed("Category with this name already exists.");
+        }
+
+        var savedEntity = categoryRepository.create(newEntity);
+        newEntity.setId(savedEntity.getId());
+
+        return validationResult;
+    }
+
+    @Override
+    public ValidationResult update(Category entity) {
+        var validationResult = categoryValidator.validate(entity);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        var existingByName = categoryRepository.findByName(entity.getName());
+        if (existingByName.isPresent() && !Objects.equals(existingByName.get().getId(), entity.getId())) {
+            return ValidationResult.failed("Another category with the same name already exists.");
+        }
+
+        categoryRepository.update(entity);
+        return validationResult;
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        categoryRepository.deleteById(id);
     }
 
     @Override
     public void deleteAll() {
-        // TODO: Implement this method
-    }
-
-    @Override
-    public @Nullable Category getById(Long categoryId) {
-        // TODO: Implement this method
-        return null;
-    }
-
-    @Override
-    public @Nullable Category getByName(String name) {
-        // TODO: Implement this method
-        return null;
-    }
-
-    @Override
-    public List<Category> getAll() {
-        return CategoryTestData.getMockCategories();
+        categoryRepository.deleteAll();
     }
 }
 

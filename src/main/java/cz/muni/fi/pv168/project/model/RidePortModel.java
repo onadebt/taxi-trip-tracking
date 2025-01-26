@@ -3,12 +3,13 @@ package cz.muni.fi.pv168.project.model;
 import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
 import cz.muni.fi.pv168.project.model.enums.TripType;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
 public class RidePortModel {
     private UUID uuid;
-    private double amountCurrency;
+    private BigDecimal amountCurrency;
     private String currencyTag;
     private double distance;
     private DistanceUnit distanceUnit;
@@ -39,11 +40,11 @@ public class RidePortModel {
         this.uuid = uuid;
     }
 
-    public double getAmountCurrency() {
+    public BigDecimal getAmountCurrency() {
         return amountCurrency;
     }
 
-    public void setAmountCurrency(double amountCurrency) {
+    public void setAmountCurrency(BigDecimal amountCurrency) {
         this.amountCurrency = amountCurrency;
     }
 

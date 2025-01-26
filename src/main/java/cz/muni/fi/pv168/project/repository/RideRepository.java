@@ -1,85 +1,75 @@
 package cz.muni.fi.pv168.project.repository;
 
+import cz.muni.fi.pv168.project.database.dao.DataStorageException;
+import cz.muni.fi.pv168.project.database.dao.RideDao;
+import cz.muni.fi.pv168.project.database.mappers.EntityMapper;
 import cz.muni.fi.pv168.project.model.Ride;
-import cz.muni.fi.pv168.project.model.RideDbModel;
-import cz.muni.fi.pv168.project.model.enums.DistanceConversionHelper;
-import cz.muni.fi.pv168.project.model.enums.DistanceUnit;
-import cz.muni.fi.pv168.project.ui.tabs.Settings;
-import org.jetbrains.annotations.Nullable;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
+import cz.muni.fi.pv168.project.repository.interfaces.IRideRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
 public class RideRepository implements IRideRepository {
-    private ICurrencyRepository currencyRepository;
-    private ICategoryRepository categoryRepository;
+    private final RideDao rideDao;
+    private final EntityMapper<RideDbModel, Ride> rideMapper;
 
-    public RideRepository(ICurrencyRepository currencyRepository, ICategoryRepository categoryRepository) {
-        this.currencyRepository = currencyRepository;
-        this.categoryRepository = categoryRepository;
+    public RideRepository(RideDao rideDao, EntityMapper<RideDbModel, Ride> rideMapper) {
+        this.rideDao = rideDao;
+        this.rideMapper = rideMapper;
+    }
+
+
+
+    public void updateAll(List<Ride> rides) {
+        for (Ride ride : rides) {
+            update(ride);
+        }
+    }
+
+
+    @Override
+    public List<Ride> findAll() {
+        return rideDao.findAll().stream().map(rideMapper::mapToBusiness).toList();
     }
 
     @Override
-    public void create(RideDbModel ride) {
-
+    public Ride create(Ride newEntity) {
+        return rideMapper.mapToBusiness(rideDao.create(rideMapper.mapNewEntityToDatabase(newEntity)));
     }
 
     @Override
-    public void update(RideDbModel ride) {
-
-    }
-
-    public void updateAll(List<RideDbModel> rides) {
-
-    }
-
-    @Override
-    public void deleteByUUID(UUID rideUUID) {
-
+    public void update(Ride entity) {
+        var existing = rideDao.findById(entity.getId()).orElseThrow(() -> new DataStorageException("Ride of ID " + entity.getId() + " not found"));
+        var updated = rideMapper.mapExistingEntityToDatabase(entity, existing.getRideId());
+        rideDao.update(updated);
     }
 
     @Override
-    public void deleteById(Long rideId) {
-
+    public void deleteById(Long id) {
+        rideDao.deleteById(id);
     }
+
+    public void deleteByUuid(UUID uuid) {
+        rideDao.deleteByUuid(uuid);
+    }
+
 
     @Override
     public void deleteAll() {
-
+        rideDao.deleteAll();
     }
 
     @Override
-    public @Nullable Ride getById(Long rideId) {
-        return null;
+    public Optional<Ride> findById(Long id) {
+        var ride = rideDao.findById(id);
+        return ride.map(rideMapper::mapToBusiness);
     }
 
-    @Override
-    public RideDbModel getByUUID(UUID rideUUID) {
-        return null;
-    }
-
-
-    @Override
-    public List<RideDbModel> getAll() {
-        return null;
-    }
-
-    public void recalculateDistances(DistanceUnit newUnit) {
-        if (newUnit == Settings.getDefaultDistanceUnit()) {
-            return;
-        }
-
-        double conversionFactor = (newUnit == DistanceUnit.Kilometer)
-                ? DistanceConversionHelper.MILES_TO_KILOMETERS_FACTOR
-                : DistanceConversionHelper.KILOMETERS_TO_MILES_FACTOR;
-
-
-        List<RideDbModel> rides = getAll();
-        for (RideDbModel ride : rides) {
-                ride.setDistance(ride.getDistance() * conversionFactor);
-        }
-
-        updateAll(rides);
+    public Optional<Ride> findByUuid(UUID uuid) {
+        var ride = rideDao.findByUuid(uuid);
+        return ride.map(rideMapper::mapToBusiness);
     }
 }

@@ -6,6 +6,7 @@ import cz.muni.fi.pv168.project.service.validation.ValidationResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for creation, read, update, and delete operations.
@@ -13,6 +14,11 @@ import java.util.List;
  * @param <T> entity type.
  */
 public interface CrudService<T> {
+
+    /**
+     * Find entity by given {@code id}.
+     */
+    Optional<T> findById(Long id);
 
     /**
      * Find all entities.
@@ -38,4 +44,5 @@ public interface CrudService<T> {
      * Delete all entities.
      */
     void deleteAll();
+
 }

@@ -1,7 +1,7 @@
 package cz.muni.fi.pv168.project.database.dao;
 
 import cz.muni.fi.pv168.project.database.ConnectionHandler;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * DAO for {@link cz.muni.fi.pv168.project.model.CurrencyDbModel} entity.
+ * DAO for {@link CurrencyDbModel} entity.
  */
 public final class CurrencyDao implements CurrencyDataAccessObject {
 
@@ -33,7 +33,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
         ) {
             statement.setString(1, newCurrency.getName());
             statement.setString(2, newCurrency.getTag());
-            statement.setDouble(3, newCurrency.getRate());
+            statement.setBigDecimal(3, newCurrency.getRate());
             statement.executeUpdate();
 
             try (ResultSet keyResultSet = statement.getGeneratedKeys()) {
@@ -134,6 +134,32 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
         }
     }
 
+    public Optional<CurrencyDbModel> findByName(String name) {
+        var sql = """
+                SELECT id,
+                       name,
+                       tag,
+                       rate
+                FROM Currency
+                WHERE name = ?
+                """;
+        try (
+                var connection = connections.get();
+                var statement = connection.use().prepareStatement(sql)
+        ) {
+            statement.setString(1, name);
+            var resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(currencyFromResultSet(resultSet));
+            } else {
+                // department not found
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new DataStorageException("Failed to load currency by name: " + name, ex);
+        }
+    }
+
     @Override
     public CurrencyDbModel update(CurrencyDbModel entity) {
         var sql = """
@@ -149,7 +175,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
         ) {
             statement.setString(1, entity.getName());
             statement.setString(2, entity.getTag());
-            statement.setDouble(3, entity.getRate());
+            statement.setBigDecimal(3, entity.getRate());
             statement.setLong(4, entity.getCurrencyId());
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
@@ -167,31 +193,49 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
 
     @Override
     public void deleteById(Long id) {
-        var sql = """
-                DELETE FROM Currency
-                WHERE id = ?
-                """;
-        try (
-                var connection = connections.get();
-                var statement = connection.use().prepareStatement(sql)
-        ) {
-            statement.setLong(1, id);
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated == 0) {
-                throw new DataStorageException("Currency not found, id: " + id);
-            }
-            if (rowsUpdated > 1) {
-                throw new DataStorageException("More then 1 currency (rows=%d) has been deleted: %s"
-                        .formatted(rowsUpdated, id));
+        var sqlUpdate = """
+            UPDATE Ride
+            SET currencyId = ?, amount = amount / (SELECT rate FROM Currency WHERE id = ?)
+            WHERE currencyId = ?;
+            """;
+        var sqlDelete = """
+            DELETE FROM Currency
+            WHERE id = ?;
+            """;
+
+        try (var connection = connections.get().use()) {
+            connection.setAutoCommit(false);
+
+            try (
+                    var statementUpdate = connection.prepareStatement(sqlUpdate);
+                    var statementDelete = connection.prepareStatement(sqlDelete)
+            ) {
+                statementUpdate.setLong(1, 15);
+                statementUpdate.setLong(2, id);
+                statementUpdate.setLong(3, id);
+                statementUpdate.executeUpdate();
+
+                statementDelete.setLong(1, id);
+                int rowsDeleted = statementDelete.executeUpdate();
+
+                if (rowsDeleted == 0) {
+                    throw new DataStorageException("Currency not deleted, id: " + id);
+                }
+
+                connection.commit();
+            } catch (SQLException ex) {
+                connection.rollback();
+                throw new DataStorageException("Transaction failed for id: " + id, ex);
             }
         } catch (SQLException ex) {
-            throw new DataStorageException("Failed to delete currency, id: " + id, ex);
+            throw new DataStorageException("Database connection error", ex);
         }
     }
 
+
     @Override
     public void deleteAll() {
-        var sql = "DELETE FROM Currency";
+        var sql = "TRUNCATE TABLE Currency";
         try (
                 var connection = connections.get();
                 var statement = connection.use().prepareStatement(sql)
@@ -207,7 +251,7 @@ public final class CurrencyDao implements CurrencyDataAccessObject {
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getString("tag"),
-                resultSet.getDouble("rate")
+                resultSet.getBigDecimal("rate")
         );
     }
 }

@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.project.database;
 
 import cz.muni.fi.pv168.project.model.*;
+import cz.muni.fi.pv168.project.model.DbModels.RideDbModel;
 import org.jetbrains.annotations.Nullable;
 
 public class RideDbConverter {

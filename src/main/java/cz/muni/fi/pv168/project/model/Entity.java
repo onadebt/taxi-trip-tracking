@@ -1,17 +1,21 @@
 package cz.muni.fi.pv168.project.model;
 
-public abstract class Entity {
-    protected Long id;
+import cz.muni.fi.pv168.project.service.port.JsonIgnore;
+import org.jetbrains.annotations.Nullable;
 
-    protected Entity(Long id) {
+public abstract class Entity {
+    @JsonIgnore
+    protected @Nullable Long id;
+
+    protected Entity(@Nullable Long id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public @Nullable Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 }

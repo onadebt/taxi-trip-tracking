@@ -32,10 +32,10 @@ public class Currencies extends JPanel {
     private final Action editAction;
     private final Action deleteAction;
 
-    public Currencies(CurrencyTableModel currencyTableModel, /*CurrencyListModel currencyListModel,*/ CurrencyValidator currencyValidator) {
+    public Currencies(CurrencyTableModel currencyTableModel, CurrencyValidator currencyValidator) {
         setLayout(new BorderLayout());
 
-        this.table = createCurrenciesTable(currencyTableModel/*, currencyListModel*/);
+        this.table = createCurrenciesTable(currencyTableModel);
         this.onSelectionChange = this::changeActionsState;
         this.currencyTableModel = currencyTableModel;
         this.addAction = new NewCurrencyAction(table, currencyValidator);
@@ -43,16 +43,31 @@ public class Currencies extends JPanel {
         this.deleteAction = new DeleteCurrencyAction(table);
 
         JLabel label = new JLabel("Currencies");
-        JToolBar toolBar = createToolBar(currencyTableModel, currencyValidator);
+        JToolBar toolBar = createToolBar();
 
         add(label, BorderLayout.NORTH);
         add(toolBar, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
+
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showPopupMenu(e);
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showPopupMenu(e);
+                }
+            }
+        });
     }
 
 
-
-    private JTable createCurrenciesTable(CurrencyTableModel currencyTableModel/*, CurrencyListModel currencyListModel*/) {
+    private JTable createCurrenciesTable(CurrencyTableModel currencyTableModel) {
         var table = new JTable(currencyTableModel);
 
         var currencyRenderer = new CurrencyRenderer();
@@ -61,66 +76,49 @@ public class Currencies extends JPanel {
         table.setAutoCreateRowSorter(true);
         table.getSelectionModel().addListSelectionListener(this::rowSelectionChanged);
 
-//        var currencyComboBox = new JComboBox<>(new ComboBoxModelAdapter<>(currencyListModel));
-//        currencyComboBox.setRenderer(currencyRenderer);
-//        table.setDefaultEditor(Currency.class, new DefaultCellEditor(currencyComboBox));
-
         return table;
     }
 
 
-    private JToolBar createToolBar(CurrencyTableModel tableModel, CurrencyValidator currencyValidator) {
+    private JToolBar createToolBar() {
         JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new JButton("Add Currency");
         addButton.addActionListener(addAction);
         toolBar.add(addButton);
 
-
-        JButton editButton = new JButton("Edit");
+        JButton editButton = new JButton("Edit Currency");
+        editButton.setEnabled(false);
         editButton.addActionListener(editAction);
         toolBar.add(editButton);
 
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new JButton("Delete Currency");
+        deleteButton.setEnabled(false);
         deleteButton.addActionListener(deleteAction);
         toolBar.add(deleteButton);
 
+        table.setRowHeight(32);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            boolean isSelected = selectedRow >= 0;
+
+            if (isSelected) {
+                Object value = table.getValueAt(selectedRow, 0);
+                boolean isEuro = "Euro".equals(value);
+
+                editButton.setEnabled(!isEuro);
+                deleteButton.setEnabled(!isEuro);
+            } else {
+                editButton.setEnabled(false);
+                deleteButton.setEnabled(false);
+            }
+        });
+
         return toolBar;
     }
-
-
-//    private JToolBar createToolBar(JTable table, EntityTableModel<Currency> tableModel) {
-//        JToolBar toolBar = new JToolBar();
-//
-//
-//
-//        JButton addButton = new JButton("Add New Currency");
-//        addButton.addActionListener(e -> {
-//            NewCurrencyDialog dialog = new NewCurrencyDialog();
-//            dialog.setVisible(true);
-//            refreshCurrenciesTable(table, tableModel);
-//        });
-//        toolBar.add(addButton);
-//
-//        JButton editNameButton = new JButton("Edit Name");
-//        editNameButton.addActionListener(e -> editName(table, tableModel));
-//        toolBar.add(editNameButton);
-//
-//        JButton editCodeButton = new JButton("Edit Code");
-//        editCodeButton.addActionListener(e -> editCode(table, tableModel));
-//        toolBar.add(editCodeButton);
-//
-//        JButton editExchangeRateButton = new JButton("Edit Exchange Rate");
-//        editExchangeRateButton.addActionListener(e -> editExchangeRate(table, tableModel));
-//        toolBar.add(editExchangeRateButton);
-//
-//        JButton deleteRowsButton = new JButton("Delete");
-//        deleteRowsButton.addActionListener(e -> deleteSelectedRows(table, tableModel));
-//        toolBar.add(deleteRowsButton);
-//
-//        return toolBar;
-//    }
-
 
     private void rowSelectionChanged(ListSelectionEvent listSelectionEvent) {
         var selectionModel = (ListSelectionModel) listSelectionEvent.getSource();
@@ -130,13 +128,35 @@ public class Currencies extends JPanel {
         }
     }
 
-    public void setPopupMenu(JPopupMenu popupMenu) {
-        table.setComponentPopupMenu(popupMenu);
-    }
 
     private void changeActionsState(int selectedItemsCount) {
         editAction.setEnabled(selectedItemsCount == 1);
         deleteAction.setEnabled(selectedItemsCount >= 1);
     }
 
+    private void showPopupMenu(MouseEvent e) {
+        int selectedRow = table.getSelectedRow();
+        boolean isSelected = selectedRow >= 0;
+        boolean isEuro = isSelected && "Euro".equals(table.getValueAt(selectedRow, 0));
+
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem addCurrency = new JMenuItem("Add Currency");
+        addCurrency.addActionListener(addAction);
+        popupMenu.add(addCurrency);
+
+        JMenuItem editCurrency = new JMenuItem("Edit Currency");
+        editCurrency.addActionListener(editAction);
+        editCurrency.setEnabled(!isEuro && isSelected);
+        popupMenu.add(editCurrency);
+
+        popupMenu.addSeparator();
+
+        JMenuItem deleteCurrency = new JMenuItem("Delete Currency");
+        deleteCurrency.addActionListener(deleteAction);
+        deleteCurrency.setEnabled(!isEuro && isSelected);
+        popupMenu.add(deleteCurrency);
+
+        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+    }
 }

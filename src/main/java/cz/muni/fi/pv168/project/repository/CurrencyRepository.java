@@ -2,12 +2,14 @@ package cz.muni.fi.pv168.project.repository;
 
 import cz.muni.fi.pv168.project.database.dao.CurrencyDataAccessObject;
 import cz.muni.fi.pv168.project.database.dao.DataStorageException;
-import cz.muni.fi.pv168.project.database.mapper.EntityMapper;
+import cz.muni.fi.pv168.project.database.mappers.EntityMapper;
 import cz.muni.fi.pv168.project.model.Currency;
-import cz.muni.fi.pv168.project.model.CurrencyDbModel;
-import org.jetbrains.annotations.Nullable;
+import cz.muni.fi.pv168.project.model.DbModels.CurrencyDbModel;
+import cz.muni.fi.pv168.project.repository.interfaces.ICurrencyRepository;
+
 
 import java.util.List;
+import java.util.Optional;
 
 public class CurrencyRepository implements ICurrencyRepository {
     private final CurrencyDataAccessObject currencyDao;
@@ -35,28 +37,28 @@ public class CurrencyRepository implements ICurrencyRepository {
         currencyDao.deleteById(currencyId);
     }
 
-    @Override
-    public @Nullable Currency getById(Long currencyId) {
+
+    public Optional<Currency> findById(Long currencyId) {
         return currencyDao
                 .findById(currencyId)
-                .map(currencyMapper::mapToBusiness).orElse(null);
+                .map(currencyMapper::mapToBusiness);
     }
-    @Override
-    public @Nullable Currency getByCode(String code) {
+
+    public Optional<Currency> findByCode(String code) {
         return currencyDao
                 .findByCode(code)
-                .map(currencyMapper::mapToBusiness).orElse(null);
+                .map(currencyMapper::mapToBusiness);
+    }
+
+    public Optional<Currency> findByName(String name) {
+        return currencyDao
+                .findByName(name)
+                .map(currencyMapper::mapToBusiness);
     }
 
     @Override
-    public List<Currency> getAll() {
-        return currencyDao.findAll().stream().map(currencyMapper::mapToBusiness)
-                .toList();
-        /*return List.of(
-                new Currency(1L, "Czech koruna", "CZK", 1.0),
-                new Currency(2L, "Euro", "EUR", 25.0),
-                new Currency(3L, "US Dollar", "USD", 20.0)
-        );*/
+    public List<Currency> findAll() {
+        return currencyDao.findAll().stream().map(currencyMapper::mapToBusiness).toList();
     }
 
     @Override

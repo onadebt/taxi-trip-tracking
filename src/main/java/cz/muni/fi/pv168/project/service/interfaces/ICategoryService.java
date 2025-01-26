@@ -1,42 +1,14 @@
 package cz.muni.fi.pv168.project.service.interfaces;
 
 import cz.muni.fi.pv168.project.model.Category;
+import cz.muni.fi.pv168.project.service.crud.CrudService;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface ICategoryService {
+public interface ICategoryService extends CrudService<Category> {
 
-    /**
-     * Create category according to model
-     * @param category
-     */
-    void create(Category category);
+    Optional<Category> findByName(String name);
 
-    /**
-     * Update category according to model
-     * @param category
-     */
-    void update(Category category);
-
-    /**
-     * Delete category with given ID
-     * @param categoryId
-     */
-    void deleteById(Long categoryId);
-    void deleteAll();
-
-    /**
-     * Get category by id
-     * @param categoryId
-     * @return category, or null if not existing
-     */
-    @Nullable Category getById(Long categoryId);
-    @Nullable Category getByName(String name);
-
-    /**
-     * Get all categories
-     * @return all categories
-     */
-    List<Category> getAll();
 }

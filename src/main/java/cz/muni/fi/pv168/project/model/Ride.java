@@ -5,12 +5,12 @@ import cz.muni.fi.pv168.project.model.enums.TripType;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-public class Ride {
-    private @Nullable Long id;
-    private Double amountCurrency;
+public class Ride extends Entity {
+    private BigDecimal amountCurrency;
     private Currency currency;
     private Double distance;
     private DistanceUnit distanceUnit;
@@ -22,8 +22,8 @@ public class Ride {
     private UUID uuid;
 
     /* New ride */
-    public Ride(@Nullable Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers) {
-        this.id = id;
+    public Ride(@Nullable Long id, BigDecimal amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers) {
+        super(id);
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;
@@ -37,8 +37,8 @@ public class Ride {
 
 
     /*Ride general*/
-    public Ride(Long id, Double amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers, Instant createdAt, UUID uuid) {
-        this.id = id;
+    public Ride(Long id, BigDecimal amountCurrency, Currency currency, Double distance, @Nullable Category category, @Nullable Icon categoryIcon, TripType tripType, Integer numberOfPassengers, Instant createdAt, UUID uuid) {
+        super(id);
         this.amountCurrency = amountCurrency;
         this.currency = currency;
         this.distance = distance;
@@ -50,7 +50,9 @@ public class Ride {
         this.uuid = uuid;
     }
 
-    public Ride() {}
+    public Ride() {
+        super(null);
+    }
 
     public DistanceUnit getDistanceUnit() {
         return distanceUnit;
@@ -60,19 +62,11 @@ public class Ride {
         this.distanceUnit = distanceUnit;
     }
 
-    public @Nullable Long getId() {
-        return id;
-    }
-
-    public void setId(@Nullable Long id) {
-        this.id = id;
-    }
-
-    public Double getAmountCurrency() {
+    public BigDecimal getAmountCurrency() {
         return amountCurrency;
     }
 
-    public void setAmountCurrency(Double amountCurrency) {
+    public void setAmountCurrency(BigDecimal amountCurrency) {
         this.amountCurrency = amountCurrency;
     }
 

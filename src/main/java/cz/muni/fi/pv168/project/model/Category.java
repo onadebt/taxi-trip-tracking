@@ -1,23 +1,30 @@
 package cz.muni.fi.pv168.project.model;
 
 import javax.swing.*;
+import java.util.Objects;
 
-public class Category {
-    private Long id = 0L;
+import cz.muni.fi.pv168.project.service.port.JsonIgnore;
+import cz.muni.fi.pv168.project.ui.resources.Icons;
+
+public class Category extends Entity {
     private String name;
+    @JsonIgnore
     private Icon icon;
+    private String iconPath;
 
-    public Category(Long id, String name, Icon icon) {
-        this.id = id;
+    public Category(String name, String iconPath) {
+        super(0L);
         this.name = name;
-        this.icon = icon;
+        this.iconPath = iconPath;
+        this.icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath)));
     }
 
-    public Category(String name, Icon icon) {
+    public Category(Long id, String name, String iconPath) {
+        super(id);
         this.name = name;
-        this.icon = icon;
+        this.iconPath = iconPath;
+        this.icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath)));
     }
-
 
     public String getName() {
         return name;
@@ -35,12 +42,9 @@ public class Category {
         this.icon = icon;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
+        this.icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath)));
     }
 
     @Override
@@ -56,7 +60,7 @@ public class Category {
         Category category = (Category) o;
 
         if (!name.equals(category.name)) return false;
-        return icon != null ? icon.equals(category.icon) : category.icon == null;
+        return Objects.equals(icon, category.icon);
     }
 
     @Override
@@ -64,5 +68,9 @@ public class Category {
         int result = name.hashCode();
         result = 31 * result + (icon != null ? icon.hashCode() : 0);
         return result;
+    }
+
+    public String getIconPath() {
+        return iconPath;
     }
 }
