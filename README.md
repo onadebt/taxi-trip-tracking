@@ -1,5 +1,8 @@
 # Taxi-Trip-Tracking
 
+Taxi-Trip-Tracking app is a comprehensive solution designed to manage taxi rides.
+The app allows users to track taxi trips distance, ride categories and money earned in many currencies.
+
 ![Image](https://github.com/user-attachments/assets/05fc5785-2eb7-4970-96b6-f88114788d00)
 
 ![Image](https://github.com/user-attachments/assets/ffa8c1bb-0e84-4e39-ae48-441d49dcb458)
@@ -11,9 +14,6 @@
 ![Image](https://github.com/user-attachments/assets/f2cc10b6-80bf-472d-9e34-0fa40805ce23)
 
 
-
-Taxi-Trip-Tracking app is a comprehensive solution designed to manage taxi rides.
-The app allows users to track taxi trips distance, ride categories and money earned in many currencies.
 
 ### Members
 
