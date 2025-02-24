@@ -13,9 +13,9 @@ public class AboutUs {
         JTextArea namesText = new JTextArea(
                 """
                         Dorián Viktora
-                        Jan Vondrášek
+                        Jan VondrášekS
                         Bc. Jan Fabšič
-                        Ivan Yatskiv"""
+                        Bc. Ivan Yatskiv"""
         );
         namesText.setEditable(false);
         namesText.setBackground(aboutUsPanel.getBackground());
@@ -33,10 +33,7 @@ public class AboutUs {
 
         JLabel pluginsLabel = new JLabel("Used Plugins/Third-Party Software:");
         JTextArea pluginsText = new JTextArea("""
-                1. SQLite Database
-                2. Log4j for logging
-                3. Apache Commons for utilities
-                4. JCalendar for date picking""");
+                1. JCalendar for date picking""");
         pluginsText.setEditable(false);
         pluginsText.setBackground(aboutUsPanel.getBackground());
         pluginsText.setFont(new Font("Arial", Font.PLAIN, 14));

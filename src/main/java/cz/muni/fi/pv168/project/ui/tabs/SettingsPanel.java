@@ -13,7 +13,6 @@ import java.awt.*;
 public class SettingsPanel extends JPanel {
     private final ISettingsService settingsService;
     private final IRideService rideService;
-    private final String defaultDistanceUnit = "DefaultDistanceUnit";
 
     public SettingsPanel(ISettingsService settingsService, IRideService rideService){
         super(new BorderLayout());
